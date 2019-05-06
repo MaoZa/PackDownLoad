@@ -28,7 +28,7 @@ public class DownLoadUtils {
         if(size != null && size > 0){
             File localFile = new File(path + "/" + fileName);
             if(localFile.exists() && size.equals(localFile.length())){
-                return true;
+                return false;
             }
         }
         DownLoadUtils.downLoadFromUrl(url, fileName, path);

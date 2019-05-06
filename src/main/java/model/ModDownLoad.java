@@ -18,6 +18,7 @@ public class ModDownLoad extends DownLoadModel {
     //forge版本
     private Long forgeVersion;
 
+    @Override
     public String getFileName(){
         if(fileName == null || fileName.equals("")){
             return name + (version == null || version.equals("") ? "" : "_" + version)

@@ -14,7 +14,7 @@ public class Main extends Application {
         System.out.println(getClass().getResource("/fxml/sample.fxml"));
         Parent root = FxmlUtils.LoadFxml("sample.fxml");
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root, 800, 275 * 2));
         primaryStage.show();
     }
 

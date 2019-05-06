@@ -14,4 +14,5 @@ public enum ModelTypeEnum {
         this.code = code;
         this.name = name;
     }
+
 }
