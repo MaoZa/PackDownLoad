@@ -55,7 +55,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
-                            <outfile>${project.build.directory}/hasCode.exe</outfile>
+                            <outfile>${project.build.directory}/整合包下载器.exe</outfile>
                             <downloadUrl>http://java.com/download</downloadUrl>
                             <classPath>
                                 <mainClass>sample.Main</mainClass>
@@ -70,13 +70,13 @@
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>2012 hasCode.com</copyright>
+                                <copyright>2019 dawnland.cn</copyright>
                                 <productVersion>1.0.0.0</productVersion>
                                 <txtProductVersion>1.0.0.0</txtProductVersion>
                                 <productName>${project.name}</productName>
-                                <companyName>hasCode.com</companyName>
-                                <internalName>hasCode</internalName>
-                                <originalFilename>hasCode.exe</originalFilename>
+                                <companyName>dawnland.cn</companyName>
+                                <internalName>PackDownLoad</internalName>
+                                <originalFilename>整合包下载器.exe</originalFilename>
                             </versionInfo>
                         </configuration>
                     </execution>
