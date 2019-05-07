@@ -1,4 +1,4 @@
-package sample;
+package main;
 
 import com.alibaba.fastjson.JSONArray;
 import javafx.event.ActionEvent;
@@ -46,7 +46,6 @@ public class MainController {
             percentage.setText("0.0%");
             progressBar.setProgress(0);
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, new String(resultStr.getBytes(), "UTF-8"));
             UIUpdateUtils.updateLable(percentage, "");
             return;
         }

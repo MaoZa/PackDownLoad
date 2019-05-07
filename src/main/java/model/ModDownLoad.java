@@ -1,9 +1,14 @@
 package model;
 
 import lombok.Data;
+import utils.UIUpdateUtils;
+
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * mod下载数据实体
+ *
  * @author Cap_Sub
  */
 @Data
@@ -19,16 +24,29 @@ public class ModDownLoad extends DownLoadModel {
     private Long forgeVersion;
 
     @Override
-    public String getFileName(){
-        if(fileName == null || fileName.equals("")){
-            return name + (version == null || version.equals("") ? "" : "_" + version)
+    public String getFileName() {
+        String filename;
+        if (fileName == null || fileName.equals("")) {
+            filename = name + (version == null || version.equals("") ? "" : "_" + version)
                     + (mcVersion != null ? "_" + mcVersion : "")
                     + (forgeVersion != null ? "_" + forgeVersion : "") + ".jar";
+
+            return UIUpdateUtils.encode(filename);
+
         }
-        if(fileName != null && !"".equals(fileName) && name != null && !"".equals(name)){
-            return "[" + name + "]" + fileName + ".jar";
+        if (fileName != null && !"".equals(fileName) && name != null && !"".equals(name)) {
+            filename = "[" + name + "]" + fileName + ".jar";
+            return UIUpdateUtils.encode(filename);
         }
-        return getFileName();
+        return null;
     }
 
+    public void setName(String name) {
+        try {
+            byte[] bytes = name.getBytes("GBK");
+            this.name = new String(bytes, "GBK");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 }

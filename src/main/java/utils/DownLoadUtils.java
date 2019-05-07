@@ -24,7 +24,7 @@ public class DownLoadUtils {
         if (!file.exists()) {
             file.mkdirs();
         }
-        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回成功)
+        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
         if(size != null && size > 0){
             File localFile = new File(path + "/" + fileName);
             if(localFile.exists() && size.equals(localFile.length())){

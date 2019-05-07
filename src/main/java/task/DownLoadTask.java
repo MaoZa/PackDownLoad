@@ -3,7 +3,7 @@ package task;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
 import model.DownLoadModel;
-import sample.MainController;
+import main.MainController;
 import utils.DownLoadUtils;
 import utils.UIUpdateUtils;
 
@@ -31,15 +31,16 @@ public class DownLoadTask extends Task {
             TextArea logText = mainController.getLogText();
             String enter = "\n";
             String headStr = "下载线程[" + Thread.currentThread().getName() + "]: ";
+            String filename = downLoadModel.getFileName();
             headStr = headStr.replaceFirst("pool", "线程组").replaceFirst("thread", "子线程");
-            UIUpdateUtils.textAreaAppend(logText, headStr + "开始下载" + downLoadModel.getFileName() + enter);
+            UIUpdateUtils.textAreaAppend(logText, headStr + "开始下载" + filename + enter);
             Long time = System.currentTimeMillis();
-            boolean flag = DownLoadUtils.downLoadFile(downLoadModel.getUrl(), downLoadModel.getFileName(), downLoadModel.getPath(), downLoadModel.getFileSize());
+            boolean flag = DownLoadUtils.downLoadFile(downLoadModel.getUrl(), filename, downLoadModel.getPath(), downLoadModel.getFileSize());
             time = (System.currentTimeMillis() - time) / 1000;
             if(flag){
-                UIUpdateUtils.textAreaAppend(logText, headStr + "下载" + downLoadModel.getFileName() + "完成,用时" + time + "秒" + enter);
+                UIUpdateUtils.textAreaAppend(logText, headStr + "下载" + filename + "完成,用时" + time + "秒" + enter);
             }else {
-                UIUpdateUtils.textAreaAppend(logText, headStr + downLoadModel.getFileName() + "已存在,跳过下载" + enter);
+                UIUpdateUtils.textAreaAppend(logText, headStr + filename + "已存在,跳过下载" + enter);
             }
             UIUpdateUtils.updateProgress(mainController.getProgressBar(), mainController.getDownLoadModels().size());
             double percentage = 100D/ mainController.getDownLoadModels().size();

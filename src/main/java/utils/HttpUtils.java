@@ -48,10 +48,10 @@ public class HttpUtils {
             RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30000).setConnectionRequestTimeout(30000).setSocketTimeout(30000).build();
             httpGet.setConfig(requestConfig);
             httpGet.setConfig(requestConfig);
-            httpGet.addHeader("Content-type", "application/json; charset=utf-8");
+            httpGet.addHeader("Content-type", "application/json; charset=GBK");
             httpGet.setHeader("Accept", "application/json");
             response = httpClient.execute(httpGet);
-            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
             StringBuffer sb = new StringBuffer("");
             String line = "";
             String NL = System.getProperty("line.separator");
