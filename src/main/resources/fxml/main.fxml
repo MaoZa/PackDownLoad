@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="656.0" prefWidth="766.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.0" minWidth="0.0" prefWidth="0.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="658.0" minWidth="10.0" prefWidth="658.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="0.0" prefWidth="0.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="499.0" minHeight="10.0" prefHeight="499.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="363.0" minHeight="10.0" prefHeight="67.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <TextField fx:id="packCode" alignment="CENTER" prefHeight="23.0" prefWidth="389.0" promptText="请输入整合包代码" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets left="250.0" right="250.0" />
+         </GridPane.margin></TextField>
+      <Button fx:id="download" mnemonicParsing="false" onAction="#onDownLoad" prefHeight="25.0" prefWidth="50.0" text="下载" textFill="#fc69e8" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+         <GridPane.margin>
+            <Insets left="500.0" />
+         </GridPane.margin>
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
+      </Button>
+      <TextArea fx:id="logText" prefHeight="240.0" prefWidth="566.0" GridPane.columnIndex="1" />
+      <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="478.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <cursor>
+            <Cursor fx:constant="CROSSHAIR" />
+         </cursor>
+      </ProgressBar>
+      <Label fx:id="percentage" prefHeight="15.0" prefWidth="49.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="490.0" />
+         </GridPane.margin>
+      </Label>
+      <TextField fx:id="threadField" alignment="CENTER" prefHeight="23.0" prefWidth="77.0" promptText="下载线程数" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets left="50.0" right="500.0" />
+         </GridPane.margin>
+      </TextField>
+   </children>
+</GridPane>

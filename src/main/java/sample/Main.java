@@ -11,8 +11,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        System.out.println(getClass().getResource("/fxml/sample.fxml"));
-        Parent root = FxmlUtils.LoadFxml("sample.fxml");
+        System.out.println(getClass().getResource("/fxml/main.fxml"));
+        Parent root = FxmlUtils.LoadFxml("main.fxml");
         primaryStage.setTitle("整合包下载器");
         primaryStage.setScene(new Scene(root, 800, 275 * 2));
         primaryStage.show();

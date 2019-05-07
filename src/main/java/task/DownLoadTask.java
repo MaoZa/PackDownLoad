@@ -1,49 +1,59 @@
 package task;
 
-import javafx.scene.control.ListView;
+import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.text.TextFlow;
 import model.DownLoadModel;
+import sample.MainController;
 import utils.DownLoadUtils;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import utils.UIUpdateUtils;
 
 /**
  * @author Cap_Sub
  */
-public class DownLoadTask implements Runnable {
+public class DownLoadTask extends Task {
 
     private DownLoadModel downLoadModel;
-    private TextArea logText;
+    private MainController mainController;
 
-    public DownLoadTask(DownLoadModel downLoadModel, TextArea logText) {
+    public DownLoadTask(DownLoadModel downLoadModel, MainController mainController) {
         this.downLoadModel = downLoadModel;
-        this.logText = logText;
+        this.mainController = mainController;
+    }
+
+    @Override
+    protected Object call() {
+        return null;
     }
 
     @Override
     public void run() {
         try {
+            TextArea logText = mainController.getLogText();
             String enter = "\n";
-            String headStr = encode("下载线程[" + Thread.currentThread().getName() + "]: ");
-            logText.appendText(encode(headStr + "开始下载" + downLoadModel.getFileName() + enter));
+            String headStr = "下载线程[" + Thread.currentThread().getName() + "]: ";
+            headStr = headStr.replaceFirst("pool", "线程组").replaceFirst("thread", "子线程");
+            UIUpdateUtils.textAreaAppend(logText, headStr + "开始下载" + downLoadModel.getFileName() + enter);
             Long time = System.currentTimeMillis();
             boolean flag = DownLoadUtils.downLoadFile(downLoadModel.getUrl(), downLoadModel.getFileName(), downLoadModel.getPath(), downLoadModel.getFileSize());
             time = (System.currentTimeMillis() - time) / 1000;
             if(flag){
-                logText.appendText(encode(headStr + "下载" + downLoadModel.getFileName() + "完成,用时" + time + "秒" + enter));
-            }else{
-                logText.appendText(encode(headStr + downLoadModel.getFileName() + "已存在,跳过下载" + enter));
+                UIUpdateUtils.textAreaAppend(logText, headStr + "下载" + downLoadModel.getFileName() + "完成,用时" + time + "秒" + enter);
+            }else {
+                UIUpdateUtils.textAreaAppend(logText, headStr + downLoadModel.getFileName() + "已存在,跳过下载" + enter);
             }
+            UIUpdateUtils.updateProgress(mainController.getProgressBar(), mainController.getDownLoadModels().size());
+            double percentage = 100D/ mainController.getDownLoadModels().size();
+            percentage += "".equals(mainController.getPercentage().getText()) ? 0 : Double.valueOf(mainController.getPercentage().getText().replaceFirst("%", ""));
+            UIUpdateUtils.updateLable(mainController.getPercentage(), percentage + "%");
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static String encode(String souStr) throws UnsupportedEncodingException {
-        return new String(souStr.getBytes(), "UTF-8");
-    }
+
+
+
+
+
 }
