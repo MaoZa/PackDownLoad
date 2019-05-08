@@ -19,7 +19,7 @@ public class ModDownLoad extends DownLoadModel {
     //Mod版本
     private String version;
     //mc版本
-    private Integer mcVersion;
+    private String mcVersion;
     //forge版本
     private Long forgeVersion;
 
