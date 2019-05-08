@@ -8,25 +8,25 @@ import javafx.scene.control.TextArea;
 import java.io.UnsupportedEncodingException;
 
 /**
- * JavaFx UI操作工具类
  * @author Cap_Sub
  */
 public class UIUpdateUtils {
 
     public static void textAreaAppend(TextArea logText, String appendStr) {
         Platform.runLater(() -> {
-                logText.appendText(encode(appendStr));
+            logText.setText(encode(appendStr));
         });
     }
 
-    public static String encode(String souStr) {
+    public static String encode(String souStr){
         try {
-            return new String(souStr.getBytes("GBK"), "GBK");
+            return new String(souStr.getBytes(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 
     public static void updateProgress(ProgressBar progressBar, int count){
         Platform.runLater(() -> {
