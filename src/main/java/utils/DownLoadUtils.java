@@ -6,6 +6,7 @@ import model.DownLoadModel;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.List;
 
 public class DownLoadUtils {
@@ -62,8 +63,9 @@ public class DownLoadUtils {
         //获取自己数组
         byte[] getData = readInputStream(inputStream);
         //文件保存位置
+        fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
         File saveDir = new File(savePath);
-        File file = new File(saveDir+File.separator+fileName);
+        File file = new File(saveDir+File.separator + fileName);
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(getData);
         if(fos!=null){

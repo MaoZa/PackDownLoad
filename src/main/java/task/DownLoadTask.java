@@ -1,5 +1,6 @@
 package task;
 
+import com.alibaba.fastjson.JSONObject;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
 import model.DownLoadModel;
