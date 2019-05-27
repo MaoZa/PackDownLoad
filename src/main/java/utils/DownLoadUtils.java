@@ -1,6 +1,16 @@
 package utils;
 
 import com.alibaba.fastjson.JSONObject;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import model.DownLoadModel;
 
 import java.io.*;
@@ -11,7 +21,30 @@ import java.util.List;
 
 public class DownLoadUtils {
 
-    private static String rootPath = DownLoadUtils.getRootPath() + "";
+    private static String rootPath = DownLoadUtils.getRootPath() + "/.minecraft";
+
+    /**
+     * 下载整合包文件
+     * @param url 下载链接
+     * @param fileName 保存文件的文件名
+     * @param path 相对于.minecraft的路径(.minecraft = 根目录)
+     */
+    public static boolean downLoadFile(String url, String fileName, String path, Long size, ProgressBar progressBar, Label proLabel, Double proSize) throws IOException {
+        path = rootPath + "/" + path;
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
+        if(size != null && size > 0){
+            File localFile = new File(path + "/" + fileName);
+            if(localFile.exists() && size.equals(localFile.length())){
+                return false;
+            }
+        }
+        DownLoadUtils.downLoadFromUrl(url, fileName, path, progressBar, proLabel, proSize);
+        return true;
+    }
 
     /**
      * 下载整合包文件
@@ -41,7 +74,7 @@ public class DownLoadUtils {
      * @return
      */
     public static String getRootPath(){
-        return System.getProperty("user.dir") + "/.minecraft";
+        return System.getProperty("user.dir");
     }
 
     /**
@@ -64,8 +97,21 @@ public class DownLoadUtils {
         byte[] getData = readInputStream(inputStream);
         //文件保存位置
         fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+        long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
+
         File saveDir = new File(savePath);
-        File file = new File(saveDir+File.separator + fileName);
+        String path = saveDir + File.separator + fileName;
+        File file = new File(path);
+
+        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
+        if(fileSize > 0){
+            File localFile = new File(path);
+            if(localFile.exists() && fileSize == localFile.length()){
+                System.out.println(fileName + "已存在:大小" + fileSize);
+                return;
+            }
+        }
+
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(getData);
         if(fos!=null){
@@ -74,6 +120,80 @@ public class DownLoadUtils {
         if(inputStream!=null){
             inputStream.close();
         }
+    }
+
+    /**
+     * 从网络Url中下载文件
+     * @param urlStr
+     * @param fileName
+     * @param savePath
+     * @throws IOException
+     */
+    public static void  downLoadFromUrl(String urlStr, String fileName, String savePath, ProgressBar progressBar, Label proLabel, Double proSize) throws IOException {
+        URL url = new URL(urlStr);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        //设置超时间为3秒
+        conn.setConnectTimeout(3*1000);
+        //防止屏蔽程序抓取而返回403错误
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+        //得到输入流
+        InputStream inputStream = conn.getInputStream();
+        //获取自己数组
+        byte[] getData = readInputStream(inputStream);
+        //文件保存位置
+        fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+        long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
+
+        File saveDir = new File(savePath);
+        String path = saveDir + File.separator + fileName;
+        File file = new File(path);
+
+        //判断文件size 本地是否已经下载该文件且大小一致(则不下载直接返回)
+        if(fileSize > 0){
+            File localFile = new File(path);
+            if(localFile.exists() && fileSize == localFile.length()){
+                System.out.println(fileName + "已存在:大小" + fileSize);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress(progressBar.getProgress() + proSize);
+                        String[] split = proLabel.getText().split("/");
+                        proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+                        if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
+                            Parent parent = progressBar.getParent();
+                            AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
+                            BorderPane borderPane = (BorderPane) parent.getParent();
+//                            borderPane.getChildren().remove(parent);
+                            HBox hBox = (HBox) anchorPane.getChildren().get(1);
+                            Label resultLabel = (Label)hBox.getChildren().get(0);
+                            if(resultLabel.getText().equals("解压完成")){
+                                resultLabel.setText("安装完成");
+                            }else{
+                                resultLabel.setText("下载完成");
+                            }
+                        }
+                    }
+                });
+                return;
+            }
+        }
+
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(getData);
+        if(fos!=null){
+            fos.close();
+        }
+        if(inputStream!=null){
+            inputStream.close();
+        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(progressBar.getProgress() + proSize);
+                String[] split = proLabel.getText().split("/");
+                proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+            }
+        });
     }
 
     /**
@@ -116,5 +236,7 @@ public class DownLoadUtils {
         List<DownLoadModel> list = JSONObject.parseArray(oStr.toString(), DownLoadModel.class);
         return list;
     }
+
+
 
 }
