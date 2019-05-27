@@ -1,10 +1,19 @@
 package controller;
 
 import com.alibaba.fastjson.JSONObject;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import task.DownLoadTask;
 import task.FilesDownLoadTask;
+import utils.DownLoadUtils;
+import utils.ZipUtils;
 
 import java.io.*;
 import java.util.Iterator;
@@ -14,25 +23,51 @@ import java.util.concurrent.Executors;
 
 public class PackDownLoadController {
 
-    @FXML private Pane progressPane;
+    @FXML private BorderPane progressPane;
+    @FXML private Label resultLabel;
 
-    private String jsonPath = "G:/SkyFactory4-4.0.5/manifest.json";
+    private String jsonPath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5\\manifest.json";
+    private String zipFilePath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5.zip";
 
     public void startPackDownLoad(){
         try {
             String fileJson = readJsonData(jsonPath);
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
-            System.out.println(jsonObject);
+            List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
+
+            ZipUtils.unzip(zipFilePath, DownLoadUtils.getRootPath(), progressPane);
+
+            ProgressBar progressBar = new ProgressBar();
+            progressBar.setPrefWidth(230D);
+            progressBar.setProgress(0);
+            Label label = new Label("下载进度");
+            label.setPrefWidth(20D);
+            label.setAlignment(Pos.CENTER_RIGHT);
+            Label label1 = new Label("0/" + files.size());
+            label.setPrefWidth(50D);
+            label.setAlignment(Pos.CENTER_LEFT);
+            HBox hb = new HBox();
+            hb.setPrefWidth(300D);
+            hb.setSpacing(5D);
+            hb.setAlignment(Pos.CENTER);
+            hb.getChildren().addAll(label, progressBar, label1);
+            progressPane.setCenter(hb);
+
+            Platform.runLater(() -> {
+                AnchorPane anchorPane = (AnchorPane) progressBar.getParent().getParent().getParent();
+                HBox hBox = (HBox) anchorPane.getChildren().get(1);
+                Label resultLabel = (Label)hBox.getChildren().get(0);
+                resultLabel.setText("下载中...");
+            });
 
             //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
             //                                                     项目id        文件id
 
-            ExecutorService pool = Executors.newFixedThreadPool(5);
-            List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
+            ExecutorService pool = Executors.newFixedThreadPool(50);
             Iterator<JSONObject> iterator = files.iterator();
             while (iterator.hasNext()){
                 JSONObject object = iterator.next();
-                pool.execute(new FilesDownLoadTask(object, this));
+                pool.execute(new FilesDownLoadTask(object, this, progressBar, label1, files.size()));
             }
         } catch (IOException e) {
             e.printStackTrace();
