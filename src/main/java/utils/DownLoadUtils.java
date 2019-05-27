@@ -105,8 +105,7 @@ public class DownLoadUtils {
 
         //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
         if(fileSize > 0){
-            File localFile = new File(path);
-            if(localFile.exists() && fileSize == localFile.length()){
+            if(file.exists() && fileSize == file.length()){
                 System.out.println(fileName + "已存在:大小" + fileSize);
                 return;
             }
@@ -150,27 +149,22 @@ public class DownLoadUtils {
 
         //判断文件size 本地是否已经下载该文件且大小一致(则不下载直接返回)
         if(fileSize > 0){
-            File localFile = new File(path);
-            if(localFile.exists() && fileSize == localFile.length()){
-                System.out.println(fileName + "已存在:大小" + fileSize);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setProgress(progressBar.getProgress() + proSize);
-                        String[] split = proLabel.getText().split("/");
-                        proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
-                        if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                            Parent parent = progressBar.getParent();
-                            AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-                            BorderPane borderPane = (BorderPane) parent.getParent();
-//                            borderPane.getChildren().remove(parent);
-                            HBox hBox = (HBox) anchorPane.getChildren().get(1);
-                            Label resultLabel = (Label)hBox.getChildren().get(0);
-                            if(resultLabel.getText().equals("解压完成")){
-                                resultLabel.setText("安装完成");
-                            }else{
-                                resultLabel.setText("下载完成");
-                            }
+            if(file.exists() && fileSize == file.length()){
+                Platform.runLater(() -> {
+                    progressBar.setProgress(progressBar.getProgress() + proSize);
+                    String[] split = proLabel.getText().split("/");
+                    proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+                    if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
+                        Parent parent = progressBar.getParent();
+                        AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
+                        BorderPane borderPane = (BorderPane) parent.getParent();
+//                      borderPane.getChildren().remove(parent);
+                        HBox hBox = (HBox) anchorPane.getChildren().get(1);
+                        Label resultLabel = (Label)hBox.getChildren().get(0);
+                        if(resultLabel.getText().equals("解压完成")){
+                            resultLabel.setText("安装完成");
+                        }else{
+                            resultLabel.setText("下载完成");
                         }
                     }
                 });

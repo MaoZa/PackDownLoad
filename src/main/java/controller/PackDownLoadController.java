@@ -20,17 +20,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipFile;
 
 public class PackDownLoadController {
 
     @FXML private BorderPane progressPane;
     @FXML private Label resultLabel;
 
-    private String jsonPath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5\\manifest.json";
     private String zipFilePath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5.zip";
+    private String jsonPath;
 
     public void startPackDownLoad(){
         try {
+            if (jsonPath == null) {
+                jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
+            }
             String fileJson = readJsonData(jsonPath);
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
@@ -69,7 +73,7 @@ public class PackDownLoadController {
                 JSONObject object = iterator.next();
                 pool.execute(new FilesDownLoadTask(object, this, progressBar, label1, files.size()));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

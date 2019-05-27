@@ -8,6 +8,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import task.UnZipSubTask;
 import task.UnZipTask;
 
 import java.io.*;
@@ -66,23 +67,7 @@ public class ZipUtils {
                 Label resultLabel = (Label)hBox.getChildren().get(0);
                 resultLabel.setText("正在读取压缩文件，稍等即可");
             });
-
-            ZipEntry ze;
-            while ((ze = zin.getNextEntry()) != null) {
-                // TODO: 2019/5/27 多线程读流优化 目前没有解决方案 主线程读流会导致舞台未响应
-                // TODO: 2019/5/27 可尝试写一个子线程Task实现一个线程专门处理读流 避免在主线程中进行读流
-                List<Integer> cs = new ArrayList<>();
-                try {
-                    for (int c = zin.read(); c != -1; c = zin.read()) {
-                        cs.add(c);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                pool.submit(new UnZipTask(location, ze, progressBar, cs, proSize, label1));
-            }
-            zin.close();
-            zf.close();
+            pool.submit(new UnZipSubTask(zin, pool, location, progressBar, proSize, label1));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -133,6 +118,25 @@ public class ZipUtils {
             }
         }
         return false;
+    }
+
+    public static File getZipEntryFile(String zipFilePath, String key) throws Exception {
+        FileInputStream fis = new FileInputStream(zipFilePath);
+        ZipInputStream zis = new ZipInputStream(fis);
+        ZipFile zipFile = new ZipFile(zipFilePath);
+        ZipEntry zipEntry = null;
+        while((zipEntry = zis.getNextEntry()) != null){
+            if(key.equals(zipEntry.getName())){
+                InputStream is = zipFile.getInputStream(zipEntry);
+                FileOutputStream fos = new FileOutputStream(zipEntry.getName());
+                int len;
+                while((len = is.read()) != -1){
+                    fos.write(len);
+                }
+            }
+            break;
+        }
+        return new File(zipEntry.getName());
     }
 
 
