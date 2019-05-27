@@ -1,6 +1,5 @@
 package main;
 
-import controller.PackDownLoadController;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,15 +13,12 @@ public class Main extends Application {
         System.out.println(getClass().getResource("/fxml/PackDownLoad.fxml"));
         Parent root = FxmlUtils.LoadFxml("PackDownLoad.fxml");
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 800, 275 * 2));
+        primaryStage.setScene(new Scene(root, 450, 270));
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> System.exit(0));
     }
 
     public static void main(String[] args) {
-//        launch(args);
-
-        PackDownLoadController packDownLoadController = new PackDownLoadController();
-        packDownLoadController.startPackDownLoad();
-
+        launch(args);
     }
 }
