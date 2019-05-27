@@ -70,6 +70,7 @@ public class ZipUtils {
             ZipEntry ze;
             while ((ze = zin.getNextEntry()) != null) {
                 // TODO: 2019/5/27 多线程读流优化 目前没有解决方案 主线程读流会导致舞台未响应
+                // TODO: 2019/5/27 可尝试写一个子线程Task实现一个线程专门处理读流 避免在主线程中进行读流
                 List<Integer> cs = new ArrayList<>();
                 try {
                     for (int c = zin.read(); c != -1; c = zin.read()) {
