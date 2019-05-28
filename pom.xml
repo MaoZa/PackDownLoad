@@ -55,7 +55,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
-                            <outfile>${project.build.directory}/整合包下载器.exe</outfile>
+                            <outfile>${project.build.directory}/Curse整合包下载器.exe</outfile>
                             <downloadUrl>http://java.com/download</downloadUrl>
                             <classPath>
                                 <mainClass>main.Main</mainClass>
@@ -77,7 +77,7 @@
                                 <productName>${project.name}</productName>
                                 <companyName>dawnland.cn</companyName>
                                 <internalName>PackDownLoad</internalName>
-                                <originalFilename>整合包下载器.exe</originalFilename>
+                                <originalFilename>Curse整合包下载器.exe</originalFilename>
                             </versionInfo>
                         </configuration>
                     </execution>
