@@ -26,7 +26,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtils {
 
-    public static void unzip(String zipFile, String location, BorderPane progressPane) throws IOException {
+    public static void unzip(String zipFile, String location, BorderPane progressPane, ExecutorService pool) throws IOException {
         try {
 
             File f = new File(location);
@@ -41,30 +41,27 @@ public class ZipUtils {
             ZipInputStream zin = new ZipInputStream(new FileInputStream(zipFile));
 
             ProgressBar progressBar = new ProgressBar();
-            progressBar.setPrefWidth(230D);
-            progressBar.setProgress(0);
-            Label label = new Label("解压进度");
-            label.setPrefWidth(20D);
-            label.setAlignment(Pos.CENTER_RIGHT);
             Label label1 = new Label("0/" + zf.size());
-            label.setPrefWidth(50D);
-            label.setAlignment(Pos.CENTER_LEFT);
-            HBox hb = new HBox();
-            hb.setPrefWidth(300D);
-            hb.setSpacing(5D);
-            hb.setAlignment(Pos.CENTER);
-            hb.getChildren().addAll(label, progressBar, label1);
-            progressPane.setBottom(hb);
-
-            ExecutorService pool = Executors.newFixedThreadPool(50);
 
             Platform.runLater(() -> {
+                progressBar.setPrefWidth(230D);
+                progressBar.setProgress(0);
+                Label label = new Label("解压进度");
+                label.setPrefWidth(20D);
+                label.setAlignment(Pos.CENTER_RIGHT);
+                label.setPrefWidth(50D);
+                label.setAlignment(Pos.CENTER_LEFT);
+                HBox hb = new HBox();
+                hb.setPrefWidth(300D);
+                hb.setSpacing(5D);
+                hb.setAlignment(Pos.CENTER);
+                hb.getChildren().addAll(label, progressBar, label1);
+                progressPane.setCenter(hb);
                 Parent parent = progressBar.getParent();
                 AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-                BorderPane borderPane = (BorderPane) parent.getParent();
-//                            borderPane.getChildren().remove(parent);
-                HBox hBox = (HBox) anchorPane.getChildren().get(1);
-                Label resultLabel = (Label)hBox.getChildren().get(0);
+//              borderPane.getChildren().remove(parent);
+                HBox hBox = (HBox) anchorPane.getChildren().get(2);
+                Label resultLabel = (Label)hBox.getChildren().get(1);
                 resultLabel.setText("正在读取压缩文件，稍等即可");
             });
             pool.submit(new UnZipSubTask(zin, pool, location, progressBar, proSize, label1));

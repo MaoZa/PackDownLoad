@@ -24,6 +24,19 @@ public class DownLoadUtils {
     private static String rootPath = DownLoadUtils.getRootPath() + "/.minecraft";
 
     /**
+     * 下载文件到指定目录 默认rootPath
+     * @param url 下载链接
+     */
+    public static String downLoadFile(String url, String path) throws IOException {
+        path = path == null ? getRootPath() : getRootPath() + path;
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return DownLoadUtils.downLoadFromUrl(url, path);
+    }
+
+    /**
      * 下载整合包文件
      * @param url 下载链接
      * @param fileName 保存文件的文件名
@@ -135,13 +148,10 @@ public class DownLoadUtils {
         conn.setConnectTimeout(3*1000);
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-        //得到输入流
-        InputStream inputStream = conn.getInputStream();
-        //获取自己数组
-        byte[] getData = readInputStream(inputStream);
+
+        long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
         //文件保存位置
         fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
-        long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
 
         File saveDir = new File(savePath);
         String path = saveDir + File.separator + fileName;
@@ -157,10 +167,9 @@ public class DownLoadUtils {
                     if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
                         Parent parent = progressBar.getParent();
                         AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-                        BorderPane borderPane = (BorderPane) parent.getParent();
 //                      borderPane.getChildren().remove(parent);
-                        HBox hBox = (HBox) anchorPane.getChildren().get(1);
-                        Label resultLabel = (Label)hBox.getChildren().get(0);
+                        HBox hBox = (HBox) anchorPane.getChildren().get(2);
+                        Label resultLabel = (Label)hBox.getChildren().get(1);
                         if(resultLabel.getText().equals("解压完成")){
                             resultLabel.setText("安装完成");
                         }else{
@@ -172,6 +181,11 @@ public class DownLoadUtils {
             }
         }
 
+        //得到输入流
+        InputStream inputStream = conn.getInputStream();
+        //获取自己数组
+        byte[] getData = readInputStream(inputStream);
+
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(getData);
         if(fos!=null){
@@ -180,12 +194,21 @@ public class DownLoadUtils {
         if(inputStream!=null){
             inputStream.close();
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setProgress(progressBar.getProgress() + proSize);
-                String[] split = proLabel.getText().split("/");
-                proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+        Platform.runLater(() -> {
+            progressBar.setProgress(progressBar.getProgress() + proSize);
+            String[] split = proLabel.getText().split("/");
+            proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+            if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
+                Parent parent = progressBar.getParent();
+                AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
+//                      borderPane.getChildren().remove(parent);
+                HBox hBox = (HBox) anchorPane.getChildren().get(2);
+                Label resultLabel = (Label)hBox.getChildren().get(1);
+                if(resultLabel.getText().equals("解压完成")){
+                    resultLabel.setText("安装完成");
+                }else{
+                    resultLabel.setText("下载完成");
+                }
             }
         });
     }
@@ -205,6 +228,50 @@ public class DownLoadUtils {
         }
         bos.close();
         return bos.toByteArray();
+    }
+
+    /**
+     * 从网络Url中下载文件到指定目录 通用方法
+     * @param urlStr
+     * @param savePath
+     * @throws IOException
+     */
+    public static String downLoadFromUrl(String urlStr, String savePath) throws IOException {
+        if(savePath == null){ savePath = getRootPath(); }
+        URL url = new URL(urlStr);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        //设置超时间为3秒
+        conn.setConnectTimeout(3*1000);
+        //防止屏蔽程序抓取而返回403错误
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+
+        //url文件大小
+        long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
+        //文件保存位置
+        String fileName = conn.getURL().getFile().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+
+        File saveDir = new File(savePath);
+        String path = saveDir + File.separator + fileName;
+        File file = new File(path);
+
+        if(file.length() == fileSize){
+            return fileName;
+        }
+
+        //得到输入流
+        InputStream inputStream = conn.getInputStream();
+        //获取自己数组
+        byte[] getData = readInputStream(inputStream);
+
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(getData);
+        if(fos!=null){
+            fos.close();
+        }
+        if(inputStream!=null){
+            inputStream.close();
+        }
+        return fileName;
     }
 
     /**
