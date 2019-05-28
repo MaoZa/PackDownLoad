@@ -109,7 +109,7 @@ public class DownLoadUtils {
         //获取自己数组
         byte[] getData = readInputStream(inputStream);
         //文件保存位置
-        fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+        fileName = new String((conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1)).getBytes(), "UTF-8");
         long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
 
         File saveDir = new File(savePath);
@@ -151,7 +151,7 @@ public class DownLoadUtils {
 
         long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
         //文件保存位置
-        fileName = conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+        fileName = new String((conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1)).getBytes(), "UTF-8");
 
         File saveDir = new File(savePath);
         String path = saveDir + File.separator + fileName;
@@ -248,7 +248,7 @@ public class DownLoadUtils {
         //url文件大小
         long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
         //文件保存位置
-        String fileName = conn.getURL().getFile().substring(conn.getURL().getPath().lastIndexOf("/") + 1);
+        String fileName = new String((conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1)).getBytes(), "UTF-8");
 
         File saveDir = new File(savePath);
         String path = saveDir + File.separator + fileName;
