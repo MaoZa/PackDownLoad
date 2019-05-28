@@ -9,10 +9,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import utils.DownLoadUtils;
+import utils.Upgrader;
 import utils.ZipUtils;
 
 import javax.swing.*;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class JsonJXTask implements Runnable {
                 String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
                 Platform.runLater(() -> {
                     JOptionPane.showMessageDialog(null, "该整合包核心要求如下: \n游戏版本: "
-                            + mcVersion + "\nforge版本: " + forgeVersion + "\n请在下载完成后使用启动器(DawnLandStarter)安装");
+                            + mcVersion + "\nforge版本: " + forgeVersion + "\n请在下载完成后使用启动器安装核心");
                 });
             }catch (Exception e){}
 
@@ -85,12 +87,12 @@ public class JsonJXTask implements Runnable {
             Iterator<JSONObject> iterator = files.iterator();
 
             pool.submit(() -> {
+                Platform.runLater(() -> {
+                    JOptionPane.showMessageDialog(null, "正在下载启动器...");
+                });
                 try {
-                    Platform.runLater(() -> {
-                        JOptionPane.showMessageDialog(null, "正在下载启动器...");
-                    });
-                    DownLoadUtils.downLoadFile("https://dawnland.cn/DawnLandStarter.exe", null);
-                } catch (IOException e) {
+                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" ,DownLoadUtils.getRootPath());
+                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             });
