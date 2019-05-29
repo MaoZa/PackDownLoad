@@ -5,37 +5,58 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
 
-import com.alibaba.fastjson.JSONObject; // 版本用json存的
+import com.alibaba.fastjson.JSONObject;
+import configs.Config;
 
 import javax.swing.*;
 
+import static java.util.regex.Pattern.*;
+
+/**
+ * @author Cap_Sub
+ */
 public class Upgrader {
-    public static float currentversion = 1.1f;//当前版本号
-    public static float newversion; //最新版本号
-    public static boolean downloaded = false;//下载完成与否
-    public static boolean errored = false;//下载出错与否
-    public static String versinurl = "https://dawnland.cn/version.json"; //版本存放地址
-    public static String jarUrl; // 程序存放地址
-    public static String batUrl = "https://dawnland.cn/update.bat"; // bat存放地址
-    public static String string2dowload; //备用更新方案
-    public static String description = "";//新版本更新信息
+    /** 最新版本号 */
+    public static float newVersion;
+    /** 下载完成与否 */
+    public static boolean downloaded = false;
+    /**下载出错与否 */
+    public static boolean errored = false;
+    /** 新版本更新信息 */
+    public static String description = "";
 
     static {
+        getNewVersion();
+    }
+
+    /**
+     * 对url中文进行UrlEncode编码
+     *
+     * @param url
+     * @return
+     */
+    public static String urlEncodeChinese(String url) {
         try {
-            jarUrl = "https://dawnland.cn/Curse" + URLEncoder.encode("整合包下载器", "UTF-8") + ".exe";
-            string2dowload = "https://dawnland.cn/Curse" + URLEncoder.encode("整合包下载器", "UTF-8") + ".exe";
+            Matcher matcher = compile("[\\u4e00-\\u9fa5]").matcher(url);
+            String tmp;
+            while (matcher.find()) {
+                tmp = matcher.group();
+                url = url.replaceAll(tmp, URLEncoder.encode(tmp, "UTF-8"));
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        return url;
     }
 
     /**
      * 静默下载最新版本
      */
     public static void dowload() throws UnsupportedEncodingException {
-        downLoadFromUrl(jarUrl, "dowloadtmp", "tmp");
-        downLoadFromUrl(batUrl, "update.bat", DownLoadUtils.getRootPath());
+        downLoadFromUrl(Config.exeUrl, "dowloadtmp", "tmp");
+        downLoadFromUrl(Config.batUrl, "update.bat", DownLoadUtils.getRootPath());
         downloaded = true;
     }
 
@@ -55,9 +76,9 @@ public class Upgrader {
      * 获取最新版本号
      */
     public static void getNewVersion() {
-        String json = sendGetRequest(versinurl);
-        JSONObject ob =  JSONObject.parseObject(json);
-        newversion = ob.getFloat("version");
+        String json = sendGetRequest(Config.versinUrl);
+        JSONObject ob = JSONObject.parseObject(json);
+        newVersion = ob.getFloat("version");
         description = ob.getString("desc");
     }
 
@@ -66,7 +87,7 @@ public class Upgrader {
      */
     public static void autoupgrade() {
         getNewVersion();
-        if(currentversion >= newversion){
+        if (Config.currentVersion >= newVersion) {
             return;
         }
         try {
@@ -77,31 +98,37 @@ public class Upgrader {
         restart();
     }
 
-    public static boolean isNewVersion(){
-        if(newversion == 0){
+    /**
+     * 检查是否有新版本
+     *
+     * @return
+     */
+    public static boolean isNewVersion() {
+        if (newVersion == 0) {
             getNewVersion();
         }
-        if(newversion > currentversion){
+        if (newVersion > Config.currentVersion) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
     /**
      * 发get请求，获取文本
+     *
      * @param getUrl
      * @return 网页context
      */
     public static String sendGetRequest(String getUrl) {
         StringBuffer sb = new StringBuffer();
-        InputStreamReader isr = null;
-        BufferedReader br = null;
+        InputStreamReader isr;
+        BufferedReader br;
         try {
             URL url = new URL(getUrl);
             URLConnection urlConnection = url.openConnection();
             urlConnection.setAllowUserInteraction(false);
-            isr = new InputStreamReader(url.openStream(),"UTF-8");
+            isr = new InputStreamReader(url.openStream(), "UTF-8");
             br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
@@ -122,7 +149,7 @@ public class Upgrader {
      * @throws IOException
      */
     public static void downLoadFromUrl(String urlStr, String fileName, String savePath) {
-        try{
+        try {
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             // 设置超时间为3秒
@@ -151,14 +178,13 @@ public class Upgrader {
             }
 
             System.out.println("info:" + url + " download success");
-        }catch (Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getStackTrace());
             e.printStackTrace();
             System.exit(0);
         }
 
     }
-
 
 
     /**
@@ -170,7 +196,7 @@ public class Upgrader {
      */
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
-        int len = 0;
+        int len;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         while ((len = inputStream.read(buffer)) != -1) {
             bos.write(buffer, 0, len);

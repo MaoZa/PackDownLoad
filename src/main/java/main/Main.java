@@ -1,7 +1,7 @@
 package main;
 
+import configs.Config;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -14,14 +14,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        System.out.println(getClass().getResource("/fxml/PackDownLoad.fxml"));
 
+        //System.out.println(getClass().getResource("/fxml/PackDownLoad.fxml"));
         //检查更新 是否弹出版本提示框
+//        JOptionPane.showMessageDialog(null, Upgrader.isNewVersion());
         if(Upgrader.isNewVersion()){
             JOptionPane.showMessageDialog(null, "更新内容:\n" + Upgrader.description, "发现新版本", 1);
         }
+
         //自动更新
-        //目前version.json 永远比当前版本高 实现每次打开强制更新
+        //如果version.json 永远比当前版本高 实现每次打开强制更新
         Upgrader.autoupgrade();
 
         Parent root = FxmlUtils.LoadFxml("PackDownLoad.fxml");
@@ -32,6 +34,12 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        try{
+            launch(args);
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, Config.class.getResource("/config.properties").toExternalForm());
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getStackTrace());
+        }
     }
 }

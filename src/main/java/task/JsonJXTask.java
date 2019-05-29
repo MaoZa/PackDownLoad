@@ -1,6 +1,7 @@
 package task;
 
 import com.alibaba.fastjson.JSONObject;
+import configs.Config;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -52,8 +53,7 @@ public class JsonJXTask implements Runnable {
                 String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
                 String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
                 Platform.runLater(() -> {
-                    JOptionPane.showMessageDialog(null, "该整合包核心要求如下: \n游戏版本: "
-                            + mcVersion + "\nforge版本: " + forgeVersion + "\n请在下载完成后使用启动器安装核心");
+                    JOptionPane.showMessageDialog(null, Config.mcjarStr.replaceFirst("mcVersion", mcVersion).replaceFirst("forgeVersion", forgeVersion));
                 });
             }catch (Exception e){}
 
