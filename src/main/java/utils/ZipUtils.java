@@ -130,8 +130,8 @@ public class ZipUtils {
                 while((len = is.read()) != -1){
                     fos.write(len);
                 }
+                break;
             }
-            break;
         }
         return new File(zipEntry.getName());
     }

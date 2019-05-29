@@ -54,6 +54,7 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
+                            <!--<headerType>console</headerType>-->
                             <jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
                             <outfile>${project.build.directory}/Curse整合包下载器.exe</outfile>
                             <downloadUrl>http://java.com/download</downloadUrl>

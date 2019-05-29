@@ -41,7 +41,6 @@ public class JsonJXTask implements Runnable {
     @Override
     public void run() {
         try {
-
             if (jsonPath == null) {
                 jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
             }
