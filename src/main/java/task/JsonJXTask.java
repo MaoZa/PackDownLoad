@@ -51,9 +51,16 @@ public class JsonJXTask implements Runnable {
             try{
                 String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
                 String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
-                Platform.runLater(() -> {
-                    JOptionPane.showMessageDialog(null, Config.mcjarStr.replaceFirst("mcVersion", mcVersion).replaceFirst("forgeVersion", forgeVersion));
-                });
+                String mcjarStrTmp = Config.mcjarStr.replaceFirst("mcVersion", mcVersion).replaceFirst("forgeVersion", forgeVersion);
+                File file = new File(DownLoadUtils.getRootPath() + "/核心要求.txt");
+                FileOutputStream fos = new FileOutputStream(file);
+                PrintStream ps = new PrintStream(fos);
+                String[] mcjarStrTmpSplit = mcjarStrTmp.split("\n");
+                for (int i = 0; i < mcjarStrTmpSplit.length; i++) {
+                    ps.println(mcjarStrTmpSplit[i]);
+                }
+                Platform.runLater(() -> JOptionPane.showMessageDialog(null, mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath()));
+                Runtime.getRuntime().exec("cmd.exe  /c notepad " + file.getPath());
             }catch (Exception e){}
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getRootPath(), progressPane, pool);
