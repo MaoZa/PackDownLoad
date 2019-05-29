@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.HBox?>
 <AnchorPane prefHeight="270.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PackDownLoadController">
    <children>
-      <HBox fx:id="projectHBox" layoutX="18.0" layoutY="187.0" prefHeight="23.0" prefWidth="414.0">
+      <HBox fx:id="projectHBox" layoutX="18.0" layoutY="200.0" prefHeight="23.0" prefWidth="414.0">
          <children>
             <Label prefHeight="23.0" prefWidth="110.0" text="Curse整合包链接：" />
             <TextField fx:id="projectUrlTextField" prefHeight="23.0" prefWidth="303.0" text="" />
          </children>
       </HBox>
-      <BorderPane fx:id="progressPane" layoutX="26.0" layoutY="82.0" prefHeight="97.0" prefWidth="400.0" />
-      <HBox layoutX="75.0" layoutY="220.0" prefHeight="23.0" prefWidth="301.0">
+      <BorderPane fx:id="progressPane" layoutX="26.0" layoutY="94.0" prefHeight="97.0" prefWidth="400.0" />
+      <HBox layoutX="75.0" layoutY="233.0" prefHeight="23.0" prefWidth="301.0">
          <children>
             <TextField fx:id="threadCount" prefHeight="23.0" prefWidth="104.0" promptText="最大线程(10)" />
             <Label fx:id="resultLabel" alignment="CENTER" prefHeight="23.0" prefWidth="134.0" />
@@ -26,5 +26,6 @@
          <image>
             <Image url="logo.jpg" />
          </image></ImageView>
+      <Hyperlink fx:id="copyrightHyperlink" layoutX="4.0" layoutY="74.0" onAction="#openUrlByCopyright" text="\@Cap_Sub" />
    </children>
 </AnchorPane>

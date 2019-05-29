@@ -72,8 +72,8 @@
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>2019 dawnland.cn</copyright>
-                                <productVersion>1.0.0.0</productVersion>
+                                <copyright>2019 DawnLand Cap_Sub</copyright>
+                                <productVersion>1.0.1.3</productVersion>
                                 <txtProductVersion>1.0.0.0</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <companyName>dawnland.cn</companyName>
