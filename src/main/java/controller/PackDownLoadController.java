@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import main.Main;
 import org.jsoup.Jsoup;
 import task.ModPackZipDownLoadTask;
 import utils.MessageUtils;
@@ -29,6 +30,7 @@ public class PackDownLoadController {
     @FXML private TextField threadCount;
     @FXML private TextField projectUrlTextField;
     @FXML private Hyperlink copyrightHyperlink;
+    @FXML private Button opinionButton;
 
 //    private String zipFilePath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5.zip";
 //    private String projectUrl = "https://www.curseforge.com/minecraft/modpacks/skyfactory-4";
