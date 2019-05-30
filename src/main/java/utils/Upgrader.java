@@ -5,7 +5,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSONObject;
 import configs.Config;
@@ -49,6 +51,70 @@ public class Upgrader {
             e.printStackTrace();
         }
         return url;
+    }
+
+    public static void versionLog() throws FileNotFoundException {
+        //提示框只展示最近三次更新的内容
+        String versionLog = Upgrader.description;
+        Pattern pt = compile("(\\d+.\\d+)");
+        Matcher mt = pt.matcher(versionLog);
+        // mt.lookingAt();
+        // mt.matches();
+        Map<String, String[]> versionMap = new LinkedHashMap<>();
+        List<Integer> indexs = new ArrayList<>();
+        while(mt.find()){
+            indexs.add(mt.start());
+        }
+        for (Integer index : indexs) {
+            if(indexs.indexOf(index) + 1 != indexs.size()){
+                String temp = versionLog.substring(index, indexs.get(indexs.indexOf(index) + 1));
+                String[] temps = temp.split(":");
+                String[] split = temps[1].split("\\n");
+                versionMap.put(temps[0], split);
+            }else {
+                String temp = versionLog.substring(index);
+                String[] temps = temp.split(":");
+                String[] split = temps[1].split("\\n");
+                versionMap.put(temps[0], split);
+            }
+        }
+        String versionShowStr = "更新内容:\n";
+        int i = 0;
+        for (Map.Entry<String, String[]> e : versionMap.entrySet()) {
+            //限制提示框只显示最近三次更新的日志
+            if(i < 3){
+                versionShowStr += e.getKey() + ":\n";
+                for (String s : e.getValue()) {
+                    if(!"".equals(s)){
+                        versionShowStr += "    " + s + "\n";
+                    }
+                }
+                i++;
+            }
+        }
+
+        ((Runnable) () -> {
+            //记录完整更新日志 需异步
+            File file = new File(DownLoadUtils.getRootPath() + "/更新日志.txt");
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                MessageUtils.error(e);
+            }
+            PrintStream ps = new PrintStream(fos);
+            for (Map.Entry<String, String[]> e : versionMap.entrySet()) {
+                ps.println(e.getKey() + ":");
+                for (String s : e.getValue()) {
+                    if(!"".equals(s)){
+                        ps.println("\t" + s);
+                    }
+                }
+            }
+        }).run();
+
+        JOptionPane.showMessageDialog(null, versionShowStr, "发现新版本 " + Upgrader.newVersion, 1);
+        //更新日志写入文件
     }
 
     /**
