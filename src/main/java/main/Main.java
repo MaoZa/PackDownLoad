@@ -10,6 +10,7 @@ import utils.FxmlUtils;
 import utils.MessageUtils;
 import utils.Upgrader;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -24,7 +25,7 @@ public class Main extends Application {
         //检查更新 是否弹出版本提示框
         //MessageUtils.info(Upgrader.isNewVersion() + "");
         if(Upgrader.isNewVersion()){
-            MessageUtils.info("更新内容:\n" + Upgrader.description, "发现新版本");
+            JOptionPane.showMessageDialog(null, "更新内容:\n" + Upgrader.description, "发现新版本 " + Upgrader.newVersion, 1);
         }
         //自动更新
         //如果version.json 永远比当前版本高 实现每次打开强制更新
