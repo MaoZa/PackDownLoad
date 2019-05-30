@@ -8,7 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import org.jsoup.Jsoup;
 import task.ModPackZipDownLoadTask;
+import utils.MessageUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,29 +38,42 @@ public class PackDownLoadController {
         try {
             Desktop.getDesktop().browse(new URI("https://github.com/MaoZa"));
         } catch (Exception e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
     }
 
     public void startPackDownLoad(){
-        Platform.runLater(() -> {
-            resultLabel.setText("请稍等...");
-            ((HBox)startPackDownLoad.getParent()).getChildren().remove(startPackDownLoad);
-        });
-        if (projectUrlTextField.getText() != null) {
-            projectUrl = projectUrlTextField.getText();
-        }else{
-            Platform.runLater(() -> {
-                JOptionPane.showMessageDialog(null, "请输入整合包链接");
-            });
+        Integer threadCount = 10;
+        if (projectUrlTextField.getText() == null && "".equals(projectUrlTextField.getText())) {
+            MessageUtils.info("请输入整合包链接");
             return;
         }
-        Integer threadCount = 10;
         if(this.threadCount.getText() != null){
             try{
                 threadCount = Integer.valueOf(this.threadCount.getText());
-            }catch (Exception e){ }
+            }catch (Exception e){
+                Platform.runLater(() -> resultLabel.setText("线程数只能为整数"));
+                return;
+            }
         }
+        if(!projectUrlTextField.getText().startsWith("http://") && !projectUrlTextField.getText().startsWith("https://")){
+            MessageUtils.error("整合包链接错误", "请输入正确的整合包链接");
+            return;
+        }
+        try {
+            Jsoup.connect(projectUrl).get();
+        } catch (Exception e) {
+            MessageUtils.error("不存在或无法访问", "整合包链接错误");
+            e.printStackTrace();
+            return;
+        }
+        projectUrl = projectUrlTextField.getText();
+        Platform.runLater(() -> {
+            resultLabel.setText("请稍等...");
+            startPackDownLoad.setText("正在安装");
+            startPackDownLoad.setDisable(true);
+        });
         ExecutorService pool = Executors.newFixedThreadPool(threadCount);
         pool.submit(new ModPackZipDownLoadTask(null, projectUrl, progressPane, pool));
     }

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import utils.FxmlUtils;
+import utils.MessageUtils;
 import utils.Upgrader;
 
 import javax.swing.*;
@@ -17,9 +18,9 @@ public class Main extends Application {
 
         //System.out.println(getClass().getResource("/fxml/PackDownLoad.fxml"));
         //检查更新 是否弹出版本提示框
-//        JOptionPane.showMessageDialog(null, Upgrader.isNewVersion());
+        //MessageUtils.info(Upgrader.isNewVersion() + "");
         if(Upgrader.isNewVersion()){
-            JOptionPane.showMessageDialog(null, "更新内容:\n" + Upgrader.description, "发现新版本", 1);
+            MessageUtils.info("更新内容:\n" + Upgrader.description, "发现新版本");
         }
 
         //自动更新
@@ -37,9 +38,7 @@ public class Main extends Application {
         try{
             launch(args);
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, Config.class.getResource("/config.properties").toExternalForm());
-            JOptionPane.showMessageDialog(null, e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getStackTrace());
+            MessageUtils.error(e);
         }
     }
 }

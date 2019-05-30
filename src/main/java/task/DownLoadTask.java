@@ -6,7 +6,10 @@ import javafx.scene.control.TextArea;
 import model.DownLoadModel;
 import main.MainController;
 import utils.DownLoadUtils;
+import utils.MessageUtils;
 import utils.UIUpdateUtils;
+
+import javax.swing.*;
 
 /**
  * @author Cap_Sub
@@ -49,6 +52,7 @@ public class DownLoadTask extends Task {
             UIUpdateUtils.updateLable(mainController.getPercentage(), percentage + "%");
 
         } catch (Exception e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
     }

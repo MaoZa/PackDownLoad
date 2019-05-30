@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 
+import javax.swing.*;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -22,6 +23,7 @@ public class UIUpdateUtils {
         try {
             return new String(souStr.getBytes(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
         return null;

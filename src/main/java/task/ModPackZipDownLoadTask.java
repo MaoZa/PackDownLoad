@@ -10,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import utils.DownLoadUtils;
+import utils.MessageUtils;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -45,14 +46,13 @@ public class ModPackZipDownLoadTask implements Runnable {
         Document document = null;
         try {
             document = Jsoup.connect(projectUrl).get();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            MessageUtils.error("不存在或无法访问", "整合包链接错误");
+            return;
         }
         Elements elementsByClass = document.getElementsByClass("button button--twitch download-button");
         if(elementsByClass.size() < 1){
-            Platform.runLater(() -> {
-                JOptionPane.showMessageDialog(null, "获取整合包文件失败，请确认链接是否正确");
-            });
+            MessageUtils.error("出错", "获取整合包文件失败，请确认链接是否正确");
             return;
         }else{
             fileUrl = baseUrl + elementsByClass.get(0).getElementsByTag("a").attr("href");
@@ -61,20 +61,16 @@ public class ModPackZipDownLoadTask implements Runnable {
 
         boolean b = false;
         try {
-            Platform.runLater(() -> {
-                JOptionPane.showMessageDialog(null, "正在下载整合包Zip...");
-            });
+            MessageUtils.info("正在下载整合包Zip...");
             String fileName = DownLoadUtils.downLoadFile(fileUrl, null);
             zipFilePath = DownLoadUtils.getRootPath() + "/" + fileName;
             b = true;
         } catch (IOException e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
         if(b){
-            Platform.runLater(() -> {
-                JOptionPane.showMessageDialog(null, "下载整合包Zip成功 正在解析...");
-            });
-
+            MessageUtils.info("下载整合包Zip成功 正在解析...");
             pool.submit(new JsonJXTask(zipFilePath, progressPane, pool));
         }
     }

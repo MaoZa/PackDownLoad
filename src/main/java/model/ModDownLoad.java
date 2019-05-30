@@ -1,8 +1,10 @@
 package model;
 
 import lombok.Data;
+import utils.MessageUtils;
 import utils.UIUpdateUtils;
 
+import javax.swing.*;
 import java.io.UnsupportedEncodingException;
 
 
@@ -46,6 +48,7 @@ public class ModDownLoad extends DownLoadModel {
             byte[] bytes = name.getBytes("GBK");
             this.name = new String(bytes, "GBK");
         } catch (UnsupportedEncodingException e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
     }

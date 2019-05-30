@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import task.UnZipSubTask;
 import task.UnZipTask;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -67,6 +68,7 @@ public class ZipUtils {
             pool.submit(new UnZipSubTask(zin, pool, location, progressBar, proSize, label1));
         }
         catch (Exception e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
     }
@@ -100,6 +102,7 @@ public class ZipUtils {
         }
         catch (IOException e)
         {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
         return foss;

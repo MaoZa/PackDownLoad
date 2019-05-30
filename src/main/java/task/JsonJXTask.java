@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import utils.DownLoadUtils;
+import utils.MessageUtils;
 import utils.Upgrader;
 import utils.ZipUtils;
 
@@ -59,7 +60,7 @@ public class JsonJXTask implements Runnable {
                 for (int i = 0; i < mcjarStrTmpSplit.length; i++) {
                     ps.println(mcjarStrTmpSplit[i]);
                 }
-                Platform.runLater(() -> JOptionPane.showMessageDialog(null, mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath()));
+                MessageUtils.info(mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath());
                 Runtime.getRuntime().exec("cmd.exe  /c notepad " + file.getPath());
             }catch (Exception e){}
 
@@ -93,9 +94,7 @@ public class JsonJXTask implements Runnable {
             Iterator<JSONObject> iterator = files.iterator();
 
             pool.submit(() -> {
-                Platform.runLater(() -> {
-                    JOptionPane.showMessageDialog(null, "正在下载启动器...");
-                });
+                MessageUtils.info("正在下载启动器...");
                 try {
                     Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" ,DownLoadUtils.getRootPath());
                 } catch (UnsupportedEncodingException e) {
@@ -139,7 +138,8 @@ public class JsonJXTask implements Runnable {
             }
             in.close();
         } catch (IOException e) {
-            e.getStackTrace();
+            MessageUtils.error(e);
+            e.printStackTrace();
         }
         //System.out.println("读取文件结束util");
         return strbuffer.toString();

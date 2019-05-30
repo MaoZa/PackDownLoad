@@ -2,7 +2,9 @@ package task;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import utils.MessageUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +42,13 @@ public class UnZipSubTask implements Runnable {
                         cs.add(c);
                     }
                 } catch (IOException e) {
+                    MessageUtils.error(e);
                     e.printStackTrace();
                 }
                 pool.submit(new UnZipTask(location, ze, progressBar, cs, proSize, label));
             }
         }catch (Exception e){
+            MessageUtils.error(e);
             e.printStackTrace();
         }
     }

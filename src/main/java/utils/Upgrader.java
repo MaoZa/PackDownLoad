@@ -179,8 +179,7 @@ public class Upgrader {
 
             System.out.println("info:" + url + " download success");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getStackTrace());
-            e.printStackTrace();
+            MessageUtils.error(e);
             System.exit(0);
         }
 

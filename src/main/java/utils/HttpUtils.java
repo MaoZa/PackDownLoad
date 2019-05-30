@@ -9,6 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,6 +62,7 @@ public class HttpUtils {
             in.close();
             result = sb.toString();
         } catch (IOException e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         } finally {
             try {
@@ -68,6 +70,7 @@ public class HttpUtils {
                     response.close();
                 }
             } catch (IOException e) {
+                MessageUtils.error(e);
                 e.printStackTrace();
             }
         }
@@ -103,6 +106,7 @@ public class HttpUtils {
             in.close();
             result = sb.toString();
         } catch (IOException e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         } finally {
             try {
@@ -110,6 +114,7 @@ public class HttpUtils {
                     response.close();
                 }
             } catch (IOException e) {
+                MessageUtils.error(e);
                 e.printStackTrace();
             }
         }
@@ -153,6 +158,7 @@ public class HttpUtils {
             osw.flush();
             osw.close();
         } catch (Exception e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         } finally {
             if (con != null) {
@@ -171,6 +177,7 @@ public class HttpUtils {
                 buffer.append("\n");
             }
         } catch (Exception e) {
+            MessageUtils.error(e);
             e.printStackTrace();
         }
 

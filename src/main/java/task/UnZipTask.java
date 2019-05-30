@@ -7,7 +7,9 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import utils.MessageUtils;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,6 +57,7 @@ public class UnZipTask implements Runnable{
                     try {
                         fout.write(c);
                     } catch (IOException e) {
+                        MessageUtils.error(e);
                         e.printStackTrace();
                     }
                 });
@@ -83,6 +86,7 @@ public class UnZipTask implements Runnable{
                 try {
                     fout.close();
                 } catch (IOException e) {
+                    MessageUtils.error(e);
                     e.printStackTrace();
                 }
             }
