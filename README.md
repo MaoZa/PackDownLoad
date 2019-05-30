@@ -6,7 +6,7 @@
 
 2. 复制整合包详情页面路径呢 例如: https://www.curseforge.com/minecraft/modpacks/skyfactory-4
 
-3. 打开这个包下载器 把链接填进去呢
+3. 打开整合包下载器 把链接填进去呢
 
 4. 点开始下载呢
 
