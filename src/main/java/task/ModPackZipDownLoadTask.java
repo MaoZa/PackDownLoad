@@ -61,7 +61,7 @@ public class ModPackZipDownLoadTask implements Runnable {
 
         boolean b = false;
         try {
-            MessageUtils.info("正在下载整合包Zip...");
+//            MessageUtils.info("正在下载整合包Zip...");
             String fileName = DownLoadUtils.downLoadFile(fileUrl, null);
             zipFilePath = DownLoadUtils.getRootPath() + "/" + fileName;
             b = true;

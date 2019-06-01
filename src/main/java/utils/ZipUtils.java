@@ -61,9 +61,7 @@ public class ZipUtils {
                 Parent parent = progressBar.getParent();
                 AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
 //              borderPane.getChildren().remove(parent);
-                HBox hBox = (HBox) anchorPane.getChildren().get(2);
-                Label resultLabel = (Label)hBox.getChildren().get(1);
-                resultLabel.setText("正在读取压缩文件，稍等即可");
+                MessageUtils.info("正在读取压缩文件，稍等即可");
             });
             pool.submit(new UnZipSubTask(zin, pool, location, progressBar, proSize, label1));
         }

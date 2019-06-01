@@ -18,10 +18,11 @@ import utils.UIUpdateUtils;
 public class FilesDownLoadTask extends Task {
 
     private JSONObject jsonObject;
-    private String rootPath;
     private ProgressBar progressBar;
     private Integer filesCount;
     private Label proLabel;
+
+    private final String MODS_PATH = ".minecraft/mods";
 
     public FilesDownLoadTask(JSONObject jsonObject, ProgressBar progressBar, Label proLabel, Integer filesCount) {
         this.jsonObject = jsonObject;
@@ -48,7 +49,7 @@ public class FilesDownLoadTask extends Task {
                 url = "https://minecraft.curseforge.com/projects/projectID/files/fileID/download";
                 url = url.replaceFirst("projectID", jsonObject.get("projectID") + "");
                 url = url.replaceFirst("fileID", jsonObject.get("fileID") + "");
-                boolean flag = DownLoadUtils.downLoadFile(url, null, "mods", null, progressBar, proLabel, 1D/filesCount);
+                boolean flag = DownLoadUtils.downLoadFile(url, null, MODS_PATH, null, progressBar, proLabel, 1D/filesCount);
 //                System.out.println(flag ? jsonObject.get("projectID") + "成功" : jsonObject.get("projectID") + "失败");
                 break;
             } catch (Exception e) {

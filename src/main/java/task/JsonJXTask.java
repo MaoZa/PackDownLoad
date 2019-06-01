@@ -60,7 +60,7 @@ public class JsonJXTask implements Runnable {
                 for (int i = 0; i < mcjarStrTmpSplit.length; i++) {
                     ps.println(mcjarStrTmpSplit[i]);
                 }
-                MessageUtils.info(mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath());
+//                MessageUtils.info(mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath());
                 Runtime.getRuntime().exec("cmd.exe  /c notepad " + file.getPath());
             }catch (Exception e){}
 
@@ -82,10 +82,7 @@ public class JsonJXTask implements Runnable {
                 hb.setAlignment(Pos.CENTER);
                 hb.getChildren().addAll(label, progressBar, label1);
                 progressPane.setTop(hb);
-                AnchorPane anchorPane = (AnchorPane) progressBar.getParent().getParent().getParent();
-                HBox hBox = (HBox) anchorPane.getChildren().get(2);
-                Label resultLabel = (Label)hBox.getChildren().get(1);
-                resultLabel.setText("下载中...");
+                MessageUtils.info("下载中...");
             });
 
             //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
@@ -96,7 +93,7 @@ public class JsonJXTask implements Runnable {
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
                 try {
-                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" ,DownLoadUtils.getRootPath());
+                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" , "");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

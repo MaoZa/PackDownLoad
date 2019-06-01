@@ -64,7 +64,7 @@ public class Main extends Application {
         Parent root = FxmlUtils.LoadFxml("PackDownLoad.fxml");
 //        ((AnchorPane)root).getChildren().add(opinionButton);
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 450, 270));
+        primaryStage.setScene(new Scene(root, 450, 300));
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> System.exit(0));
     }

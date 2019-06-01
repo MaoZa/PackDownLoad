@@ -70,12 +70,9 @@ public class UnZipTask implements Runnable{
                 String[] split = proLable.getText().split("/");
                 proLable.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
                 if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                    Parent parent = progressBar.getParent();
-                    AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-//                  borderPane.getChildren().remove(parent);
-                    HBox hBox = (HBox) anchorPane.getChildren().get(2);
-                    Label resultLabel = (Label)hBox.getChildren().get(1);
-                    if(resultLabel.getText().equals("下载完成")){
+                    Label resultLabel = MessageUtils.resultLabel;
+                    Label downloadSpeed = MessageUtils.downloadSpeed;
+                    if(downloadSpeed.getText().equals("下载完成") || resultLabel.getText().equals("下载完成")){
                         resultLabel.setText("安装完成");
                     }else{
                         resultLabel.setText("解压完成");

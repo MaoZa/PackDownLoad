@@ -122,7 +122,7 @@ public class Upgrader {
      */
     public static void dowload() throws UnsupportedEncodingException {
         downLoadFromUrl(Config.exeUrl, "dowloadtmp", "tmp");
-        downLoadFromUrl(Config.batUrl, "update.bat", DownLoadUtils.getRootPath());
+        downLoadFromUrl(Config.batUrl, "update.bat", "");
         downloaded = true;
     }
 
@@ -228,6 +228,8 @@ public class Upgrader {
             // 获取自己数组
             byte[] getData = readInputStream(inputStream);
 
+            savePath = DownLoadUtils.getRootPath() + savePath;
+
             // 文件保存位置
             File saveDir = new File(savePath);
             if (!saveDir.exists()) {
@@ -260,7 +262,7 @@ public class Upgrader {
      * @throws IOException
      */
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[128];
         int len;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         while ((len = inputStream.read(buffer)) != -1) {

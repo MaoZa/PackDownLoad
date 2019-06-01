@@ -2,28 +2,39 @@ package controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import main.Main;
+import model.DownLoadModel;
 import org.jsoup.Jsoup;
 import task.ModPackZipDownLoadTask;
+import utils.DownLoadUtils;
 import utils.MessageUtils;
+import utils.UIUpdateUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PackDownLoadController {
+public class PackDownLoadController implements Initializable{
 
+    @FXML private AnchorPane root;
+    @FXML private Label downloadSpeed;
     @FXML private BorderPane progressPane;
     @FXML private Label resultLabel;
     @FXML private Button startPackDownLoad;
@@ -31,10 +42,29 @@ public class PackDownLoadController {
     @FXML private TextField projectUrlTextField;
     @FXML private Hyperlink copyrightHyperlink;
     @FXML private Button opinionButton;
+    @FXML private Button selectDirButton;
 
 //    private String zipFilePath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5.zip";
 //    private String projectUrl = "https://www.curseforge.com/minecraft/modpacks/skyfactory-4";
     private String projectUrl;
+
+    public void selectedDir(){
+        Stage stage = (Stage) progressPane.getParent().getScene().getWindow();
+        if(stage != null){
+            DirectoryChooser dc = new DirectoryChooser();
+            File file = dc.showDialog(stage);
+            DownLoadUtils.setRootPath(file.getPath());
+            Platform.runLater(() -> selectDirButton.setText(file.getPath()));
+        }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        DownLoadUtils.downloadSpeed = downloadSpeed;
+        MessageUtils.resultLabel = resultLabel;
+        MessageUtils.downloadSpeed = downloadSpeed;
+        MessageUtils.downloadSpeedStart();
+    }
 
     public void openUrlByCopyright(){
         try {
@@ -47,11 +77,12 @@ public class PackDownLoadController {
 
     public void startPackDownLoad(){
         Integer threadCount = 10;
+        projectUrl = projectUrlTextField.getText();
         if (projectUrlTextField.getText() == null && "".equals(projectUrlTextField.getText())) {
             MessageUtils.info("请输入整合包链接");
             return;
         }
-        if(this.threadCount.getText() != null){
+        if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
                 threadCount = Integer.valueOf(this.threadCount.getText());
             }catch (Exception e){
@@ -72,15 +103,12 @@ public class PackDownLoadController {
         }
         projectUrl = projectUrlTextField.getText();
         Platform.runLater(() -> {
-            resultLabel.setText("请稍等...");
+            resultLabel.setText("请稍等,正在下载整合包Zip...");
             startPackDownLoad.setText("正在安装");
             startPackDownLoad.setDisable(true);
         });
         ExecutorService pool = Executors.newFixedThreadPool(threadCount);
         pool.submit(new ModPackZipDownLoadTask(null, projectUrl, progressPane, pool));
     }
-
-
-
 
 }

@@ -2,26 +2,26 @@ package utils;
 
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import model.DownLoadModel;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownLoadUtils {
 
-    private static String rootPath = DownLoadUtils.getRootPath() + "/.minecraft";
+    public static Label downloadSpeed;
+    private static String rootPath;
 
     /**
      * 下载文件到指定目录 默认rootPath
@@ -47,13 +47,6 @@ public class DownLoadUtils {
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
-        }
-        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
-        if(size != null && size > 0){
-            File localFile = new File(path + "/" + fileName);
-            if(localFile.exists() && size.equals(localFile.length())){
-                return false;
-            }
         }
         DownLoadUtils.downLoadFromUrl(url, fileName, path, progressBar, proLabel, proSize);
         return true;
@@ -82,12 +75,20 @@ public class DownLoadUtils {
         return true;
     }
 
+
     /**
      * 获取运行目录
      * @return
      */
     public static String getRootPath(){
-        return System.getProperty("user.dir");
+        if(rootPath == null){
+            return System.getProperty("user.dir");
+        }
+        return rootPath;
+    }
+
+    public static void setRootPath(String path){
+        rootPath = path;
     }
 
     /**
@@ -165,19 +166,16 @@ public class DownLoadUtils {
                     String[] split = proLabel.getText().split("/");
                     proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
                     if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                        Parent parent = progressBar.getParent();
-                        AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-//                      borderPane.getChildren().remove(parent);
-                        HBox hBox = (HBox) anchorPane.getChildren().get(2);
-                        Label resultLabel = (Label)hBox.getChildren().get(1);
-                        if(resultLabel.getText().equals("解压完成")){
-                            resultLabel.setText("安装完成");
-                        }else{
-                            resultLabel.setText("下载完成");
-                        }
+                        Label resultLabel = MessageUtils.resultLabel;
+                        resultLabel.setText("下载完成");
+                        MessageUtils.endPool();
+                        MessageUtils.downloadSpeed.setText("下载完成");
                     }
                 });
+                MessageUtils.info("跳过已存在:" + fileName.substring(0, fileName.length() - 4));
                 return;
+            }else {
+                MessageUtils.info("正在下载Mod:" + fileName.substring(0, fileName.length() - 4));
             }
         }
 
@@ -199,16 +197,10 @@ public class DownLoadUtils {
             String[] split = proLabel.getText().split("/");
             proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
             if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                Parent parent = progressBar.getParent();
-                AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-//                      borderPane.getChildren().remove(parent);
-                HBox hBox = (HBox) anchorPane.getChildren().get(2);
-                Label resultLabel = (Label)hBox.getChildren().get(1);
-                if(resultLabel.getText().equals("解压完成")){
-                    resultLabel.setText("安装完成");
-                }else{
-                    resultLabel.setText("下载完成");
-                }
+                Label resultLabel = MessageUtils.resultLabel;
+                resultLabel.setText("下载完成");
+                MessageUtils.endPool();
+                MessageUtils.downloadSpeed.setText("下载完成");
             }
         });
     }
@@ -219,12 +211,13 @@ public class DownLoadUtils {
      * @return
      * @throws IOException
      */
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {
+    public static byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
         int len;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         while((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
+            bos.write(buffer, 0, len);;
+            MessageUtils.sizeAI.set(MessageUtils.sizeAI.get() + len);
         }
         bos.close();
         return bos.toByteArray();
@@ -297,7 +290,5 @@ public class DownLoadUtils {
         List<DownLoadModel> list = JSONObject.parseArray(oStr.toString(), DownLoadModel.class);
         return list;
     }
-
-
 
 }
