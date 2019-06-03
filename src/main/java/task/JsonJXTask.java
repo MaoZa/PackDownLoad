@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import utils.DownLoadUtils;
@@ -14,7 +13,6 @@ import utils.MessageUtils;
 import utils.Upgrader;
 import utils.ZipUtils;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -60,7 +58,6 @@ public class JsonJXTask implements Runnable {
                 for (int i = 0; i < mcjarStrTmpSplit.length; i++) {
                     ps.println(mcjarStrTmpSplit[i]);
                 }
-//                MessageUtils.info(mcjarStrTmp + "\n避免忘记已将要求写入" + file.getPath());
                 Runtime.getRuntime().exec("cmd.exe  /c notepad " + file.getPath());
             }catch (Exception e){}
 
@@ -115,12 +112,9 @@ public class JsonJXTask implements Runnable {
      * @return
      * @throws IOException
      */
-    public static String readJsonData(String pactFile) throws IOException {
-        // 读取文件数据
-        //System.out.println("读取文件数据util");
-
-        StringBuffer strbuffer = new StringBuffer();
-        File myFile = new File(pactFile);//"D:"+File.separatorChar+"DStores.json"
+    public static String readJsonData(String pactFile){
+        StringBuffer sb = new StringBuffer();
+        File myFile = new File(pactFile);
         if (!myFile.exists()) {
             System.err.println("Can't Find " + pactFile);
         }
@@ -131,14 +125,13 @@ public class JsonJXTask implements Runnable {
 
             String str;
             while ((str = in.readLine()) != null) {
-                strbuffer.append(str);  //new String(str,"UTF-8")
+                sb.append(str);
             }
             in.close();
         } catch (IOException e) {
             MessageUtils.error(e);
             e.printStackTrace();
         }
-        //System.out.println("读取文件结束util");
-        return strbuffer.toString();
+        return sb.toString();
     }
 }

@@ -1,15 +1,12 @@
 package task;
 
-import com.alibaba.fastjson.JSONObject;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
-import model.DownLoadModel;
 import main.MainController;
+import model.DownLoadModel;
 import utils.DownLoadUtils;
 import utils.MessageUtils;
 import utils.UIUpdateUtils;
-
-import javax.swing.*;
 
 /**
  * @author Cap_Sub

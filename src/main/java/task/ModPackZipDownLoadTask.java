@@ -1,18 +1,12 @@
 package task;
 
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import utils.DownLoadUtils;
 import utils.MessageUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
@@ -43,7 +37,7 @@ public class ModPackZipDownLoadTask implements Runnable {
         if(projectUrl.indexOf("/files") == -1){
             projectUrl = projectUrl + "/files";
         }
-        Document document = null;
+        Document document;
         try {
             document = Jsoup.connect(projectUrl).get();
         } catch (Exception e) {
@@ -61,7 +55,6 @@ public class ModPackZipDownLoadTask implements Runnable {
 
         boolean b = false;
         try {
-//            MessageUtils.info("正在下载整合包Zip...");
             String fileName = DownLoadUtils.downLoadFile(fileUrl, null);
             zipFilePath = DownLoadUtils.getRootPath() + "/" + fileName;
             b = true;

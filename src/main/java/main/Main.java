@@ -1,30 +1,14 @@
 package main;
 
-import configs.Config;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import utils.DownLoadUtils;
 import utils.FxmlUtils;
 import utils.MessageUtils;
 import utils.Upgrader;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.regex.Pattern.*;
 
 public class Main extends Application {
 
@@ -34,9 +18,6 @@ public class Main extends Application {
     }
 
     public void showPackDownLoad(Stage primaryStage) throws IOException {
-        //System.out.println(getClass().getResource("/fxml/PackDownLoad.fxml"));
-        //检查更新 是否弹出版本提示框
-        //MessageUtils.info(Upgrader.isNewVersion() + "");
         if(Upgrader.isNewVersion()){
             Upgrader.versionLog();
         }

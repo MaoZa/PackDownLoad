@@ -11,7 +11,6 @@ import task.DownLoadTask;
 import utils.HttpUtils;
 import utils.UIUpdateUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;

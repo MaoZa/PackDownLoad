@@ -4,7 +4,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import utils.MessageUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * @author Cap_Sub
+ */
 public class UnZipSubTask implements Runnable {
 
     private ZipEntry ze;

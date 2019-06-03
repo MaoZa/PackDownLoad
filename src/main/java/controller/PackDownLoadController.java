@@ -4,28 +4,19 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import main.Main;
-import model.DownLoadModel;
 import org.jsoup.Jsoup;
 import task.ModPackZipDownLoadTask;
 import utils.DownLoadUtils;
 import utils.MessageUtils;
-import utils.UIUpdateUtils;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -33,19 +24,17 @@ import java.util.concurrent.Executors;
 
 public class PackDownLoadController implements Initializable{
 
-    @FXML private AnchorPane root;
+//    @FXML private AnchorPane root;
     @FXML private Label downloadSpeed;
     @FXML private BorderPane progressPane;
     @FXML private Label resultLabel;
     @FXML private Button startPackDownLoad;
     @FXML private TextField threadCount;
     @FXML private TextField projectUrlTextField;
-    @FXML private Hyperlink copyrightHyperlink;
-    @FXML private Button opinionButton;
+//    @FXML private Hyperlink copyrightHyperlink;
+//    @FXML private Button opinionButton;
     @FXML private Button selectDirButton;
 
-//    private String zipFilePath = "D:\\PackDownLoad\\src\\main\\resources\\SkyFactory4-4.0.5.zip";
-//    private String projectUrl = "https://www.curseforge.com/minecraft/modpacks/skyfactory-4";
     private String projectUrl;
 
     public void selectedDir(){
@@ -90,7 +79,7 @@ public class PackDownLoadController implements Initializable{
                 return;
             }
         }
-        if(!projectUrlTextField.getText().startsWith("http://") && !projectUrlTextField.getText().startsWith("https://")){
+        if(!projectUrlTextField.getText().startsWith("http://www.curseforge.com/minecraft/modpacks") && !projectUrlTextField.getText().startsWith("https://www.curseforge.com/minecraft/modpacks")){
             MessageUtils.error("整合包链接错误", "请输入正确的整合包链接");
             return;
         }

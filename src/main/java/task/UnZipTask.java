@@ -1,21 +1,15 @@
 package task;
 
 import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import utils.MessageUtils;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author Cap_Sub
@@ -27,17 +21,17 @@ public class UnZipTask implements Runnable{
     private ProgressBar progressBar;
     private List<Integer> cs;
     private Double proSize;
-    private Label proLable;
+    private Label proLabel;
 
-    private FileOutputStream fout;
+    private FileOutputStream fos;
 
-    public UnZipTask(String location, ZipEntry ze, ProgressBar progressBar, List<Integer> cs, Double proSize, Label proLable) {
+    public UnZipTask(String location, ZipEntry ze, ProgressBar progressBar, List<Integer> cs, Double proSize, Label proLabel) {
         this.location = location;
         this.ze = ze;
         this.progressBar = progressBar;
         this.cs = cs;
         this.proSize = proSize;
-        this.proLable = proLable;
+        this.proLabel = proLabel;
     }
 
     @Override
@@ -52,10 +46,10 @@ public class UnZipTask implements Runnable{
                 }
             }
             else {
-                fout = new FileOutputStream(path, false);
+                fos = new FileOutputStream(path, false);
                 cs.forEach(c -> {
                     try {
-                        fout.write(c);
+                        fos.write(c);
                     } catch (IOException e) {
                         MessageUtils.error(e);
                         e.printStackTrace();
@@ -67,21 +61,21 @@ public class UnZipTask implements Runnable{
         }finally {
             Platform.runLater(() -> {
                 progressBar.setProgress(progressBar.getProgress() + proSize);
-                String[] split = proLable.getText().split("/");
-                proLable.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
+                String[] split = proLabel.getText().split("/");
+                proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
                 if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
                     Label resultLabel = MessageUtils.resultLabel;
                     Label downloadSpeed = MessageUtils.downloadSpeed;
-                    if(downloadSpeed.getText().equals("下载完成") || resultLabel.getText().equals("下载完成")){
+                    if("下载完成".equals(downloadSpeed.getText()) || "下载完成".equals(resultLabel.getText())){
                         resultLabel.setText("安装完成");
                     }else{
                         resultLabel.setText("解压完成");
                     }
                 }
             });
-            if (fout != null) {
+            if (fos != null) {
                 try {
-                    fout.close();
+                    fos.close();
                 } catch (IOException e) {
                     MessageUtils.error(e);
                     e.printStackTrace();

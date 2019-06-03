@@ -42,7 +42,7 @@ public class HttpUtils {
      */
     public static String get(String url) {
         CloseableHttpResponse response = null;
-        BufferedReader in = null;
+        BufferedReader in;
         String result = "";
         try {
             HttpGet httpGet = new HttpGet(url);
@@ -53,8 +53,8 @@ public class HttpUtils {
             httpGet.setHeader("Accept", "application/json");
             response = httpClient.execute(httpGet);
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-            StringBuffer sb = new StringBuffer("");
-            String line = "";
+            StringBuffer sb = new StringBuffer();
+            String line;
             String NL = System.getProperty("line.separator");
             while ((line = in.readLine()) != null) {
                 sb.append(line + NL);
@@ -85,7 +85,7 @@ public class HttpUtils {
      */
     public static String post(String url, String jsonString) {
         CloseableHttpResponse response = null;
-        BufferedReader in = null;
+        BufferedReader in;
         String result = "";
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -98,7 +98,7 @@ public class HttpUtils {
             response = httpClient.execute(httpPost);
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             StringBuffer sb = new StringBuffer("");
-            String line = "";
+            String line;
             String NL = System.getProperty("line.separator");
             while ((line = in.readLine()) != null) {
                 sb.append(line + NL);
@@ -128,7 +128,7 @@ public class HttpUtils {
      * @return
      */
     public static String http(String url, Map<String, String> params) {
-        URL u = null;
+        URL u;
         HttpURLConnection con = null;
         // 构建请求参数
         StringBuffer sb = new StringBuffer();

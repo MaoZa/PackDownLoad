@@ -16,6 +16,4 @@ public abstract class DownLoadModel {
     //下载类型
     protected ModelTypeEnum type;
 
-
-
 }

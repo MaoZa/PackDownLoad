@@ -53,13 +53,11 @@ public class Upgrader {
         return url;
     }
 
-    public static void versionLog() throws FileNotFoundException {
+    public static void versionLog() {
         //提示框只展示最近三次更新的内容
         String versionLog = Upgrader.description;
         Pattern pt = compile("(\\d+.\\d+)");
         Matcher mt = pt.matcher(versionLog);
-        // mt.lookingAt();
-        // mt.matches();
         Map<String, String[]> versionMap = new LinkedHashMap<>();
         List<Integer> indexs = new ArrayList<>();
         while(mt.find()){
@@ -94,6 +92,7 @@ public class Upgrader {
         }
 
         ((Runnable) () -> {
+            //更新日志写入文件
             //记录完整更新日志 需异步
             File file = new File(DownLoadUtils.getRootPath() + "/更新日志.txt");
             FileOutputStream fos = null;
@@ -114,13 +113,12 @@ public class Upgrader {
         }).run();
 
         JOptionPane.showMessageDialog(null, versionShowStr, "发现新版本 " + Upgrader.newVersion, 1);
-        //更新日志写入文件
     }
 
     /**
      * 静默下载最新版本
      */
-    public static void dowload() throws UnsupportedEncodingException {
+    public static void dowload() {
         downLoadFromUrl(Config.exeUrl, "dowloadtmp", "tmp");
         downLoadFromUrl(Config.batUrl, "update.bat", "");
         downloaded = true;
@@ -158,8 +156,9 @@ public class Upgrader {
         }
         try {
             dowload();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            MessageUtils.error(e);
+            System.exit(0);
         }
         restart();
     }
@@ -201,7 +200,7 @@ public class Upgrader {
                 sb.append(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            MessageUtils.error(e);
         }
         return sb.toString();
     }

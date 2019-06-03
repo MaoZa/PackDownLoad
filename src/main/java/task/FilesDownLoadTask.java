@@ -1,16 +1,10 @@
 package task;
 
 import com.alibaba.fastjson.JSONObject;
-import controller.PackDownLoadController;
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import main.MainController;
-import model.DownLoadModel;
 import utils.DownLoadUtils;
-import utils.UIUpdateUtils;
 
 /**
  * @author Cap_Sub
