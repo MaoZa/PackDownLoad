@@ -140,7 +140,7 @@ public class Upgrader {
      * 获取最新版本号
      */
     public static void getNewVersion() {
-        String json = sendGetRequest(Config.versinUrl);
+        String json = sendGetRequest(Config.versionUrl);
         JSONObject ob = JSONObject.parseObject(json);
         newVersion = ob.getFloat("version");
         description = ob.getString("desc");
