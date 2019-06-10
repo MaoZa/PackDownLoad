@@ -43,8 +43,7 @@ public class FilesDownLoadTask extends Task {
                 url = "https://minecraft.curseforge.com/projects/projectID/files/fileID/download";
                 url = url.replaceFirst("projectID", jsonObject.get("projectID") + "");
                 url = url.replaceFirst("fileID", jsonObject.get("fileID") + "");
-                boolean flag = DownLoadUtils.downLoadFile(url, null, MODS_PATH, null, progressBar, proLabel, 1D/filesCount);
-//                System.out.println(flag ? jsonObject.get("projectID") + "成功" : jsonObject.get("projectID") + "失败");
+                DownLoadUtils.downLoadFile(url, null, MODS_PATH, null, progressBar, proLabel, 1D/filesCount);
                 break;
             } catch (Exception e) {
                 try {
