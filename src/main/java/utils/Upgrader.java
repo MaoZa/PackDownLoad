@@ -20,6 +20,7 @@ import static java.util.regex.Pattern.*;
  * @author Cap_Sub
  */
 public class Upgrader {
+
     /** 最新版本号 */
     public static float newVersion;
     /** 下载完成与否 */

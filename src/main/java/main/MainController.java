@@ -18,6 +18,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Getter
+@Deprecated
+/**
+ * 弃用
+ */
 public class MainController {
 
     @FXML private TextField packCode;

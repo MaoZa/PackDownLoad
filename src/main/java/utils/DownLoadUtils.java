@@ -2,21 +2,14 @@ package utils;
 
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import model.DownLoadModel;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Cap_Sub

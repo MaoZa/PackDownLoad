@@ -5,7 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 
-import javax.swing.*;
 import java.io.UnsupportedEncodingException;
 
 /**
