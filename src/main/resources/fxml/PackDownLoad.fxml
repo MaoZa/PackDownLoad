@@ -2,17 +2,20 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 
 <AnchorPane fx:id="root" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PackDownLoadController">
    <children>
-      <Label fx:id="downloadSpeed" layoutX="347.0" layoutY="14.0" prefHeight="15.0" prefWidth="89.0" />
+      <HBox fx:id="seartchHbox" layoutX="126.0" layoutY="14.0" prefHeight="23.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="projectNameSearchText" promptText="搜索整合包" />
+            <Button fx:id="projectNameSearchButton" mnemonicParsing="false" onAction="#searchPack" text="搜索" />
+         </children>
+      </HBox>
+      <Label fx:id="downloadSpeed" layoutX="347.0" layoutY="270.0" prefHeight="15.0" prefWidth="89.0" />
       <HBox fx:id="projectHBox" layoutX="18.0" layoutY="200.0" prefHeight="23.0" prefWidth="414.0">
          <children>
             <Label prefHeight="23.0" prefWidth="110.0" text="Curse整合包链接：" />
