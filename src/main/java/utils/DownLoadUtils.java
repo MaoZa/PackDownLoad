@@ -17,7 +17,11 @@ import java.util.List;
 public class DownLoadUtils {
 
     public static Label downloadSpeed;
-    private static String rootPath = DownLoadUtils.getRootPath();
+    private static String rootPath;
+
+    static {
+        rootPath = DownLoadUtils.getRootPath();
+    }
 
     /**
      * 下载文件到指定目录 默认rootPath

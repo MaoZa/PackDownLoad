@@ -228,7 +228,7 @@ public class Upgrader {
             // 获取自己数组
             byte[] getData = readInputStream(inputStream);
 
-            savePath = DownLoadUtils.getRootPath() + savePath;
+            savePath = DownLoadUtils.getRootPath() + "/" + savePath;
 
             // 文件保存位置
             File saveDir = new File(savePath);
