@@ -59,7 +59,10 @@ public class PackDownLoadController implements Initializable{
         searchUrl += searchText;
         Document document = Jsoup.connect(searchUrl).get();
         Elements elementsByClass = document.getElementsByClass("list-item__details xs-mg-r-1");
-
+        if(elementsByClass.size() < 1){
+            MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
+            return;
+        }
         ConcurrentMap<String, Object> projectMap = new ConcurrentHashMap<>(elementsByClass.size());
         ObservableList obs = FXCollections.observableArrayList();
         elementsByClass.forEach(e -> {

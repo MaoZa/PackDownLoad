@@ -30,8 +30,8 @@ public class MessageUtils {
     }
 
     public static void info(String msg, String title){
-//        Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, 1));
-        Platform.runLater(() -> resultLabel.setText(title + ":" + msg));
+        Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, 1));
+//        Platform.runLater(() -> resultLabel.setText(title + ":" + msg));
     }
 
     public static void info (String msg){
