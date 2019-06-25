@@ -48,6 +48,8 @@ public class PackDownLoadController implements Initializable{
     @FXML private TextField projectNameSearchText;
     @FXML private Button projectNameSearchButton;
     @FXML private HBox seartchHbox;
+    private static TextField projectUrlTextFieldStatic;
+    private static HBox seartchHboxStatic;
     private String baseUrl = "https://www.curseforge.com";
 
     private String projectUrl;
@@ -112,8 +114,8 @@ public class PackDownLoadController implements Initializable{
     }
 
     public void startPackDownLoad(){
-        seartchHbox.setDisable(true);
-        projectUrlTextField.setDisable(true);
+        projectUrlTextFieldStatic = projectUrlTextField;
+        seartchHboxStatic = seartchHbox;
         Integer threadCount = 10;
         projectUrl = projectUrlTextField.getText();
         if (projectUrlTextField.getText() == null && "".equals(projectUrlTextField.getText())) {
@@ -147,6 +149,13 @@ public class PackDownLoadController implements Initializable{
         });
         ExecutorService pool = Executors.newFixedThreadPool(threadCount);
         pool.submit(new ModPackZipDownLoadTask(null, projectUrl, progressPane, pool));
+    }
+
+    public static void setDisplay(){
+        if(seartchHboxStatic != null && projectUrlTextFieldStatic != null){
+            seartchHboxStatic.setDisable(true);
+            projectUrlTextFieldStatic.setDisable(true);
+        }
     }
 
 }
