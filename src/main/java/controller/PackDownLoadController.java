@@ -75,12 +75,10 @@ public class PackDownLoadController implements Initializable{
         seartchHbox.getChildren().remove(1);
         comboBox.setPrefWidth(seartchHbox.getWidth());
         comboBox.setItems(obs);
-        comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                projectUrlTextField.setText(comboBox.getValue().toString().split("@")[1]);
-            }
-        });
+        comboBox.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue)
+                        -> projectUrlTextField.setText(comboBox.getValue().toString().split("@")[1]));
         int i = seartchHbox.getChildren().indexOf(projectNameSearchText);
         seartchHbox.getChildren().set(i, comboBox);
 
@@ -114,6 +112,8 @@ public class PackDownLoadController implements Initializable{
     }
 
     public void startPackDownLoad(){
+        seartchHbox.setDisable(true);
+        projectUrlTextField.setDisable(true);
         Integer threadCount = 10;
         projectUrl = projectUrlTextField.getText();
         if (projectUrlTextField.getText() == null && "".equals(projectUrlTextField.getText())) {

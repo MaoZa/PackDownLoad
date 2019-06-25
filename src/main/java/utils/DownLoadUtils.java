@@ -86,7 +86,6 @@ public class DownLoadUtils {
         }
         return rootPath;
     }
-
     public static void setRootPath(String path){
         rootPath = path;
     }
