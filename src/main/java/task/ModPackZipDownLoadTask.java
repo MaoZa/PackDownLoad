@@ -1,5 +1,6 @@
 package task;
 
+import controller.PackDownLoadController;
 import javafx.scene.layout.BorderPane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -63,6 +64,7 @@ public class ModPackZipDownLoadTask implements Runnable {
             e.printStackTrace();
         }
         if(b){
+            PackDownLoadController.setDisplay();
             MessageUtils.info("下载整合包Zip成功 正在解析...");
             pool.submit(new JsonJXTask(zipFilePath, progressPane, pool));
         }
