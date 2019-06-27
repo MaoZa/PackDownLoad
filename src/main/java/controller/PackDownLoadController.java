@@ -59,7 +59,7 @@ public class PackDownLoadController implements Initializable{
                 "search?search=";
         searchUrl += searchText;
         Document document = Jsoup.connect(searchUrl).get();
-        Elements elementsByClass = document.getElementsByClass("list-item__details xs-mg-r-1");
+        Elements elementsByClass = document.getElementsByClass("flex items-end lg:hidden");
         if(elementsByClass.size() < 1){
             MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
             return;
@@ -68,8 +68,8 @@ public class PackDownLoadController implements Initializable{
         ObservableList obs = FXCollections.observableArrayList();
         elementsByClass.forEach(e -> {
             Elements a = e.getElementsByTag("a");
-            projectMap.put(a.get(0).getElementsByTag("h2").text(), baseUrl + a.attr("href"));
-            obs.add(a.get(0).getElementsByTag("h2").text() + "@" + baseUrl + a.get(0).attr("href"));
+            projectMap.put(a.get(0).getElementsByTag("h3").text(), baseUrl + a.attr("href"));
+            obs.add(a.get(0).getElementsByTag("h3").text() + "@" + baseUrl + a.get(0).attr("href"));
         });
         ComboBox comboBox = new ComboBox<>();
         comboBox.setPromptText("请选择一个整合包.....");
