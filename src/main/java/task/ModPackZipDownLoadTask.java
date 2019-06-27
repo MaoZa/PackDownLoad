@@ -4,6 +4,7 @@ import controller.PackDownLoadController;
 import javafx.scene.layout.BorderPane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import utils.DownLoadUtils;
 import utils.MessageUtils;
@@ -45,18 +46,33 @@ public class ModPackZipDownLoadTask implements Runnable {
             MessageUtils.error("不存在或无法访问", "整合包链接错误");
             return;
         }
-        Elements elementsByClass = document.getElementsByClass("button button--twitch download-button");
-        if(elementsByClass.size() < 1){
+        Element element = document.getElementsByClass("listing listing-project-file project-file-listing b-table b-table-a")
+                .get(0)
+                .getElementsByTag("tbody")
+                .get(0).getElementsByTag("tr").get(0)
+                .getElementsByAttributeValue("data-action", "modpack-file-link").get(0);
+
+//        if(elementsByClass.size() < 1){
+//            MessageUtils.error("出错", "获取整合包文件失败，请确认链接是否正确");
+//            return;
+//        }else{
+//            fileUrl = baseUrl + elementsByClass.get(0).getElementsByTag("a").attr("href");
+//            fileUrl = fileUrl.substring(0, fileUrl.length() - 9) + "/file";
+//        }
+        String downloadUrl ;
+        String packName;
+
+        if(element != null){
+            downloadUrl = baseUrl + element.attr("href").replace("files", "download") + "/file";
+            packName = element.text();
+        }else{
             MessageUtils.error("出错", "获取整合包文件失败，请确认链接是否正确");
             return;
-        }else{
-            fileUrl = baseUrl + elementsByClass.get(0).getElementsByTag("a").attr("href");
-            fileUrl = fileUrl.substring(0, fileUrl.length() - 9) + "/file";
         }
 
         boolean b = false;
         try {
-            String fileName = DownLoadUtils.downLoadFile(fileUrl, null);
+            String fileName = DownLoadUtils.downLoadFile(downloadUrl, null);
             zipFilePath = DownLoadUtils.getRootPath() + "/" + fileName;
             b = true;
         } catch (IOException e) {
