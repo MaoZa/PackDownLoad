@@ -36,7 +36,7 @@ public class FilesDownLoadTask extends Task {
     public void run() {
         //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
         //                                                     项目id        文件id
-        String url = "https://minecraft.curseforge.com/projects/projectID/files/fileID/download";
+        String url = "https://www.curseforge.com/minecraft/mc-mods/projectID/download/fileID/file";
         int count = 3;
         for (int i = reCount; i < count; i++) {
             try {
