@@ -222,10 +222,12 @@ public class DownLoadUtils {
             String[] split = proLabel.getText().split("/");
             proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
             Label resultLabel = MessageUtils.resultLabel;
-            if(MessageUtils.isOk()){
-                DownLoadUtils.isOpenLanauch(resultLabel);
-            }else{
-                MessageUtils.setOk();
+            if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
+                if(MessageUtils.isOk()){
+                    DownLoadUtils.isOpenLanauch(resultLabel);
+                }else{
+                    MessageUtils.setOk();
+                }
             }
         });
     }
