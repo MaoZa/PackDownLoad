@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import utils.CommonUtils;
 import utils.FxmlUtils;
 import utils.MessageUtils;
 import utils.Upgrader;
@@ -47,7 +48,7 @@ public class Main extends Application {
         primaryStage.setTitle("整合包下载器");
         primaryStage.setScene(new Scene(root, 450, 300));
         primaryStage.show();
-        primaryStage.setOnCloseRequest(e -> System.exit(0));
+        primaryStage.setOnCloseRequest(e -> CommonUtils.appExit());
     }
 
     public static void main(String[] args) {
