@@ -221,11 +221,11 @@ public class DownLoadUtils {
             progressBar.setProgress(progressBar.getProgress() + proSize);
             String[] split = proLabel.getText().split("/");
             proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
-            if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                Label resultLabel = MessageUtils.resultLabel;
-                resultLabel.setText("下载完成");
-                MessageUtils.endPool();
-                MessageUtils.downloadSpeed.setText("下载完成");
+            Label resultLabel = MessageUtils.resultLabel;
+            if(MessageUtils.isOk()){
+                DownLoadUtils.isOpenLanauch(resultLabel);
+            }else{
+                MessageUtils.setOk();
             }
         });
     }
@@ -350,6 +350,7 @@ public class DownLoadUtils {
 
     public static void isOpenLanauch(Label resultLabel){
         MessageUtils.info("打开启动器开始玩耍吧!", "安装完成");
+        System.exit(0);
 
 //        resultLabel.setText("安装完成");
 //        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
