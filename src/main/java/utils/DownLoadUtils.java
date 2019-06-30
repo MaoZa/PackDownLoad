@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import model.DownLoadModel;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -351,7 +352,7 @@ public class DownLoadUtils {
     }
 
     public static void isOpenLanauch(Label resultLabel){
-        MessageUtils.info("打开启动器开始玩耍吧!", "安装完成");
+        JOptionPane.showMessageDialog(null, "打开启动器开始玩耍吧!", "安装完成", 1);
         CommonUtils.appExit();
 
 //        resultLabel.setText("安装完成");
