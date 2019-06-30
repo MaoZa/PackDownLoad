@@ -6,9 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -18,6 +18,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import task.ModPackZipDownLoadTask;
+import utils.CurseUtils;
 import utils.DownLoadUtils;
 import utils.MessageUtils;
 
@@ -45,31 +46,27 @@ public class PackDownLoadController implements Initializable{
 //    @FXML private Button opinionButton;
     @FXML private Button selectDirButton;
     @FXML private TextField projectNameSearchText;
-    @FXML private Button projectNameSearchButton;
+//    @FXML private Button projectNameSearchButton;
     @FXML private HBox seartchHbox;
+    @FXML private CheckBox divideVersionCheckBox;
     private static TextField projectUrlTextFieldStatic;
     private static HBox seartchHboxStatic;
-    private String baseUrl = "https://www.curseforge.com";
 
     private String projectUrl;
 
     public void searchPack() throws IOException {
         String searchText = projectNameSearchText.getText();
-        String searchUrl = baseUrl + "/minecraft/modpacks/" +
-                "search?search=";
-        searchUrl += searchText;
-        Document document = Jsoup.connect(searchUrl).get();
-        Elements elementsByClass = document.getElementsByClass("flex items-end lg:hidden");
-        if(elementsByClass.size() < 1){
+        Elements searchResult = CurseUtils.searchProjectByName(searchText);
+        if(searchResult.size() < 1){
             MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
             return;
         }
-        ConcurrentMap<String, Object> projectMap = new ConcurrentHashMap<>(elementsByClass.size());
+        ConcurrentMap<String, Object> projectMap = new ConcurrentHashMap<>(searchResult.size());
         ObservableList obs = FXCollections.observableArrayList();
-        elementsByClass.forEach(e -> {
+        searchResult.forEach(e -> {
             Elements a = e.getElementsByTag("a");
-            projectMap.put(a.get(0).getElementsByTag("h3").text(), baseUrl + a.attr("href"));
-            obs.add(a.get(0).getElementsByTag("h3").text() + "@" + baseUrl + a.get(0).attr("href"));
+            projectMap.put(a.get(0).getElementsByTag("h3").text(), CurseUtils.baseUrl + a.attr("href"));
+            obs.add(a.get(0).getElementsByTag("h3").text() + "@" + CurseUtils.baseUrl + a.get(0).attr("href"));
         });
         ComboBox comboBox = new ComboBox<>();
         comboBox.setPromptText("请选择一个整合包.....");
@@ -82,7 +79,6 @@ public class PackDownLoadController implements Initializable{
                         -> projectUrlTextField.setText(comboBox.getValue().toString().split("@")[1]));
         int i = seartchHbox.getChildren().indexOf(projectNameSearchText);
         seartchHbox.getChildren().set(i, comboBox);
-
     }
 
     public void selectedDir(){
@@ -133,14 +129,11 @@ public class PackDownLoadController implements Initializable{
             MessageUtils.error("整合包链接错误", "请输入正确的整合包链接");
             return;
         }
-        try {
-            Jsoup.connect(projectUrl).get();
-        } catch (Exception e) {
-            MessageUtils.error("不存在或无法访问", "整合包链接错误");
-            e.printStackTrace();
-            return;
+        String title = CurseUtils.getDocumentByProjectUrl(projectUrl).getElementsByTag("head").get(0).getElementsByTag("title").get(0).text();
+        title = title.split(" - ")[0];
+        if(divideVersionCheckBox.isSelected()){
+            DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + DownLoadUtils.filenameFilter(title));
         }
-        projectUrl = projectUrlTextField.getText();
         Platform.runLater(() -> {
             resultLabel.setText("请稍等,正在下载整合包Zip...");
             startPackDownLoad.setText("正在安装");

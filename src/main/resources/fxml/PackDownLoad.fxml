@@ -36,5 +36,6 @@
          </image></ImageView>
       <Hyperlink fx:id="copyrightHyperlink" layoutX="4.0" layoutY="74.0" onAction="#openUrlByCopyright" text="\@Cap_Sub" />
       <Button fx:id="selectDirButton" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" onAction="#selectedDir" text="选择安装目录(默认下载到启动器目录)" />
+      <CheckBox fx:id="divideVersionCheckBox" selected="true" layoutX="357.0" layoutY="18.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="71.0" text="版本隔离" />
    </children>
 </AnchorPane>
