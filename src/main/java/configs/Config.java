@@ -13,7 +13,7 @@ import static utils.Upgrader.urlEncodeChinese;
 @Data
 public class Config {
 
-    public static float currentVersion = 1.24f;
+    public static float currentVersion = 1.25f;
     public static String batUrl = "https://dawnland.cn/update.bat";
     public static String versionUrl = "https://dawnland.cn/version.json";
     public static String exeUrl = urlEncodeChinese("https://dawnland.cn/Curse整合包下载器.exe");
