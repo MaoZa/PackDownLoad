@@ -20,6 +20,16 @@ public class MessageUtils {
     private static ExecutorService pool = Executors.newFixedThreadPool(1);
     public static Label downloadSpeed;
 
+    public static int status = 0;
+
+    public static boolean isOk(){
+        return status == 0 ? false : true;
+    }
+
+    public static void setOk(){
+        status = 1;
+    }
+
     public static void error(Exception e){
         Platform.runLater(() -> JOptionPane.showMessageDialog(null, "未知错误", e.getStackTrace().toString(), 0));
         e.printStackTrace();
@@ -49,6 +59,8 @@ public class MessageUtils {
                     if(speed > 0 && downloadSpeed != null){
                         UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed) + "/s");
                         sizeAI.set(0);
+                    }else if(downloadSpeed != null){
+                        UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
                     }
                 } catch (InterruptedException e) {
                     MessageUtils.error(e);

@@ -3,6 +3,7 @@ package task;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import utils.DownLoadUtils;
 import utils.MessageUtils;
 
 import java.io.File;
@@ -38,7 +39,14 @@ public class UnZipTask implements Runnable{
     public void run() {
         try {
             String path = location + "\\" + ze.getName();
-            path = path.replaceFirst("overrides", ".minecraft");
+            if(location.indexOf("versions") > 0){
+                path = path.replaceFirst("overrides", "");
+            }else {
+                if(path.indexOf(".minecraft") > 0){
+                    path = path.replaceFirst("overrides/", "");
+                }
+                path = path.replaceFirst("overrides", ".minecraft");
+            }
             if (ze.isDirectory()) {
                 File unzipFile = new File(path);
                 if(!unzipFile.isDirectory()) {
@@ -65,11 +73,10 @@ public class UnZipTask implements Runnable{
                 proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
                 if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
                     Label resultLabel = MessageUtils.resultLabel;
-                    Label downloadSpeed = MessageUtils.downloadSpeed;
-                    if("下载完成".equals(downloadSpeed.getText()) || "下载完成".equals(resultLabel.getText())){
-                        resultLabel.setText("安装完成");
+                    if(MessageUtils.isOk()){
+                        DownLoadUtils.isOpenLanauch(resultLabel);
                     }else{
-                        resultLabel.setText("解压完成");
+                        MessageUtils.setOk();
                     }
                 }
             });

@@ -1,5 +1,6 @@
 package utils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -10,25 +11,45 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Cap_Sub
  */
 public class DownLoadUtils {
 
+    private static Pattern FilePattern = Pattern.compile("[\\\\/:*?\"<>|]");
+    public static String filenameFilter(String str) {
+        return str==null?null:FilePattern.matcher(str).replaceAll("");
+    }
+
     public static Label downloadSpeed;
     private static String rootPath;
+    private static String packPath;
 
     static {
         rootPath = DownLoadUtils.getRootPath();
     }
 
+    public static String getPackPath(){
+        if(packPath == null){
+            packPath = getRootPath() + "/.minecraft";
+        }
+        return packPath;
+    }
+
+    public static void setPackPath(String path){
+        packPath = path;
+    }
+
     /**
-     * 下载文件到指定目录 默认rootPath
+     * 下载文件到指定目录 不指定path则下载到rootPath下
      * @param url 下载链接
      */
     public static String downLoadFile(String url, String path) throws IOException {
-        path = path == null ? getRootPath() : getRootPath() + path;
+        if(path == null || "".equals(path)){
+            path = getPackPath();
+        }
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -43,7 +64,9 @@ public class DownLoadUtils {
      * @param path 相对于.minecraft的路径(.minecraft = 根目录)
      */
     public static boolean downLoadFile(String url, String fileName, String path, Long size, ProgressBar progressBar, Label proLabel, Double proSize) throws IOException {
-        path = rootPath + "/" + path;
+        if(path == null || "".equals(path)){
+            path = rootPath;
+        }
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -86,6 +109,7 @@ public class DownLoadUtils {
         }
         return rootPath;
     }
+
     public static void setRootPath(String path){
         rootPath = path;
     }
@@ -166,9 +190,11 @@ public class DownLoadUtils {
                     proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
                     if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
                         Label resultLabel = MessageUtils.resultLabel;
-                        resultLabel.setText("下载完成");
-                        MessageUtils.endPool();
-                        MessageUtils.downloadSpeed.setText("下载完成");
+                        if(MessageUtils.isOk()){
+                            DownLoadUtils.isOpenLanauch(resultLabel);
+                        }else{
+                            MessageUtils.setOk();
+                        }
                     }
                 });
                 MessageUtils.info("跳过已存在:" + fileName.substring(0, fileName.length() - 4));
@@ -229,7 +255,7 @@ public class DownLoadUtils {
      * @throws IOException
      */
     public static String downLoadFromUrl(String urlStr, String savePath) throws IOException {
-        if(savePath == null){ savePath = getRootPath(); }
+        if(savePath == null || "".equals(savePath)){ savePath = getRootPath(); }
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         //设置超时间为3秒
@@ -288,6 +314,58 @@ public class DownLoadUtils {
         Object oStr = JSONObject.parseObject(str).get("proxies");
         List<DownLoadModel> list = JSONObject.parseArray(oStr.toString(), DownLoadModel.class);
         return list;
+    }
+
+    public static void downloadVersionJson(String mcVersion, String forgeVersion){
+        String s = HttpUtils.get(MojangUtils.getJsonUrl(mcVersion));
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        JSONArray libraries = (JSONArray) jsonObject.get("libraries");
+        JSONObject addJson = new JSONObject();
+        String forgeJson = "net.minecraftforge:forge:" + forgeVersion.replace("forge", mcVersion);
+        addJson.put("name", forgeJson);
+        addJson.put("url", "http://files.minecraftforge.net/maven/");
+        libraries.add(addJson);
+        String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
+        File f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+        if(!f.isDirectory()) {
+            File tempF = new File(f.getPath().substring(0, f.getPath().lastIndexOf("\\")));
+            tempF.mkdirs();
+            f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+        }
+        FileOutputStream fio = null;
+        try {
+            fio = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        PrintStream ps = new PrintStream(fio);
+        ps.print(jsonObject.toJSONString());
+        ps.close();
+        try {
+            fio.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void isOpenLanauch(Label resultLabel){
+        MessageUtils.info("打开启动器开始玩耍吧!", "安装完成");
+
+//        resultLabel.setText("安装完成");
+//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//        alert.setTitle("安装完成");
+//        alert.setHeaderText("");
+//        alert.setContentText("是否打开启动器");
+//        Optional result = alert.showAndWait();
+//        if (result.get() == ButtonType.OK) {
+//            /** 执行cmd命令打开启动器 */
+//            try {
+//                Desktop.getDesktop().open(new File(DownLoadUtils.getRootPath() + "/黎明大陆伪正版启动器.exe"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            System.exit(0);
+//        }
     }
 
 }

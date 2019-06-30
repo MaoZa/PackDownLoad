@@ -51,17 +51,10 @@ public class JsonJXTask implements Runnable {
                 String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
                 String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
                 String mcjarStrTmp = Config.mcjarStr.replaceFirst("mcVersion", mcVersion).replaceFirst("forgeVersion", forgeVersion);
-                File file = new File(DownLoadUtils.getRootPath() + "/核心要求.txt");
-                FileOutputStream fos = new FileOutputStream(file);
-                PrintStream ps = new PrintStream(fos);
-                String[] mcjarStrTmpSplit = mcjarStrTmp.split("\n");
-                for (int i = 0; i < mcjarStrTmpSplit.length; i++) {
-                    ps.println(mcjarStrTmpSplit[i]);
-                }
-                Runtime.getRuntime().exec("cmd.exe  /c notepad " + file.getPath());
+                ((Runnable) () -> DownLoadUtils.downloadVersionJson(mcVersion, forgeVersion)).run();
             }catch (Exception e){}
 
-            ZipUtils.unzip(zipFilePath, DownLoadUtils.getRootPath(), progressPane, pool);
+            ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), progressPane, pool);
             Label label1 = new Label("0/" + files.size());
 
             ProgressBar progressBar = new ProgressBar();
@@ -81,12 +74,9 @@ public class JsonJXTask implements Runnable {
                 progressPane.setTop(hb);
                 MessageUtils.info("下载中...");
             });
-
             //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
             //                                                     项目id        文件id
-
             Iterator<JSONObject> iterator = files.iterator();
-
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
                 try {
@@ -95,7 +85,6 @@ public class JsonJXTask implements Runnable {
                     e.printStackTrace();
                 }
             });
-
             while (iterator.hasNext()){
                 JSONObject object = iterator.next();
                 pool.submit(new FilesDownLoadTask(object, progressBar, label1, files.size()));
