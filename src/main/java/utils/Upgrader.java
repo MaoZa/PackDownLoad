@@ -148,11 +148,31 @@ public class Upgrader {
     }
 
     /**
+     * 删除升级临时文件
+     */
+    public static void deleteTmpFile(){
+        List<File> tmpFiles = new ArrayList<>();
+        tmpFiles.add(new File(DownLoadUtils.getRootPath() + "/tmp"));
+        tmpFiles.add(new File(DownLoadUtils.getRootPath() + "/update.bat"));
+        tmpFiles.forEach(f -> {
+            if(f.isDirectory()){
+                for (File file : f.listFiles()) {
+                    file.delete();
+                }
+                f.delete();
+            }else {
+                f.delete();
+            }
+        });
+    }
+
+    /**
      * 启动后自动更新
      */
     public static void autoupgrade() {
         getNewVersion();
         if (Config.currentVersion >= newVersion) {
+            deleteTmpFile();
             return;
         }
         try {

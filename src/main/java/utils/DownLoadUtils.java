@@ -350,7 +350,7 @@ public class DownLoadUtils {
 
     public static void isOpenLanauch(Label resultLabel){
         MessageUtils.info("打开启动器开始玩耍吧!", "安装完成");
-        System.exit(0);
+        CommonUtils.appExit();
 
 //        resultLabel.setText("安装完成");
 //        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
