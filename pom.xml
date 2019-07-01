@@ -36,7 +36,7 @@
                     <transformers>
                         <transformer
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>main.Main</mainClass>
+                            <mainClass>cn.dawnland.packdownload.launcher.Launcher</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
@@ -59,7 +59,7 @@
                             <outfile>${project.build.directory}/Curse整合包下载器.exe</outfile>
                             <downloadUrl>http://java.com/download</downloadUrl>
                             <classPath>
-                                <mainClass>main.Main</mainClass>
+                                <mainClass>cn.dawnland.packdownload.launcher.Launcher</mainClass>
                                 <preCp>anything</preCp>
                             </classPath>
                             <!--<icon>${project.basedir}/resources/logo.ico</icon>-->

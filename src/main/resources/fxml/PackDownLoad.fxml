@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="root" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PackDownLoadController">
+<AnchorPane fx:id="root" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadController">
    <children>
       <HBox fx:id="seartchHbox" layoutX="126.0" layoutY="14.0" prefHeight="23.0" prefWidth="200.0">
          <children>
