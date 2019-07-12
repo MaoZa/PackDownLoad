@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.task.FilesDownLoadTask;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
@@ -12,12 +13,19 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Cap_Sub
  */
 public class DownLoadUtils {
+
+
+    public static ConcurrentMap<String, String> downloadFaildModS = new ConcurrentHashMap();
 
     private static Pattern FilePattern = Pattern.compile("[\\\\/:*?\"<>|]");
     public static String filenameFilter(String str) {
@@ -64,7 +72,7 @@ public class DownLoadUtils {
      * @param fileName 保存文件的文件名
      * @param path 相对于.minecraft的路径(.minecraft = 根目录)
      */
-    public static boolean downLoadFile(String url, String fileName, String path, Long size, ProgressBar progressBar, Label proLabel, Double proSize) throws IOException {
+    public static boolean downLoadMod(String url, String fileName, String path, Long size) throws IOException {
         if(path == null || "".equals(path)){
             path = rootPath;
         }
@@ -72,7 +80,7 @@ public class DownLoadUtils {
         if (!file.exists()) {
             file.mkdirs();
         }
-        DownLoadUtils.downLoadFromUrl(url, fileName, path, progressBar, proLabel, proSize);
+        DownLoadUtils.downLoadModFromUrl(url, fileName, path);
         return true;
     }
 
@@ -166,17 +174,24 @@ public class DownLoadUtils {
      * @param savePath
      * @throws IOException
      */
-    public static void  downLoadFromUrl(String urlStr, String fileName, String savePath, ProgressBar progressBar, Label proLabel, Double proSize) throws IOException {
+    public static void  downLoadModFromUrl(String urlStr, String fileName, String savePath) throws IOException {
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//        conn.setInstanceFollowRedirects(false);
         //设置超时间为3秒
         conn.setConnectTimeout(3*1000);
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-
+        String rsqCode = conn.getResponseCode() + "";
+//        if(rsqCode.startsWith("3") && conn.getHeaderField("Location") != null && !"".equals(conn.getHeaderField("Location"))){
+//            url = new URL(conn.getHeaderField("Location").replaceFirst("edge", "media"));
+//            conn = (HttpURLConnection) url.openConnection();
+//        }
         long fileSize = Long.valueOf(conn.getHeaderField("Content-Length"));
         //文件保存位置
-        fileName = new String((conn.getURL().getPath().substring(conn.getURL().getPath().lastIndexOf("/") + 1)).getBytes(), "UTF-8");
+        fileName = new String((conn.getURL().getPath()
+                .substring(conn.getURL().getPath().lastIndexOf("/") + 1))
+                .getBytes(), "UTF-8");
 
         File saveDir = new File(savePath);
         String path = saveDir + File.separator + fileName;
@@ -185,19 +200,7 @@ public class DownLoadUtils {
         //判断文件size 本地是否已经下载该文件且大小一致(则不下载直接返回)
         if(fileSize > 0){
             if(file.exists() && fileSize == file.length()){
-                Platform.runLater(() -> {
-                    progressBar.setProgress(progressBar.getProgress() + proSize);
-                    String[] split = proLabel.getText().split("/");
-                    proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
-                    if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                        Label resultLabel = MessageUtils.resultLabel;
-                        if(MessageUtils.isOk()){
-                            DownLoadUtils.isOpenLanauch(resultLabel);
-                        }else{
-                            MessageUtils.setOk();
-                        }
-                    }
-                });
+                UIUpdateUtils.modsBarAddOne();
                 MessageUtils.info("跳过已存在:" + fileName.substring(0, fileName.length() - 4));
                 return;
             }else {
@@ -205,8 +208,25 @@ public class DownLoadUtils {
             }
         }
 
+        InputStream inputStream ;
         //得到输入流
-        InputStream inputStream = conn.getInputStream();
+        try{
+            inputStream = conn.getInputStream();
+        }catch (Exception e){
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(false);
+            //设置超时间为3秒
+            conn.setConnectTimeout(3*1000);
+            //防止屏蔽程序抓取而返回403错误
+            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            System.out.println("307:{}" + conn.getHeaderField("Location"));
+            conn = (HttpURLConnection) new URL(conn.getHeaderField("Location").replaceFirst("edge", "media")).openConnection();
+            //设置超时间为3秒
+            conn.setConnectTimeout(3*1000);
+            //防止屏蔽程序抓取而返回403错误
+            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            inputStream = conn.getInputStream();
+        }
         //获取自己数组
         byte[] getData = readInputStream(inputStream);
 
@@ -218,19 +238,7 @@ public class DownLoadUtils {
         if(inputStream!=null){
             inputStream.close();
         }
-        Platform.runLater(() -> {
-            progressBar.setProgress(progressBar.getProgress() + proSize);
-            String[] split = proLabel.getText().split("/");
-            proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
-            Label resultLabel = MessageUtils.resultLabel;
-            if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                if(MessageUtils.isOk()){
-                    DownLoadUtils.isOpenLanauch(resultLabel);
-                }else{
-                    MessageUtils.setOk();
-                }
-            }
-        });
+        UIUpdateUtils.modsBarAddOne();
     }
 
     /**
@@ -319,15 +327,30 @@ public class DownLoadUtils {
         return list;
     }
 
-    public static void downloadVersionJson(String mcVersion, String forgeVersion){
+    public static void downloadVersionJson(String mcVersion, String forgeVersion, String installUrl) throws IOException {
+        MessageUtils.info("正在安装核心...");
         String s = HttpUtils.get(MojangUtils.getJsonUrl(mcVersion));
         JSONObject jsonObject = JSONObject.parseObject(s);
-        JSONArray libraries = (JSONArray) jsonObject.get("libraries");
-        JSONObject addJson = new JSONObject();
-        String forgeJson = "net.minecraftforge:forge:" + forgeVersion.replace("forge", mcVersion);
-        addJson.put("name", forgeJson);
-        addJson.put("url", "http://files.minecraftforge.net/maven/");
-        libraries.add(addJson);
+        String jarName = "";
+        try {
+            MessageUtils.info("正在下载Forge...");
+            jarName = DownLoadUtils.downLoadFromUrl(installUrl, DownLoadUtils.getPackPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MessageUtils.info("正在安装Forge...");
+        File file = new File(DownLoadUtils.getPackPath() + "/" + jarName);
+        File universal = ZipUtils.getZipEntryFile(file.getPath(), jarName.replaceFirst("installer", "universal"));
+        File versionJsonFile = ZipUtils.getZipEntryFile(universal.getPath(), "version.json");
+        String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
+        JSONObject versionObject = JSONObject.parseObject(versionJson);
+        JSONArray libraries = (JSONArray) versionObject.get("libraries");
+        libraries.addAll((JSONArray)jsonObject.get("libraries"));
+        jsonObject.put("libraries", libraries);
+        jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
+        jsonObject.put("mainClass", versionObject.get("mainClass"));
+        DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath());
+//        libraries.add(addJson);
         String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
         File f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
         if(!f.isDirectory()) {
@@ -349,6 +372,7 @@ public class DownLoadUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        MessageUtils.info("安装完成");
     }
 
     public static void isOpenLanauch(Label resultLabel){

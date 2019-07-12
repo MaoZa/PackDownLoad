@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -26,13 +27,10 @@ public class UnZipTask implements Runnable{
 
     private FileOutputStream fos;
 
-    public UnZipTask(String location, ZipEntry ze, ProgressBar progressBar, List<Integer> cs, Double proSize, Label proLabel) {
+    public UnZipTask(String location, ZipEntry ze, List<Integer> cs) {
         this.location = location;
         this.ze = ze;
-        this.progressBar = progressBar;
         this.cs = cs;
-        this.proSize = proSize;
-        this.proLabel = proLabel;
     }
 
     @Override
@@ -47,14 +45,12 @@ public class UnZipTask implements Runnable{
                 }
                 path = path.replaceFirst("overrides", ".minecraft");
             }
+            File unzipFile = new File(path);
             if (ze.isDirectory()) {
-                File unzipFile = new File(path);
-                if(!unzipFile.isDirectory()) {
-                    unzipFile.mkdirs();
-                }
-            }
-            else {
-                fos = new FileOutputStream(path, false);
+                unzipFile.mkdirs();
+            }else {
+                unzipFile.getParentFile().mkdirs();
+                fos = new FileOutputStream(unzipFile.getPath(), false);
                 cs.forEach(c -> {
                     try {
                         fos.write(c);
@@ -65,21 +61,9 @@ public class UnZipTask implements Runnable{
                 });
             }
         }catch (Exception e){
-
+            MessageUtils.error(e);
         }finally {
-            Platform.runLater(() -> {
-                progressBar.setProgress(progressBar.getProgress() + proSize);
-                String[] split = proLabel.getText().split("/");
-                proLabel.setText(Integer.valueOf(split[0]) + 1 + "/" + split[1]);
-                if((Integer.valueOf(split[0]) + 1) == Integer.valueOf(split[1])){
-                    Label resultLabel = MessageUtils.resultLabel;
-                    if(MessageUtils.isOk()){
-                        DownLoadUtils.isOpenLanauch(resultLabel);
-                    }else{
-                        MessageUtils.setOk();
-                    }
-                }
-            });
+            UIUpdateUtils.unzipBarAddOne();
             if (fos != null) {
                 try {
                     fos.close();

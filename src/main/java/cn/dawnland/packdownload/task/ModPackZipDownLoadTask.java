@@ -1,6 +1,7 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.controller.PackDownLoadController;
+import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import cn.dawnland.packdownload.utils.CurseUtils;
 import cn.dawnland.packdownload.utils.DownLoadUtils;

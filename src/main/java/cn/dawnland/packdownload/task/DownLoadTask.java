@@ -43,10 +43,6 @@ public class DownLoadTask extends Task {
             }else {
                 UIUpdateUtils.textAreaAppend(logText, headStr + filename + "已存在,跳过下载" + enter);
             }
-            UIUpdateUtils.updateProgress(mainController.getProgressBar(), mainController.getDownLoadModels().size());
-            double percentage = 100D/ mainController.getDownLoadModels().size();
-            percentage += "".equals(mainController.getPercentage().getText()) ? 0 : Double.valueOf(mainController.getPercentage().getText().replaceFirst("%", ""));
-            UIUpdateUtils.updateLable(mainController.getPercentage(), percentage + "%");
 
         } catch (Exception e) {
             MessageUtils.error(e);
