@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.controller;
 
+import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -107,6 +108,7 @@ public class PackDownLoadController implements Initializable{
     }
 
     public void startPackDownLoad(){
+        UIUpdateUtils.startButton = startPackDownLoad;
         projectUrlTextFieldStatic = projectUrlTextField;
         seartchHboxStatic = seartchHbox;
         Integer threadCount = 10;
@@ -127,18 +129,18 @@ public class PackDownLoadController implements Initializable{
             MessageUtils.error("整合包链接错误", "请输入正确的整合包链接");
             return;
         }
-        String title = CurseUtils.getDocumentByProjectUrl(projectUrl).getElementsByTag("head").get(0).getElementsByTag("title").get(0).text();
+        String title = CurseUtils.getDocumentByProjectUrl(projectUrl).getElementsByClass("font-bold text-lg break-all").text();
         title = title.split(" - ")[0];
         if(divideVersionCheckBox.isSelected()){
             DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + DownLoadUtils.filenameFilter(title));
         }
+        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
+        pool.submit(new ModPackZipDownLoadTask(null, projectUrl, progressPane, pool));
+        MessageUtils.info("请稍等,正在下载整合包Zip...");
         Platform.runLater(() -> {
-            resultLabel.setText("请稍等,正在下载整合包Zip...");
             startPackDownLoad.setText("正在安装");
             startPackDownLoad.setDisable(true);
         });
-        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
-        pool.submit(new ModPackZipDownLoadTask(null, projectUrl, progressPane, pool));
     }
 
     public static void setDisplay(){

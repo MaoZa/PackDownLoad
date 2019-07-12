@@ -6,7 +6,7 @@ public class CommonUtils {
      * 退出软件
      */
     public static void appExit(){
-        Upgrader.deleteTmpFile();
+        FileUtils.deleteTmpFile();
         System.exit(0);
     }
 

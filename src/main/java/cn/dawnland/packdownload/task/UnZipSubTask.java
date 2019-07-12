@@ -20,17 +20,11 @@ public class UnZipSubTask implements Runnable {
     private ZipInputStream zin;
     private ExecutorService pool;
     private String location;
-    private ProgressBar progressBar;
-    private Double proSize;
-    private Label label;
 
-    public UnZipSubTask(ZipInputStream zin, ExecutorService pool, String location, ProgressBar progressBar, Double proSize, Label label) {
+    public UnZipSubTask(ZipInputStream zin, ExecutorService pool, String location) {
         this.zin = zin;
         this.pool = pool;
         this.location = location;
-        this.progressBar = progressBar;
-        this.proSize = proSize;
-        this.label = label;
     }
 
     @Override
@@ -47,7 +41,7 @@ public class UnZipSubTask implements Runnable {
                     MessageUtils.error(e);
                     e.printStackTrace();
                 }
-                pool.submit(new UnZipTask(location, ze, progressBar, cs, proSize, label));
+                pool.submit(new UnZipTask(location, ze, cs));
             }
         }catch (Exception e){
             MessageUtils.error(e);

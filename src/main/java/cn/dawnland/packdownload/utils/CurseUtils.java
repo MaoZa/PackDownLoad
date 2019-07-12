@@ -5,8 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CurseUtils {
 
@@ -55,6 +56,38 @@ public class CurseUtils {
             MessageUtils.error("出错", "获取整合包文件失败，请确认链接是否正确");
         }
         return resulMap;
+    }
+
+    public static void failsMod(ConcurrentMap<String, String> downloadFialdModS){
+        String url = "https://www.curseforge.com/minecraft/mc-mods/projectID/download/fileID/file";
+        File downloadFialdModsfile = new File(DownLoadUtils.getPackPath() + "/下载失败的MOD.txt");
+        FileOutputStream fio = null;
+        try {
+            fio = new FileOutputStream(downloadFialdModsfile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        PrintStream ps = new PrintStream(fio);
+        /** 循环处理下载失败的mod */
+        ps.println("以下mod请尝试手动下载至目录:" + DownLoadUtils.getPackPath() + "/mods");
+        String text = "MODID:{MODID}\tURL:{URL}";
+        downloadFialdModS.forEach((p,f) ->{
+            String modUrl = url.replaceFirst("projectId", p);
+            modUrl = modUrl.replaceFirst("fileId", f);
+            ps.println(text.replace("{MODID}", p).replace("{URL}", modUrl));
+        });
+        ps.flush();
+        ps.close();
+        try {
+            Process p = Runtime.getRuntime().exec("notepad " + downloadFialdModsfile.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fio.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

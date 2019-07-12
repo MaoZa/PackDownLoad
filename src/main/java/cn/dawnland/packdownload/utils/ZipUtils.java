@@ -33,16 +33,13 @@ public class ZipUtils {
 
             ZipFile zf = new ZipFile(zipFile);
 
-            Double proSize = 1D/zf.size();
-
             ZipInputStream zin = new ZipInputStream(new FileInputStream(zipFile));
 
-            ProgressBar progressBar = new ProgressBar();
-            Label label1 = new Label("0/" + zf.size());
-
             Platform.runLater(() -> {
-                progressBar.setPrefWidth(230D);
-                progressBar.setProgress(0);
+                ProgressBar unzipBar = new ProgressBar();
+                Label unzipLabel = new Label();
+                unzipBar.setPrefWidth(230D);
+                unzipBar.setProgress(0);
                 Label label = new Label("解压进度");
                 label.setPrefWidth(20D);
                 label.setAlignment(Pos.CENTER_RIGHT);
@@ -52,14 +49,15 @@ public class ZipUtils {
                 hb.setPrefWidth(300D);
                 hb.setSpacing(5D);
                 hb.setAlignment(Pos.CENTER);
-                hb.getChildren().addAll(label, progressBar, label1);
+                hb.getChildren().addAll(label, unzipBar, unzipLabel);
                 progressPane.setCenter(hb);
-                Parent parent = progressBar.getParent();
+                Parent parent = unzipBar.getParent();
                 AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
 //              borderPane.getChildren().remove(parent);
                 MessageUtils.info("正在读取压缩文件，稍等即可");
+                pool.submit(()-> UIUpdateUtils.initUnzip(unzipBar, unzipLabel, zf.size()));
             });
-            pool.submit(new UnZipSubTask(zin, pool, location, progressBar, proSize, label1));
+            pool.submit(new UnZipSubTask(zin, pool, location));
         }
         catch (Exception e) {
             MessageUtils.error(e);
@@ -114,19 +112,19 @@ public class ZipUtils {
         return false;
     }
 
-    public static File getZipEntryFile(String zipFilePath, String key) throws Exception {
+    public static File getZipEntryFile(String zipFilePath, String key) throws IOException {
         FileInputStream fis = new FileInputStream(zipFilePath);
-        ZipInputStream zis = new ZipInputStream(fis);
-        ZipFile zipFile = new ZipFile(zipFilePath);
-        ZipEntry zipEntry = null;
-        while((zipEntry = zis.getNextEntry()) != null){
-            if(key.equals(zipEntry.getName())){
-                InputStream is = zipFile.getInputStream(zipEntry);
-                FileOutputStream fos = new FileOutputStream(zipEntry.getName());
-                int len;
-                while((len = is.read()) != -1){
-                    fos.write(len);
-                }
+                ZipInputStream zis = new ZipInputStream(fis);
+                ZipFile zipFile = new ZipFile(zipFilePath);
+                ZipEntry zipEntry = null;
+                while((zipEntry = zis.getNextEntry()) != null){
+                    if(key.equals(zipEntry.getName())){
+                        InputStream is = zipFile.getInputStream(zipEntry);
+                        FileOutputStream fos = new FileOutputStream(zipEntry.getName());
+                        int len;
+                        while((len = is.read()) != -1){
+                            fos.write(len);
+                        }
                 break;
             }
         }

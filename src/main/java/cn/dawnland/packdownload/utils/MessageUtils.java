@@ -1,10 +1,14 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.configs.Config;
+import cn.dawnland.packdownload.model.ForgeVersion;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
 import javax.swing.*;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,21 +26,26 @@ public class MessageUtils {
 
     public static int status = 0;
 
-    public static boolean isOk(){
-        return status == 0 ? false : true;
+    public static Boolean isOk(){
+        return status == 2 ? true : false;
     }
 
-    public static void setOk(){
-        status = 1;
+    public synchronized static void setStatus(){
+        status = status + 1;
     }
 
     public static void error(Exception e){
-        Platform.runLater(() -> JOptionPane.showMessageDialog(null, "未知错误", e.getStackTrace().toString(), 0));
+        Platform.runLater(() -> {
+            JOptionPane.showMessageDialog(null, "未知错误", e.getStackTrace().toString(), 0);
+            UIUpdateUtils.startButton.setDisable(false);
+        });
+        LogUtils.error(e);
         e.printStackTrace();
     }
 
     public static void error(String msg, String title){
         Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, 0));
+
     }
 
     public static void info(String msg, String title){
