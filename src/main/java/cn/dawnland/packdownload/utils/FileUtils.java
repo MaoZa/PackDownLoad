@@ -41,6 +41,16 @@ public class FileUtils {
      * 删除临时文件
      */
     public static void deleteTmpFile(){
+        String property = System.getProperty("user.dir");
+        if(property.indexOf("PackDownLoad") > 0){
+            return;
+        }
+        File[] filess = new File(".").listFiles();
+        for (File file : filess) {
+            if(file.getName().indexOf("src") > 0){
+                return;
+            }
+        }
         String[] notTempFiles = {".minecraft", "黎明大陆伪正版启动器.exe", "Curse整合包下载器.exe", "更新日志.txt", "hmcl.json", "下载失败的MOD.txt"};
         List<String> notTempFileList = new ArrayList<>(Arrays.asList(notTempFiles));
         if(ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug")){
