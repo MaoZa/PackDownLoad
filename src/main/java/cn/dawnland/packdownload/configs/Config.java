@@ -16,7 +16,7 @@ import static cn.dawnland.packdownload.utils.Upgrader.urlEncodeChinese;
 @Data
 public class Config {
 
-    public static float currentVersion = 1.27f;
+    public static float currentVersion = 1.28f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;

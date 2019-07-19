@@ -59,7 +59,7 @@ public class CurseUtils {
     }
 
     public static void failsMod(ConcurrentMap<String, String> downloadFialdModS){
-        String url = "https://www.curseforge.com/minecraft/mc-mods/projectID/download/fileID/file";
+        String[] url = {"https://www.curseforge.com/minecraft/mc-mods/", "/download/", "/file"};
         File downloadFialdModsfile = new File(DownLoadUtils.getPackPath() + "/下载失败的MOD.txt");
         FileOutputStream fio = null;
         try {
@@ -72,9 +72,7 @@ public class CurseUtils {
         ps.println("以下mod请尝试手动下载至目录:" + DownLoadUtils.getPackPath() + "/mods");
         String text = "MODID:{MODID}\tURL:{URL}";
         downloadFialdModS.forEach((p,f) ->{
-            String modUrl = url.replaceFirst("projectId", p);
-            modUrl = modUrl.replaceFirst("fileId", f);
-            ps.println(text.replace("{MODID}", p).replace("{URL}", modUrl));
+            ps.println(text.replace("{MODID}", p).replace("{URL}", url[0] + p + url[1] + f + url[2]));
         });
         ps.flush();
         ps.close();
