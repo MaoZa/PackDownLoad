@@ -35,9 +35,11 @@ public class FilesDownLoadTask extends Task {
         for (int i = reCount; i < count; i++) {
             try {
                 String enter = "\n";
-                url = url.replaceFirst("projectID", jsonObject.get("projectID") + "");
-                url = url.replaceFirst("fileID", jsonObject.get("fileID") + "");
-                DownLoadUtils.downLoadMod(url, null, MODS_PATH, null);
+                String projectId = jsonObject.get("projectID").toString();
+                String fileId = jsonObject.get("fileID").toString();
+                url = url.replaceFirst("projectID", projectId);
+                url = url.replaceFirst("fileID", fileId);
+                DownLoadUtils.downLoadMod(url, projectId + "-" + fileId + ".jar" , MODS_PATH, null);
                 break;
             } catch (Exception e) {
                 LogUtils.error(e);
@@ -52,7 +54,7 @@ public class FilesDownLoadTask extends Task {
                     UIUpdateUtils.modsBarAddOne();
                     DownLoadUtils.downloadFaildModS.putIfAbsent(jsonObject.get("projectID") + "", jsonObject.get("fileID") + "");
                 }else{
-                    System.out.println(url + "{连接失败正在重试:" + (reCount + 1) + "}");
+                    System.out.println(url + "{连接失败正在重试:"+ (reCount + 1) + "}");
                 }
                 reCount++;
             }
