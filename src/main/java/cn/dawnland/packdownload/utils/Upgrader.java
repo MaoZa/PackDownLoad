@@ -42,9 +42,9 @@ public class Upgrader {
      * @param url
      * @return
      */
-    public static String urlEncodeChinese(String url) {
+    public static String urlEncode(String url) {
         try {
-            Matcher matcher = compile("[\\u4e00-\\u9fa5]").matcher(url);
+            Matcher matcher = compile("[\\u4e00-\\u9fa5]|\\[|\\]").matcher(url);
             String tmp;
             while (matcher.find()) {
                 tmp = matcher.group();
@@ -224,15 +224,8 @@ public class Upgrader {
      */
     public static void downLoadFromUrl(String urlStr, String fileName, String savePath) {
         try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            // 设置超时间为3秒
-            conn.setConnectTimeout(3 * 1000);
-            // 防止屏蔽程序抓取而返回403错误
-            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-
             // 得到输入流
-            InputStream inputStream = conn.getInputStream();
+            InputStream inputStream = HttpRequestUtils.getInputStream4Url(urlStr);
             // 获取自己数组
             byte[] getData = readInputStream(inputStream);
 
@@ -253,7 +246,7 @@ public class Upgrader {
                 inputStream.close();
             }
 
-            System.out.println("info:" + url + " download success");
+            System.out.println("info:" + urlStr + " download success");
         } catch (Exception e) {
             MessageUtils.error(e);
             System.exit(0);

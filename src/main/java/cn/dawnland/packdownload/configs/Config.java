@@ -7,8 +7,6 @@ import lombok.Data;
 
 import java.util.Properties;
 
-import static cn.dawnland.packdownload.utils.Upgrader.urlEncodeChinese;
-
 /**
  * @author Cap_Sub
  * @version 创建时间：19/02/29 11:29
@@ -16,7 +14,7 @@ import static cn.dawnland.packdownload.utils.Upgrader.urlEncodeChinese;
 @Data
 public class Config {
 
-    public static float currentVersion = 1.28f;
+    public static float currentVersion = 1.29f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;
@@ -63,10 +61,10 @@ public class Config {
 //                currentVersion = 1.0f;
 //            }
 //            mcjarStr = properties.getProperty("mcjarStr");
-//            batUrl = urlEncodeChinese(properties.getProperty("batUrl"));
-//            versionUrl = urlEncodeChinese(properties.getProperty("versionUrl"));
-//            exeUrl = urlEncodeChinese(properties.getProperty("exeUrl"));
-//            string2download = urlEncodeChinese(properties.getProperty("string2download"));
+//            batUrl = urlEncode(properties.getProperty("batUrl"));
+//            versionUrl = urlEncode(properties.getProperty("versionUrl"));
+//            exeUrl = urlEncode(properties.getProperty("exeUrl"));
+//            string2download = urlEncode(properties.getProperty("string2download"));
 //        }
 //    }
 

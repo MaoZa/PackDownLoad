@@ -10,6 +10,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.util.EntityUtils;
 
 public class HttpRequestUtils {
@@ -55,6 +56,7 @@ public class HttpRequestUtils {
     }
 
     public static InputStream getInputStream4Url(String url) throws IOException {
+        url = HttpClientUtils.urlEncode(url);
         HttpEntity httpEntity = new HttpRequestUtils().httpRequest(url);
         if(httpEntity != null){
             return httpEntity.getContent();
@@ -76,7 +78,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * 使用HTTP GET方式請求
+     * 使用GET方式請求
      *
      * @param url
      *      URL地址
@@ -109,6 +111,8 @@ public class HttpRequestUtils {
             errorMessage = e.getMessage();
         } catch (IOException e) {
             errorMessage = e.getMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
