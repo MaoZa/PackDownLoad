@@ -14,7 +14,7 @@ import java.util.Properties;
 @Data
 public class Config {
 
-    public static float currentVersion = 1.29f;
+    public static float currentVersion = 1.30f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;

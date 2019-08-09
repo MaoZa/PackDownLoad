@@ -4,6 +4,7 @@ import cn.dawnland.packdownload.model.DownLoadModel;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.scene.control.Label;
+import okhttp3.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public class DownLoadUtils {
 
+    public static OkHttpClient okHttpClient = new OkHttpClient();
 
     public static ConcurrentMap<String, String> downloadFaildModS = new ConcurrentHashMap();
 
@@ -125,37 +127,100 @@ public class DownLoadUtils {
      * @throws IOException
      */
     public static String  downLoadFromUrl(String urlStr, String fileName, String savePath) throws IOException {
+        final Request request = new Request.Builder().url(urlStr).build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
         if(fileName == null || "".equals(fileName)){
             fileName = new String(urlStr.substring(urlStr.lastIndexOf("/") + 1).getBytes(), "UTF-8");
         }
-        long fileSize = HttpRequestUtils.getSize4Url(urlStr);
-        //文件保存位置
-        File saveDir = new File(savePath);
-        String path = saveDir + File.separator + fileName;
-        File file = new File(path);
-        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
-        if(fileSize > 0){
-            if(file.exists() && fileSize == file.length()){
-                System.out.println(fileName + "已存在:大小" + fileSize);
-                return fileName;
+        //异步请求
+        String finalFileName = fileName;
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MessageUtils.info("下载失败");
             }
-        }
-        InputStream inputStream = null;
-        try{
-            inputStream = HttpRequestUtils.getInputStream4Url(urlStr);
-        }catch (IOException e){
-            MessageUtils.error(e);
-        }
-        byte[] getData = readInputStream(inputStream);
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(getData);
-        if(fos!=null){
-            fos.close();
-        }
-        if(inputStream!=null){
-            inputStream.close();
-        }
-        return fileName;
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+
+                //储存下载文件的目录
+                File dir = new File(savePath);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                File file = new File(dir, finalFileName);
+
+                try {
+
+                    is = response.body().byteStream();
+                    long total = response.body().contentLength();
+                    fos = new FileOutputStream(file);
+                    long sum = 0;
+                    while ((len = is.read(buf)) != -1) {
+                        fos.write(buf, 0, len);
+                        sum += len;
+                        int progress = (int) (sum * 1.0f / total * 100);
+                    }
+                    fos.flush();
+                    //下载完成
+                    UIUpdateUtils.modsBarAddOne();
+                } catch (Exception e) {
+                }finally {
+
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+
+                    }
+
+                }
+
+
+            }
+        });
+//
+//        if(fileName == null || "".equals(fileName)){
+//            fileName = new String(urlStr.substring(urlStr.lastIndexOf("/") + 1).getBytes(), "UTF-8");
+//        }
+//        long fileSize = HttpRequestUtils.getSize4Url(urlStr);
+//        //文件保存位置
+//        File saveDir = new File(savePath);
+//        String path = saveDir + File.separator + fileName;
+//        File file = new File(path);
+//        //如果传入文件size 则判断本地是否已经下载该文件且大小一致(则不下载直接返回)
+//        if(fileSize > 0){
+//            if(file.exists() && fileSize == file.length()){
+//                System.out.println(fileName + "已存在:大小" + fileSize);
+//                return fileName;
+//            }
+//        }
+//        InputStream inputStream = null;
+//        try{
+//            inputStream = HttpRequestUtils.getInputStream4Url(urlStr);
+//        }catch (IOException e){
+//            MessageUtils.error(e);
+//        }
+//        byte[] getData = readInputStream(inputStream);
+//        FileOutputStream fos = new FileOutputStream(file);
+//        fos.write(getData);
+//        if(fos!=null){
+//            fos.close();
+//        }
+//        if(inputStream!=null){
+//            inputStream.close();
+//        }
+//        return fileName;
     }
 
     /**
