@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static cn.dawnland.packdownload.utils.DownLoadUtils.isOpenLanauch;
-
 public class ForgeUtils {
 
     private static ExecutorService pool = Executors.newFixedThreadPool(5);
@@ -17,7 +15,6 @@ public class ForgeUtils {
     public static void downloadForge(String mcVersion, String forgeVersion){
         pool.submit(() -> {
             while(true){
-                System.out.println(MessageUtils.status);
                 if(MessageUtils.isOk()){
                     String installUrl = new ForgeVersion(mcVersion, forgeVersion).getForgeInstallUrl();
                     try {
@@ -29,7 +26,6 @@ public class ForgeUtils {
                     if(DownLoadUtils.downloadFaildModS.size() > 0){
                         CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
                     }
-                    isOpenLanauch(MessageUtils.resultLabel);
                     break;
                 }
                 try {

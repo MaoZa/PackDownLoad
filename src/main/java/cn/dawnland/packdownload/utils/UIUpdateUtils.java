@@ -1,12 +1,17 @@
 package cn.dawnland.packdownload.utils;
 
+import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -22,11 +27,12 @@ public class UIUpdateUtils {
     private static Label unzipLabel;
     private static int modsCount;
     private static int unzipCount;
+    public static JFXListView<HBox> taskList;
 
     public static AtomicInteger modsPoint = new AtomicInteger(0);
     public static AtomicInteger unzipPoint = new AtomicInteger(0);
 
-    public static void initMods(ProgressBar modsBar, Label modsLabel, int modsCount){
+    public static void initMods(HBox hb, ProgressBar modsBar, Label modsLabel, int modsCount){
         UIUpdateUtils.modsBar = modsBar;
         UIUpdateUtils.modsLabel = modsLabel;
         UIUpdateUtils.modsCount = modsCount;
@@ -44,13 +50,14 @@ public class UIUpdateUtils {
                     updateProgress(modsBar, ((1D/modsCount) * modsPoint.get()));
                     MessageUtils.info("Mod下载完成,请等待其他任务完成...");
                     MessageUtils.setStatus();
+//                    taskList.getItems().remove(hb);
                     break;
                 }
             }
         }).run();
     }
 
-    public static void initUnzip(ProgressBar unzipBar, Label unzipLabel, int unzipCount){
+    public static void initUnzip(HBox hb, ProgressBar unzipBar, Label unzipLabel, int unzipCount){
         UIUpdateUtils.unzipBar = unzipBar;
         UIUpdateUtils.unzipLabel = unzipLabel;
         UIUpdateUtils.unzipCount = unzipCount;
@@ -68,6 +75,7 @@ public class UIUpdateUtils {
                     updateProgress(unzipBar, ((1D / unzipCount) * unzipPoint.get()));
                     MessageUtils.setStatus();
                     MessageUtils.info("解压完成,请等待其他任务完成...");
+//                    taskList.getItems().remove(hb);
                     break;
                 }
             }
@@ -116,6 +124,12 @@ public class UIUpdateUtils {
 
     public static synchronized void updateLable(Label label, String values){
         Platform.runLater(() -> label.setText(values));
+    }
+
+    public static VBox taskListVbox;
+    public static ConcurrentMap taskMap = new ConcurrentHashMap();
+    public static void updateTaskList(){
+
     }
 
 }

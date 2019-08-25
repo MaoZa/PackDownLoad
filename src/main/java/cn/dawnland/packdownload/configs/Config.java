@@ -14,7 +14,7 @@ import java.util.Properties;
 @Data
 public class Config {
 
-    public static float currentVersion = 1.29f;
+    public static float currentVersion = 1.32f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;
@@ -37,35 +37,5 @@ public class Config {
             return false;
         }
     }
-
-//    static {
-//        init();
-//    }
-//
-//    public static void init(){
-//        if(properties == null){
-////            file = new File("src/cn.dawnland.packdownload.launcher/resources/config.properties");
-//            File file = new File(Config.class.getResource("/config.properties").getFile());
-//            InputStream in;
-//            Properties properties = null;
-//            try {
-//                in = new FileInputStream(file);
-//                properties = new Properties();
-//                properties.load(in);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                currentVersion = Float.valueOf(properties.getProperty("currentVersion"));
-//            } catch (Exception e) {
-//                currentVersion = 1.0f;
-//            }
-//            mcjarStr = properties.getProperty("mcjarStr");
-//            batUrl = urlEncode(properties.getProperty("batUrl"));
-//            versionUrl = urlEncode(properties.getProperty("versionUrl"));
-//            exeUrl = urlEncode(properties.getProperty("exeUrl"));
-//            string2download = urlEncode(properties.getProperty("string2download"));
-//        }
-//    }
 
 }

@@ -1,17 +1,15 @@
 package cn.dawnland.packdownload.task;
 
-import cn.dawnland.packdownload.model.ForgeVersion;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
-import cn.dawnland.packdownload.configs.Config;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +25,11 @@ public class JsonJXTask implements Runnable {
 
     private String jsonPath;
     private String zipFilePath;
-    private BorderPane progressPane;
+    private JFXListView taskList;
 
-    public JsonJXTask(String zipFilePath, BorderPane progressPane, ExecutorService pool) {
+    public JsonJXTask(String zipFilePath, JFXListView taskList, ExecutorService pool) {
         this.zipFilePath = zipFilePath;
-        this.progressPane = progressPane;
+        this.taskList = taskList;
         this.pool = pool;
     }
 
@@ -48,27 +46,7 @@ public class JsonJXTask implements Runnable {
             String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
             ForgeUtils.downloadForge(mcVersion, forgeVersion);
 
-            ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), progressPane, pool);
-
-            Platform.runLater(() -> {
-                Label modsLabel = new Label();
-                ProgressBar modsBar = new ProgressBar();
-                modsBar.setPrefWidth(230D);
-                modsBar.setProgress(0);
-                Label lable = new Label("下载进度");
-                lable.setPrefWidth(20D);
-                lable.setAlignment(Pos.CENTER_RIGHT);
-                lable.setPrefWidth(50D);
-                lable.setAlignment(Pos.CENTER_LEFT);
-                HBox modsHb = new HBox();
-                modsHb.setPrefWidth(300D);
-                modsHb.setSpacing(5D);
-                modsHb.setAlignment(Pos.CENTER);
-                modsHb.getChildren().addAll(lable, modsBar, modsLabel);
-                progressPane.setTop(modsHb);
-                MessageUtils.info("下载中...");
-                pool.submit(()-> UIUpdateUtils.initMods(modsBar, modsLabel, files.size()));
-            });
+            ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
             //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
             //                                                     项目id        文件id
             Iterator<JSONObject> iterator = files.iterator();
@@ -79,6 +57,30 @@ public class JsonJXTask implements Runnable {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+            });
+            Platform.runLater(() -> {
+                JFXProgressBar modsBar = new JFXProgressBar();
+                Label modsLabel = new Label("下载进度");
+                modsBar.setPrefWidth(70);
+                HBox hb = new HBox();
+                Label label = new Label();
+                hb.setPrefWidth(350D);
+                hb.setSpacing(10D);
+                hb.setAlignment(Pos.CENTER);
+                modsBar.setPrefWidth(130D);
+                modsBar.setMaxHeight(5D);
+                modsBar.setProgress(0);
+                modsLabel.setPrefWidth(60D);
+                modsLabel.setMaxHeight(5);
+                modsLabel.setAlignment(Pos.CENTER_LEFT);
+                label.setPrefWidth(60D);
+                label.setAlignment(Pos.CENTER_RIGHT);
+                MessageUtils.info("正在下载所需文件，请耐心等待");
+                Platform.runLater(() -> {
+                    hb.getChildren().addAll(modsLabel, modsBar, label);
+                    DownLoadUtils.taskList.getItems().add(hb);
+                });
+                pool.submit(()-> UIUpdateUtils.initMods(hb, modsBar, label, files.size()));
             });
             while (iterator.hasNext()){
                 JSONObject object = iterator.next();

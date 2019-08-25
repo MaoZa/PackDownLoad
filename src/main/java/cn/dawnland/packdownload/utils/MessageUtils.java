@@ -1,14 +1,10 @@
 package cn.dawnland.packdownload.utils;
 
-import cn.dawnland.packdownload.configs.Config;
-import cn.dawnland.packdownload.model.ForgeVersion;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
 import javax.swing.*;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,10 +59,10 @@ public class MessageUtils {
             while (true) {
                 int size = sizeAI.get();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     int speed = sizeAI.get() - size;
                     if(speed > 0 && downloadSpeed != null){
-                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed) + "/s");
+                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 2) + "/s");
                         sizeAI.set(0);
                     }else if(downloadSpeed != null){
                         UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
@@ -83,10 +79,6 @@ public class MessageUtils {
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-    public static void endPool(){
-        pool.shutdown();
     }
 
 }

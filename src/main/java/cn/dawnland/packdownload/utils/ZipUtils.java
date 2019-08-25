@@ -1,14 +1,12 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.task.UnZipSubTask;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import cn.dawnland.packdownload.task.UnZipSubTask;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtils {
 
-    public static void unzip(String zipFile, String location, BorderPane progressPane, ExecutorService pool) throws IOException {
+    public static void unzip(String zipFile, String location, JFXListView taskList, ExecutorService pool) throws IOException {
         try {
 
             File f = new File(location);
@@ -36,26 +34,26 @@ public class ZipUtils {
             ZipInputStream zin = new ZipInputStream(new FileInputStream(zipFile));
 
             Platform.runLater(() -> {
-                ProgressBar unzipBar = new ProgressBar();
-                Label unzipLabel = new Label();
-                unzipBar.setPrefWidth(230D);
-                unzipBar.setProgress(0);
-                Label label = new Label("解压进度");
-                label.setPrefWidth(20D);
-                label.setAlignment(Pos.CENTER_RIGHT);
-                label.setPrefWidth(50D);
-                label.setAlignment(Pos.CENTER_LEFT);
+                JFXProgressBar unzipBar = new JFXProgressBar();
+                Label unzipLabel = new Label("解压进度");
+                unzipBar.setPrefWidth(70);
                 HBox hb = new HBox();
-                hb.setPrefWidth(300D);
-                hb.setSpacing(5D);
+                Label label = new Label();
+                hb.setPrefWidth(350D);
+                hb.setSpacing(10D);
                 hb.setAlignment(Pos.CENTER);
-                hb.getChildren().addAll(label, unzipBar, unzipLabel);
-                progressPane.setCenter(hb);
-                Parent parent = unzipBar.getParent();
-                AnchorPane anchorPane = (AnchorPane) parent.getParent().getParent();
-//              borderPane.getChildren().remove(parent);
+                unzipBar.setPrefWidth(130D);
+                unzipBar.setMaxHeight(5D);
+                unzipBar.setProgress(0);
+                unzipLabel.setAlignment(Pos.CENTER_LEFT);
+                unzipLabel.setPrefWidth(60D);
+                unzipLabel.setMaxHeight(5);
+                label.setPrefWidth(60D);
+                label.setAlignment(Pos.CENTER_RIGHT);
+                hb.getChildren().addAll(unzipLabel, unzipBar, label);
+                taskList.getItems().add((hb));
                 MessageUtils.info("正在读取压缩文件，稍等即可");
-                pool.submit(()-> UIUpdateUtils.initUnzip(unzipBar, unzipLabel, zf.size()));
+                pool.submit(()-> UIUpdateUtils.initUnzip(hb, unzipBar, label, zf.size()));
             });
             pool.submit(new UnZipSubTask(zin, pool, location));
         }

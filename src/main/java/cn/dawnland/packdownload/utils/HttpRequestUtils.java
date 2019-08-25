@@ -1,59 +1,21 @@
 package cn.dawnland.packdownload.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class HttpRequestUtils {
 
     private String errorMessage; // 錯誤信息
-    /**
-     * HTTP請求字符串資源
-     *
-     * @param url
-     *      URL地址
-     * @return 字符串資源
-     * */
-    public String httpRequestString(String url) {
-        String result = null;
-        try {
-            HttpEntity httpEntity = httpRequest(url);
-            if (httpEntity != null) {
-                result = EntityUtils.toString(httpEntity, "urf-8"); // 使用UTF-8編碼
-            }
-        } catch (IOException e) {
-            errorMessage = e.getMessage();
-        }
-        return result;
-    }
-    /**
-     * HTTP請求字節數組資源
-     *
-     * @param url
-     *      URL地址
-     * @return 字節數組資源
-     * */
-    public byte[] httpRequestByteArray(String url) {
-        byte[] result = null;
-        try {
-            HttpEntity httpEntity = httpRequest(url);
-            if (httpEntity != null) {
-                result = EntityUtils.toByteArray(httpEntity);
-            }
-        } catch (IOException e) {
-            errorMessage = e.getMessage();
-        }
-        return result;
-    }
+
 
     public static InputStream getInputStream4Url(String url) throws IOException {
         url = HttpClientUtils.urlEncode(url);
@@ -64,18 +26,6 @@ public class HttpRequestUtils {
         return null;
     }
 
-    /**
-     * 获取文件大小
-     * @param url
-     * @return
-     */
-    public static long getSize4Url(String url){
-        HttpEntity httpEntity = new HttpRequestUtils().httpRequest(url);
-        if(httpEntity != null) {
-            return httpEntity.getContentLength();
-        }
-        return 0;
-    }
 
     /**
      * 使用GET方式請求
@@ -116,12 +66,5 @@ public class HttpRequestUtils {
         }
         return result;
     }
-    /**
-     * 返回錯誤消息
-     *
-     * @return 錯誤信息
-     * */
-    public String getErrorMessage() {
-        return this.errorMessage;
-    }
+
 }
