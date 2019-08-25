@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane fx:id="root" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadController">
+<AnchorPane fx:id="root" prefHeight="291.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadController">
    <children>
       <HBox fx:id="seartchHbox" layoutX="126.0" layoutY="14.0" prefHeight="23.0" prefWidth="200.0">
          <children>
@@ -15,15 +12,14 @@
             <Button fx:id="projectNameSearchButton" mnemonicParsing="false" onAction="#searchPack" text="搜索" />
          </children>
       </HBox>
-      <Label fx:id="downloadSpeed" layoutX="347.0" layoutY="270.0" prefHeight="15.0" prefWidth="89.0" />
+      <Label fx:id="downloadSpeed" layoutX="348.0" layoutY="236.0" prefHeight="15.0" prefWidth="89.0" />
       <HBox fx:id="projectHBox" layoutX="18.0" layoutY="200.0" prefHeight="23.0" prefWidth="414.0">
          <children>
             <Label prefHeight="23.0" prefWidth="110.0" text="Curse整合包链接：" />
             <TextField fx:id="projectUrlTextField" prefHeight="23.0" prefWidth="303.0" text="" />
          </children>
       </HBox>
-      <BorderPane fx:id="progressPane" layoutX="26.0" layoutY="94.0" prefHeight="97.0" prefWidth="400.0" />
-      <HBox layoutX="18.0" layoutY="233.0" prefHeight="23.0" prefWidth="414.0">
+      <HBox layoutX="14.0" layoutY="263.0" prefHeight="23.0" prefWidth="414.0">
          <children>
             <TextField fx:id="threadCount" prefHeight="23.0" prefWidth="104.0" promptText="线程数(10-50)" />
             <Label fx:id="resultLabel" alignment="CENTER" prefHeight="23.0" prefWidth="245.0" />
@@ -35,7 +31,8 @@
             <Image url="img/logo.jpg" />
          </image></ImageView>
       <Hyperlink fx:id="copyrightHyperlink" layoutX="4.0" layoutY="74.0" onAction="#openUrlByCopyright" text="\@Cap_Sub" />
-      <Button fx:id="selectDirButton" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" onAction="#selectedDir" text="选择安装目录(默认下载到启动器目录)" />
-      <CheckBox fx:id="divideVersionCheckBox" selected="true" layoutX="357.0" layoutY="18.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="71.0" text="版本隔离" />
+      <Button fx:id="selectDirButton" layoutX="14.0" layoutY="232.0" mnemonicParsing="false" onAction="#selectedDir" text="选择安装目录(默认下载到启动器目录)" />
+      <CheckBox fx:id="divideVersionCheckBox" layoutX="357.0" layoutY="18.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="71.0" selected="true" text="版本隔离" />
+      <VBox fx:id="taskListVbox" layoutX="77.0" layoutY="44.0" prefHeight="150.0" prefWidth="360.0" />
    </children>
 </AnchorPane>

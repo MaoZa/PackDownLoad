@@ -1,10 +1,18 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.utils.DownLoadUtils;
 import cn.dawnland.packdownload.utils.LogUtils;
+import cn.dawnland.packdownload.utils.OkHttpUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.jfoenix.controls.JFXProgressBar;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
-import cn.dawnland.packdownload.utils.DownLoadUtils;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+
+import java.io.File;
 
 /**
  * @author Cap_Sub
@@ -39,7 +47,57 @@ public class FilesDownLoadTask extends Task {
                 String fileId = jsonObject.get("fileID").toString();
                 url = url.replaceFirst("projectID", projectId);
                 url = url.replaceFirst("fileID", fileId);
-                DownLoadUtils.downLoadMod(url, projectId + "-" + fileId + ".jar" , MODS_PATH, null);
+                DownLoadUtils.downLoadMod(url, projectId + "-" + fileId + ".jar", MODS_PATH, new OkHttpUtils.OnDownloadListener() {
+
+                    final Label modsLabel = new Label();
+                    final JFXProgressBar modsBar = new JFXProgressBar();
+                    final Label lable = new Label();
+                    final HBox modsHb = new HBox();
+
+                    private boolean flag = false;
+
+                    @Override
+                    public void onDownloadSuccess(File file) {
+                        Platform.runLater(() -> {
+                            if(modsHb.getParent() != null){
+                                UIUpdateUtils.taskList.getItems().remove(modsHb);
+                            }
+                        });
+                        UIUpdateUtils.modsBarAddOne();
+                    }
+
+                    @Override
+                    public void onDownloading(int progress, String filename) {
+                        if(!flag){
+                            modsHb.setPrefWidth(350D);
+                            modsHb.setSpacing(10D);
+                            modsHb.setAlignment(Pos.CENTER);
+                            modsBar.setPrefWidth(70D);
+                            modsBar.setMaxHeight(5D);
+                            modsBar.setProgress(0);
+                            modsLabel.setText(filename);
+                            modsLabel.setPrefWidth(150D);
+                            modsLabel.setMaxHeight(5);
+                            modsLabel.setAlignment(Pos.CENTER_LEFT);
+                            lable.setPrefWidth(30D);
+                            lable.setAlignment(Pos.CENTER_RIGHT);
+                            Platform.runLater(() -> {
+                                modsHb.getChildren().addAll(modsLabel, modsBar, lable);
+                                DownLoadUtils.taskList.getItems().add(modsHb);
+                            });
+                            flag = true;
+                        }
+                        Platform.runLater(() -> {
+                            lable.setText(progress + "%");
+                            modsBar.setProgress(progress / 100D);
+                        });
+                    }
+
+                    @Override
+                    public void onDownloadFailed(Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                });
                 break;
             } catch (Exception e) {
                 LogUtils.error(e);

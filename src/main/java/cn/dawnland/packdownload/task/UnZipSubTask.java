@@ -1,7 +1,5 @@
 package cn.dawnland.packdownload.task;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import cn.dawnland.packdownload.utils.MessageUtils;
 
 import java.io.IOException;

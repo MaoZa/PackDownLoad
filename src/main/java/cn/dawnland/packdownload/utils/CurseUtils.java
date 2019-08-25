@@ -1,31 +1,26 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.model.Project;
+import com.alibaba.fastjson.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class CurseUtils {
 
     public static String baseUrl = "https://www.curseforge.com";
+    public static String serverurl = "http://localhost:8099";
 
-    public static Elements searchProjectByName(String name){
-        String searchUrl = baseUrl + "/minecraft/modpacks/" +
-                "search?search=";
-        searchUrl += name;
-        Document document = null;
-        try {
-            document = Jsoup.connect(searchUrl).get();
-        } catch (IOException e) {
-            MessageUtils.error(e);
-            e.printStackTrace();
-        }
-        Elements elementsByClass = document.getElementsByClass("flex items-end lg:hidden");
-        return elementsByClass;
+    public static Set<Project> searchProjectByName(String name) throws IOException {
+        String s = OkHttpUtils.get().get(serverurl + "/search?key=" + name);
+        HashSet<Project> projects = new HashSet<>(JSONArray.parseArray(s, Project.class));
+        return projects;
     }
 
     public static Document getDocumentByProjectUrl(String projectUrl){
@@ -46,8 +41,6 @@ public class CurseUtils {
                 .getElementsByTag("tbody")
                 .get(0).getElementsByTag("tr").get(0)
                 .getElementsByAttributeValue("data-action", "modpack-file-link").get(0);
-        String downloadUrl;
-        String packName;
         ConcurrentHashMap resulMap = new ConcurrentHashMap();
         if(element != null){
             resulMap.putIfAbsent("downloadUrl", baseUrl + element.attr("href").replace("files", "download") + "/file");

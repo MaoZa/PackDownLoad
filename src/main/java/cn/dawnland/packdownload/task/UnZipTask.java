@@ -1,11 +1,9 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import cn.dawnland.packdownload.utils.DownLoadUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
