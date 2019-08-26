@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.io.*;
@@ -35,20 +36,10 @@ public class DownLoadUtils {
     public static Label downloadSpeed;
     private static String rootPath;
     private static String packPath;
-    private static String baseDownloadServerUrl = "http://dps.mc.dawnland.cn:8001";
-    private static String downloadServerHelloUrl = baseDownloadServerUrl + "/hello";
-    private static String downloadServerUrl = "";
+    public static String baseDownloadServerUrl = "http://dps.mc.dawnland.cn:8001";
+    public static String downloadServerHelloUrl = baseDownloadServerUrl + "/hello";
+    public static String downloadServerUrl = "";
     static {
-        try {
-            String str = OkHttpUtils.get().get(downloadServerHelloUrl);
-            if(str.indexOf("Hello Dawnland!") >= 0){
-                downloadServerUrl = baseDownloadServerUrl + "/oss?url=";
-            }else {
-                downloadServerUrl = "";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         rootPath = DownLoadUtils.getRootPath();
     }
 

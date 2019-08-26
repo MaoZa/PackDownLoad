@@ -1,10 +1,7 @@
 package cn.dawnland.packdownload.launcher;
 
 import cn.dawnland.packdownload.configs.Config;
-import cn.dawnland.packdownload.utils.CommonUtils;
-import cn.dawnland.packdownload.utils.FxmlUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.Upgrader;
+import cn.dawnland.packdownload.utils.*;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +14,18 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        try {
+            String str = OkHttpUtils.get().get(DownLoadUtils.downloadServerHelloUrl);
+            if(str.indexOf("Hello Dawnland!") >= 0){
+                DownLoadUtils.downloadServerUrl = DownLoadUtils.baseDownloadServerUrl + "/oss?url=";
+            }else {
+                DownLoadUtils.downloadServerUrl = "";
+            }
+        } catch (IOException e) {
+            MessageUtils.info("无法连接缓存服务器, 将使用源链接下载");
+        }
+
         showPackDownLoad(primaryStage);
     }
 
