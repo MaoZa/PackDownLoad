@@ -35,9 +35,20 @@ public class DownLoadUtils {
     public static Label downloadSpeed;
     private static String rootPath;
     private static String packPath;
-    private static String downloadServerUrl = "http://localhost:8099/oss?url=";
-
+    private static String baseDownloadServerUrl = "http://dps.mc.dawnland.cn:8001";
+    private static String downloadServerHelloUrl = baseDownloadServerUrl + "/hello";
+    private static String downloadServerUrl = "";
     static {
+        try {
+            String str = OkHttpUtils.get().get(downloadServerHelloUrl);
+            if(str.indexOf("Hello Dawnland!") >= 0){
+                downloadServerUrl = baseDownloadServerUrl + "/oss?url=";
+            }else {
+                downloadServerUrl = "";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         rootPath = DownLoadUtils.getRootPath();
     }
 
@@ -176,7 +187,7 @@ public class DownLoadUtils {
      * @throws IOException
      */
     public static void  downLoadModFromUrl(String urlStr, String fileName, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
-        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
+        OkHttpUtils.get().download(downloadServerUrl + urlStr, savePath, onDownloadListener);
     }
 
     /**

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 public class CurseUtils {
 
     public static String baseUrl = "https://www.curseforge.com";
-    public static String serverurl = "http://localhost:8099";
+    public static String serverurl = "http://dps.mc.dawnland.cn:8001";
 
     public static Set<Project> searchProjectByName(String name) throws IOException {
         String s = OkHttpUtils.get().get(serverurl + "/search?key=" + name);

@@ -27,6 +27,7 @@ public class RetryIntercepter implements Interceptor {
         Response response = null;
         try{
             response = chain.proceed(request);
+            Thread.sleep(10000);
         }catch (Exception e){
             LogUtils.info(e.getMessage());
         }

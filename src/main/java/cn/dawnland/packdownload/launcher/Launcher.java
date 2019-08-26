@@ -1,17 +1,16 @@
 package cn.dawnland.packdownload.launcher;
 
 import cn.dawnland.packdownload.configs.Config;
+import cn.dawnland.packdownload.utils.CommonUtils;
+import cn.dawnland.packdownload.utils.FxmlUtils;
+import cn.dawnland.packdownload.utils.MessageUtils;
+import cn.dawnland.packdownload.utils.Upgrader;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import cn.dawnland.packdownload.utils.CommonUtils;
-import cn.dawnland.packdownload.utils.FxmlUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.Upgrader;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class Launcher extends Application {
@@ -56,10 +55,10 @@ public class Launcher extends Application {
 //            primaryStage.show();
 //        });
 
-        Parent root = FxmlUtils.LoadFxml("PackDownLoad.fxml");
+        Parent root = FxmlUtils.LoadFxml("PackDownLoadNew.fxml");
 //        ((AnchorPane)root).getChildren().add(opinionButton);
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 450, 300));
+        primaryStage.setScene(new Scene(root, 644, 300));
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> CommonUtils.appExit());
     }
