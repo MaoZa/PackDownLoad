@@ -35,7 +35,7 @@ public class DownLoadUtils {
     public static Label downloadSpeed;
     private static String rootPath;
     private static String packPath;
-    private static String downloadServerUrl = "http://localhost:8099/oss?url=";
+    public static String downloadServerUrl = "http://dps.dawnland.cn/oss?url=";
 
     static {
         rootPath = DownLoadUtils.getRootPath();
@@ -56,7 +56,7 @@ public class DownLoadUtils {
      * 下载文件到指定目录 不指定path则下载到rootPath下
      * @param url 下载链接
      */
-    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
+    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) {
         if(path == null || "".equals(path)){
             path = getPackPath();
         }
@@ -70,10 +70,9 @@ public class DownLoadUtils {
     /**
      * 下载整合包文件
      * @param url 下载链接
-     * @param fileName 保存文件的文件名
      * @param path 相对于.minecraft的路径(.minecraft = 根目录)
      */
-    public static boolean downLoadMod(String url, String fileName, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
+    public static boolean downLoadMod(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
         if(path == null || "".equals(path)){
             path = rootPath;
         }
@@ -81,7 +80,7 @@ public class DownLoadUtils {
         if (!file.exists()) {
             file.mkdirs();
         }
-        DownLoadUtils.downLoadModFromUrl(url, fileName, path, onDownloadListener);
+        DownLoadUtils.downLoadModFromUrl(url, path, onDownloadListener);
         return true;
     }
 
@@ -171,11 +170,10 @@ public class DownLoadUtils {
     /**
      * 从网络Url中下载文件
      * @param urlStr
-     * @param fileName
      * @param savePath
      * @throws IOException
      */
-    public static void  downLoadModFromUrl(String urlStr, String fileName, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
+    public static void  downLoadModFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
         OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
     }
 
@@ -203,7 +201,7 @@ public class DownLoadUtils {
      * @param savePath
      * @throws IOException
      */
-    public static String downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
+    public static String downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
         OkHttpUtils.get().download(downloadServerUrl + urlStr, savePath, onDownloadListener);
         return null;
     }
@@ -212,147 +210,142 @@ public class DownLoadUtils {
         MessageUtils.info("正在安装核心...");
         String s = OkHttpUtils.get().get(downloadServerUrl + MojangUtils.getJsonUrl(mcVersion));
         JSONObject jsonObject = JSONObject.parseObject(s);
-        String jarName = "";
-        try {
-            MessageUtils.info("正在下载Forge...");
-            DownLoadUtils.downLoadFromUrl(downloadServerUrl + installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+        MessageUtils.info("正在下载Forge...");
+        DownLoadUtils.downLoadFromUrl(downloadServerUrl + installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
 
-                final Label modsLabel = new Label();
-                final JFXProgressBar modsBar = new JFXProgressBar();
-                final Label lable = new Label();
-                final HBox modsHb = new HBox();
+            final Label modsLabel = new Label();
+            final JFXProgressBar modsBar = new JFXProgressBar();
+            final Label lable = new Label();
+            final HBox modsHb = new HBox();
 
-                private boolean flag = false;
+            private boolean flag = false;
 
-                @Override
-                public void onDownloadSuccess(File file) throws IOException {
+            @Override
+            public void onDownloadSuccess(File file) throws IOException {
 
-                    Platform.runLater(() -> {
-                        if(modsHb.getParent() != null){
-                            UIUpdateUtils.taskList.getItems().remove(modsHb);
-                        }
-                    });
-
-                    String filename = file.getName();
-                    MessageUtils.info("正在安装Forge...");
-                    File universal = ZipUtils.getZipEntryFile(file.getPath(), filename.replaceFirst("installer", "universal"));
-                    File versionJsonFile = ZipUtils.getZipEntryFile(universal.getPath(), "version.json");
-                    String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
-                    JSONObject versionObject = JSONObject.parseObject(versionJson);
-                    JSONArray libraries = (JSONArray) versionObject.get("libraries");
-                    libraries.addAll((JSONArray)jsonObject.get("libraries"));
-                    jsonObject.put("libraries", libraries);
-                    jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
-                    jsonObject.put("mainClass", versionObject.get("mainClass"));
-                    DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
-
-                        final Label modsLabel = new Label();
-                        final JFXProgressBar modsBar = new JFXProgressBar();
-                        final Label lable = new Label();
-                        final HBox modsHb = new HBox();
-
-                        private boolean flag = false;
-
-                        @Override
-                        public void onDownloadSuccess(File file) {
-                            Platform.runLater(() -> {
-                                if(modsHb.getParent() != null){
-                                    UIUpdateUtils.taskList.getItems().remove(modsHb);
-                                }
-                            });
-                            String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
-                            File f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
-                            if(!f.isDirectory()) {
-                                File tempF = new File(f.getPath().substring(0, f.getPath().lastIndexOf("\\")));
-                                tempF.mkdirs();
-                                f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
-                            }
-                            FileOutputStream fio = null;
-                            try {
-                                fio = new FileOutputStream(f);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                            PrintStream ps = new PrintStream(fio);
-                            ps.print(jsonObject.toJSONString());
-                            ps.close();
-                            try {
-                                fio.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            MessageUtils.info("安装完成");
-                        }
-
-                        @Override
-                        public void onDownloading(int progress, String filename) {
-                            if(!flag){
-                                modsHb.setPrefWidth(350D);
-                                modsHb.setSpacing(10D);
-                                modsHb.setAlignment(Pos.CENTER);
-                                modsBar.setPrefWidth(70D);
-                                modsBar.setMaxHeight(5D);
-                                modsBar.setProgress(0);
-                                modsLabel.setText(filename);
-                                modsLabel.setPrefWidth(150D);
-                                modsLabel.setMaxHeight(5);
-                                modsLabel.setAlignment(Pos.CENTER_LEFT);
-                                lable.setPrefWidth(30D);
-                                lable.setAlignment(Pos.CENTER_RIGHT);
-                                Platform.runLater(() -> {
-                                    modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                                    DownLoadUtils.taskList.getItems().add(modsHb);
-                                });
-                                flag = true;
-                            }
-                            Platform.runLater(() -> {
-                                lable.setText(progress + "%");
-                                modsBar.setProgress(progress / 100D);
-                            });
-                        }
-
-                        @Override
-                        public void onDownloadFailed(Exception e) {
-                            System.out.println(e.getMessage());
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloading(int progress, String filename) {
-                    if(!flag){
-                        modsHb.setPrefWidth(350D);
-                        modsHb.setSpacing(10D);
-                        modsHb.setAlignment(Pos.CENTER);
-                        modsBar.setPrefWidth(70D);
-                        modsBar.setMaxHeight(5D);
-                        modsBar.setProgress(0);
-                        modsLabel.setText(filename);
-                        modsLabel.setPrefWidth(150D);
-                        modsLabel.setMaxHeight(5);
-                        modsLabel.setAlignment(Pos.CENTER_LEFT);
-                        lable.setPrefWidth(30D);
-                        lable.setAlignment(Pos.CENTER_RIGHT);
-                        Platform.runLater(() -> {
-                            modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                            DownLoadUtils.taskList.getItems().add(modsHb);
-                        });
-                        flag = true;
+                Platform.runLater(() -> {
+                    if(modsHb.getParent() != null){
+                        UIUpdateUtils.taskList.getItems().remove(modsHb);
                     }
+                });
+
+                String filename = file.getName();
+                MessageUtils.info("正在安装Forge...");
+                File universal = ZipUtils.getZipEntryFile(file.getPath(), filename.replaceFirst("installer", "universal"));
+                File versionJsonFile = ZipUtils.getZipEntryFile(universal.getPath(), "version.json");
+                String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
+                JSONObject versionObject = JSONObject.parseObject(versionJson);
+                JSONArray libraries = (JSONArray) versionObject.get("libraries");
+                libraries.addAll((JSONArray)jsonObject.get("libraries"));
+                jsonObject.put("libraries", libraries);
+                jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
+                jsonObject.put("mainClass", versionObject.get("mainClass"));
+                DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+
+                    final Label modsLabel = new Label();
+                    final JFXProgressBar modsBar = new JFXProgressBar();
+                    final Label lable = new Label();
+                    final HBox modsHb = new HBox();
+
+                    private boolean flag = false;
+
+                    @Override
+                    public void onDownloadSuccess(File file) {
+                        Platform.runLater(() -> {
+                            if(modsHb.getParent() != null){
+                                UIUpdateUtils.taskList.getItems().remove(modsHb);
+                            }
+                        });
+                        String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
+                        File f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+                        if(!f.isDirectory()) {
+                            File tempF = new File(f.getPath().substring(0, f.getPath().lastIndexOf("\\")));
+                            tempF.mkdirs();
+                            f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+                        }
+                        FileOutputStream fio = null;
+                        try {
+                            fio = new FileOutputStream(f);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        PrintStream ps = new PrintStream(fio);
+                        ps.print(jsonObject.toJSONString());
+                        ps.close();
+                        try {
+                            fio.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        MessageUtils.info("安装完成");
+                    }
+
+                    @Override
+                    public void onDownloading(int progress, String filename) {
+                        if(!flag){
+                            modsHb.setPrefWidth(350D);
+                            modsHb.setSpacing(10D);
+                            modsHb.setAlignment(Pos.CENTER);
+                            modsBar.setPrefWidth(70D);
+                            modsBar.setMaxHeight(5D);
+                            modsBar.setProgress(0);
+                            modsLabel.setText(filename);
+                            modsLabel.setPrefWidth(150D);
+                            modsLabel.setMaxHeight(5);
+                            modsLabel.setAlignment(Pos.CENTER_LEFT);
+                            lable.setPrefWidth(30D);
+                            lable.setAlignment(Pos.CENTER_RIGHT);
+                            Platform.runLater(() -> {
+                                modsHb.getChildren().addAll(modsLabel, modsBar, lable);
+                                DownLoadUtils.taskList.getItems().add(modsHb);
+                            });
+                            flag = true;
+                        }
+                        Platform.runLater(() -> {
+                            lable.setText(progress + "%");
+                            modsBar.setProgress(progress / 100D);
+                        });
+                    }
+
+                    @Override
+                    public void onDownloadFailed(Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onDownloading(int progress, String filename) {
+                if(!flag){
+                    modsHb.setPrefWidth(350D);
+                    modsHb.setSpacing(10D);
+                    modsHb.setAlignment(Pos.CENTER);
+                    modsBar.setPrefWidth(70D);
+                    modsBar.setMaxHeight(5D);
+                    modsBar.setProgress(0);
+                    modsLabel.setText(filename);
+                    modsLabel.setPrefWidth(150D);
+                    modsLabel.setMaxHeight(5);
+                    modsLabel.setAlignment(Pos.CENTER_LEFT);
+                    lable.setPrefWidth(30D);
+                    lable.setAlignment(Pos.CENTER_RIGHT);
                     Platform.runLater(() -> {
-                        lable.setText(progress + "%");
-                        modsBar.setProgress(progress / 100D);
+                        modsHb.getChildren().addAll(modsLabel, modsBar, lable);
+                        DownLoadUtils.taskList.getItems().add(modsHb);
                     });
+                    flag = true;
                 }
+                Platform.runLater(() -> {
+                    lable.setText(progress + "%");
+                    modsBar.setProgress(progress / 100D);
+                });
+            }
 
-                @Override
-                public void onDownloadFailed(Exception e) {
+            @Override
+            public void onDownloadFailed(Exception e) {
 
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            }
+        });
     }
 
     public static void isOpenLanauch(Label resultLabel){

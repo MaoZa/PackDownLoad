@@ -42,57 +42,53 @@ public class ModPackZipDownLoadTask implements Runnable {
             projectUrl = projectUrl + "/files";
         }
         ConcurrentHashMap<String, String> resultMap = CurseUtils.getProjectNameAndDownloadUrl(projectUrl);
-        try {
-            MessageUtils.downloadSpeedStart();
-            DownLoadUtils.downLoadFile(resultMap.get("downloadUrl"), null, new OkHttpUtils.OnDownloadListener() {
+        MessageUtils.downloadSpeedStart();
+        DownLoadUtils.downLoadFile(resultMap.get("downloadUrl"), null, new OkHttpUtils.OnDownloadListener() {
 
-                final Label modsLabel = new Label();
-                final JFXProgressBar modsBar = new JFXProgressBar();
-                final Label lable = new Label();
-                final HBox modsHb = new HBox();
+            final Label modsLabel = new Label();
+            final JFXProgressBar modsBar = new JFXProgressBar();
+            final Label lable = new Label();
+            final HBox modsHb = new HBox();
 
-                private boolean flag = false;
+            private boolean flag = false;
 
-                @Override
-                public void onDownloadSuccess(File file) throws IOException {
-                    PackDownLoadNewController.setDisplay();
-                    MessageUtils.info("下载整合包Zip成功 正在解析...");
-                    pool.submit(new JsonJXTask(file.getPath(), taskList, pool));
-                    UIUpdateUtils.taskList.getItems().remove(modsHb);
-                }
-                @Override
-                public void onDownloading(int progress, String filename) {
-                    if(!flag){
-                        modsHb.setPrefWidth(350D);
-                        modsHb.setSpacing(10D);
-                        modsHb.setAlignment(Pos.CENTER);
-                        modsBar.setPrefWidth(70D);
-                        modsBar.setMaxHeight(5D);
-                        modsBar.setProgress(0);
-                        modsLabel.setText(filename);
-                        modsLabel.setPrefWidth(150D);
-                        modsLabel.setMaxHeight(5);
-                        lable.setAlignment(Pos.CENTER_RIGHT);
-                        lable.setPrefWidth(30D);
-                        lable.setAlignment(Pos.CENTER_LEFT);
-                        Platform.runLater(() -> {
-                            modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                            DownLoadUtils.taskList.getItems().add(modsHb);
-                        });
-                        flag = true;
-                    }
+            @Override
+            public void onDownloadSuccess(File file) throws IOException {
+                PackDownLoadNewController.setDisplay();
+                MessageUtils.info("下载整合包Zip成功 正在解析...");
+                pool.submit(new JsonJXTask(file.getPath(), taskList, pool));
+                UIUpdateUtils.taskList.getItems().remove(modsHb);
+            }
+            @Override
+            public void onDownloading(int progress, String filename) {
+                if(!flag){
+                    modsHb.setPrefWidth(350D);
+                    modsHb.setSpacing(10D);
+                    modsHb.setAlignment(Pos.CENTER);
+                    modsBar.setPrefWidth(70D);
+                    modsBar.setMaxHeight(5D);
+                    modsBar.setProgress(0);
+                    modsLabel.setText(filename);
+                    modsLabel.setPrefWidth(150D);
+                    modsLabel.setMaxHeight(5);
+                    lable.setAlignment(Pos.CENTER_RIGHT);
+                    lable.setPrefWidth(30D);
+                    lable.setAlignment(Pos.CENTER_LEFT);
                     Platform.runLater(() -> {
-                        lable.setText(progress + "%");
-                        modsBar.setProgress(progress / 100D);
+                        modsHb.getChildren().addAll(modsLabel, modsBar, lable);
+                        DownLoadUtils.taskList.getItems().add(modsHb);
                     });
+                    flag = true;
                 }
-                @Override
-                public void onDownloadFailed(Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (IOException e) {
-            MessageUtils.error(e);
-        }
+                Platform.runLater(() -> {
+                    lable.setText(progress + "%");
+                    modsBar.setProgress(progress / 100D);
+                });
+            }
+            @Override
+            public void onDownloadFailed(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

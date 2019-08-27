@@ -47,7 +47,7 @@ public class FilesDownLoadTask extends Task {
                 String fileId = jsonObject.get("fileID").toString();
                 url = url.replaceFirst("projectID", projectId);
                 url = url.replaceFirst("fileID", fileId);
-                DownLoadUtils.downLoadMod(url, projectId + "-" + fileId + ".jar", MODS_PATH, new OkHttpUtils.OnDownloadListener() {
+                DownLoadUtils.downLoadMod(url, MODS_PATH, new OkHttpUtils.OnDownloadListener() {
 
                     final Label modsLabel = new Label();
                     final JFXProgressBar modsBar = new JFXProgressBar();

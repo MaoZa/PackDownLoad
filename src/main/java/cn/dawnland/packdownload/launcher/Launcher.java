@@ -1,23 +1,23 @@
 package cn.dawnland.packdownload.launcher;
 
 import cn.dawnland.packdownload.configs.Config;
+import cn.dawnland.packdownload.utils.*;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import cn.dawnland.packdownload.utils.CommonUtils;
-import cn.dawnland.packdownload.utils.FxmlUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.Upgrader;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        String s = OkHttpUtils.get().get("http://dps.dawnland.cn/hello");
+        if(s.indexOf("Hello Dawnland!") >= 0){
+            DownLoadUtils.downloadServerUrl = "http://dps.dawnland.cn/oss?url=";
+        }
         showPackDownLoad(primaryStage);
     }
 
