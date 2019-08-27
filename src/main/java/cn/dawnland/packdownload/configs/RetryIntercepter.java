@@ -1,7 +1,6 @@
 package cn.dawnland.packdownload.configs;
 
 import cn.dawnland.packdownload.utils.LogUtils;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,6 +26,7 @@ public class RetryIntercepter implements Interceptor {
         Response response = null;
         try{
             response = chain.proceed(request);
+            Thread.sleep(10000);
         }catch (Exception e){
             LogUtils.info(e.getMessage());
         }

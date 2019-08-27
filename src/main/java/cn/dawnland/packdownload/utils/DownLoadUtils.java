@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.io.*;
@@ -35,7 +37,10 @@ public class DownLoadUtils {
     public static Label downloadSpeed;
     private static String rootPath;
     private static String packPath;
-    public static String downloadServerUrl = "http://dps.dawnland.cn/oss?url=";
+
+    public static String baseDownloadServerUrl = "http://dps.mc.dawnland.cn:8001";
+    public static String downloadServerHelloUrl = baseDownloadServerUrl + "/hello";
+    public static String downloadServerUrl = "";
 
     static {
         rootPath = DownLoadUtils.getRootPath();
@@ -56,7 +61,7 @@ public class DownLoadUtils {
      * 下载文件到指定目录 不指定path则下载到rootPath下
      * @param url 下载链接
      */
-    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) {
+    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
         if(path == null || "".equals(path)){
             path = getPackPath();
         }

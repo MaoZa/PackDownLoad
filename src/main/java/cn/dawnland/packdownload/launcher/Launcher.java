@@ -56,10 +56,10 @@ public class Launcher extends Application {
 //            primaryStage.show();
 //        });
 
-        Parent root = FxmlUtils.LoadFxml("PackDownLoad.fxml");
+        Parent root = FxmlUtils.LoadFxml("PackDownLoadNew.fxml");
 //        ((AnchorPane)root).getChildren().add(opinionButton);
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 450, 300));
+        primaryStage.setScene(new Scene(root, 644, 300));
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> CommonUtils.appExit());
     }
