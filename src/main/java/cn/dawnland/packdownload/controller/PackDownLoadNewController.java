@@ -1,15 +1,15 @@
 package cn.dawnland.packdownload.controller;
 
+import cn.dawnland.packdownload.configs.Config;
+import cn.dawnland.packdownload.configs.NettyConfig;
 import cn.dawnland.packdownload.model.Project;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
-import cn.dawnland.packdownload.utils.CurseUtils;
-import cn.dawnland.packdownload.utils.DownLoadUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.UIUpdateUtils;
+import cn.dawnland.packdownload.utils.*;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import io.netty.bootstrap.Bootstrap;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,17 +38,15 @@ public class PackDownLoadNewController implements Initializable {
     @FXML private JFXButton downloadButton;
     @FXML private JFXTextField threadCount;
     @FXML private JFXTextField projectUrlTextField;
-    //    @FXML private Hyperlink copyrightHyperlink;
-//    @FXML private Button opinionButton;
     @FXML private JFXButton selectDirButton;
     @FXML private JFXTextField searchText;
     @FXML private JFXButton searchButton;
-    //    @FXML private Button projectNameSearchButton;
     @FXML private HBox searchHbox;
     @FXML private CheckBox divideVersionCheckBox;
     @FXML private JFXListView<HBox> taskList;
     private static JFXTextField projectUrlTextFieldStatic;
     private static HBox seartchHboxStatic;
+    public Bootstrap bootstrap = new NettyConfig().bootstrap();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,6 +69,15 @@ public class PackDownLoadNewController implements Initializable {
     }
 
     public void searchPack() throws IOException {
+        String s = null;
+        try {
+            s = OkHttpUtils.get().get(DownLoadUtils.downloadServerHelloUrl);
+        } catch (IOException e) {
+            DownLoadUtils.downloadServerUrl = "";
+        }
+        if(s.indexOf("Hello Dawnland!") >= 0){
+            DownLoadUtils.downloadServerUrl = Config.dpsServer + "/oss?url=";
+        }
         String searchStr = searchText.getText();
         Set<Project> projects = CurseUtils.searchProjectByName(searchStr);
         if(projects.size() < 1){

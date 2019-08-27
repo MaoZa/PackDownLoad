@@ -48,8 +48,8 @@ public class OkHttpUtils{
      * @param listener     下载监听
      */
 
-    public void download(final String url, final String saveFilePath, final OnDownloadListener listener) {
-
+    public void download(String url, final String saveFilePath, final OnDownloadListener listener) {
+        url = DownLoadUtils.downloadServerUrl + url;
         Request request = new Request.Builder().url(url).build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {

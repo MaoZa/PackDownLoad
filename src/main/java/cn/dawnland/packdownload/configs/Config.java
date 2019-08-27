@@ -21,6 +21,7 @@ public class Config {
     public static String string2download;
     public static String mcjarStr = "该整合包核心要求如下: \n游戏版本: *mcVersion*\nforge版本: *forgeVersion*\n请在下载完成后使用启动器安装核心";
     public static Properties properties;
+    public static String dpsServer = "http://dps.dawnland.cn";
 
     public static boolean init(){
         try{

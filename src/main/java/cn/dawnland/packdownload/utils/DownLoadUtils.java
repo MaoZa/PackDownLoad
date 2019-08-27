@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.configs.Config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
@@ -34,12 +35,10 @@ public class DownLoadUtils {
         return str==null?null:FilePattern.matcher(str).replaceAll("");
     }
 
-    public static Label downloadSpeed;
     private static String rootPath;
     private static String packPath;
 
-    public static String baseDownloadServerUrl = "http://dps.mc.dawnland.cn:8001";
-    public static String downloadServerHelloUrl = baseDownloadServerUrl + "/hello";
+    public static String downloadServerHelloUrl = Config.dpsServer + "/hello";
     public static String downloadServerUrl = "";
 
     static {
@@ -61,7 +60,7 @@ public class DownLoadUtils {
      * 下载文件到指定目录 不指定path则下载到rootPath下
      * @param url 下载链接
      */
-    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
+    public static String downLoadFile(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) {
         if(path == null || "".equals(path)){
             path = getPackPath();
         }
@@ -77,7 +76,7 @@ public class DownLoadUtils {
      * @param url 下载链接
      * @param path 相对于.minecraft的路径(.minecraft = 根目录)
      */
-    public static boolean downLoadMod(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) throws IOException {
+    public static boolean downLoadMod(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) {
         if(path == null || "".equals(path)){
             path = rootPath;
         }
@@ -207,16 +206,16 @@ public class DownLoadUtils {
      * @throws IOException
      */
     public static String downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
-        OkHttpUtils.get().download(downloadServerUrl + urlStr, savePath, onDownloadListener);
+        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
         return null;
     }
 
     public static void downloadVersionJson(String mcVersion, String forgeVersion, String installUrl) throws IOException {
         MessageUtils.info("正在安装核心...");
-        String s = OkHttpUtils.get().get(downloadServerUrl + MojangUtils.getJsonUrl(mcVersion));
+        String s = OkHttpUtils.get().get(MojangUtils.getJsonUrl(mcVersion));
         JSONObject jsonObject = JSONObject.parseObject(s);
         MessageUtils.info("正在下载Forge...");
-        DownLoadUtils.downLoadFromUrl(downloadServerUrl + installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+        DownLoadUtils.downLoadFromUrl(installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
 
             final Label modsLabel = new Label();
             final JFXProgressBar modsBar = new JFXProgressBar();
