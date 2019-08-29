@@ -1,5 +1,7 @@
-package cn.dawnland.packdownload.configs;
+package cn.dawnland.packdownload.netty.config;
 
+import cn.dawnland.packdownload.netty.coder.PacketDecoder;
+import cn.dawnland.packdownload.netty.coder.PacketEncoder;
 import cn.dawnland.packdownload.netty.handler.ClientHandler;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import io.netty.bootstrap.Bootstrap;
@@ -29,14 +31,14 @@ public class NettyConfig {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast("decoder", new StringDecoder());
+                            pipeline.addLast("decoder", new PacketDecoder());
                             pipeline.addLast("handler", new ClientHandler());
-                            pipeline.addLast("encoder", new StringEncoder());
+                            pipeline.addLast("encoder", new PacketEncoder());
                         }
                     });
             b.connect(host, tcpPort);
         }catch (Exception e){
-            MessageUtils.info("服务器连接失败, 当前无法使用加速下载");
+            MessageUtils.info("服务器连接失败, 当前只可使用普通加速下载");
         }
         return b;
     }

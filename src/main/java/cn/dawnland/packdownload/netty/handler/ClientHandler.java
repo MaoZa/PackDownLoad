@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.netty.handler;
 
+import cn.dawnland.packdownload.netty.packet.request.DownloadRequestPacket;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -13,7 +14,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx){
-        ctx.channel().writeAndFlush("我连上来拉!");
+        ctx.channel().writeAndFlush(new DownloadRequestPacket("https://www.curseforge.com/minecraft/modpacks/agrarian-skies-2/download/2736974/file"));
     }
 
     @Override

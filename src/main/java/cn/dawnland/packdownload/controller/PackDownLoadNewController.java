@@ -1,8 +1,8 @@
 package cn.dawnland.packdownload.controller;
 
 import cn.dawnland.packdownload.configs.Config;
-import cn.dawnland.packdownload.configs.NettyConfig;
 import cn.dawnland.packdownload.model.Project;
+import cn.dawnland.packdownload.netty.config.NettyConfig;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
 import cn.dawnland.packdownload.utils.*;
 import com.jfoenix.controls.JFXButton;
