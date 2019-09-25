@@ -1,6 +1,7 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.model.Project;
+import cn.dawnland.packdownload.netty.config.NettyConfig;
 import com.alibaba.fastjson.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
 public class CurseUtils {
 
     public static String baseUrl = "https://www.curseforge.com";
-    public static String serverurl = "http://dps.mc.dawnland.cn:8001";
+    public static String serverurl = "http://" + NettyConfig.host;
 
     public static Set<Project> searchProjectByName(String name) throws IOException {
         String s = OkHttpUtils.get().get(serverurl + "/search?key=" + name);

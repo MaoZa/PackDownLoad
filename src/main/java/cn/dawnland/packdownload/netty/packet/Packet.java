@@ -13,6 +13,8 @@ public abstract class Packet {
      */
     private Byte version = 1;
 
+    private Byte command;
+
     /**
      * 指令
      */

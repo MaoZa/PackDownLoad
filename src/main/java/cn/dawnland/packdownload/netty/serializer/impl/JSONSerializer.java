@@ -1,8 +1,7 @@
 package cn.dawnland.packdownload.netty.serializer.impl;
 
 import cn.dawnland.packdownload.netty.serializer.Serializer;
-import cn.dawnland.packdownloadserver.netty.serializer.Serializer;
-import cn.dawnland.packdownloadserver.netty.serializer.SerializerAlgorithm;
+import cn.dawnland.packdownload.netty.serializer.SerializerAlgorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,8 +25,8 @@ public class JSONSerializer implements Serializer {
             return objectMapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class JSONSerializer implements Serializer {
             return objectMapper.readValue(bytes, clazz);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 }

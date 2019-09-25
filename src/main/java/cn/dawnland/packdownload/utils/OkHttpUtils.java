@@ -49,7 +49,6 @@ public class OkHttpUtils{
      */
 
     public void download(String url, final String saveFilePath, final OnDownloadListener listener) {
-        url = DownLoadUtils.downloadServerUrl + url;
         Request request = new Request.Builder().url(url).build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {

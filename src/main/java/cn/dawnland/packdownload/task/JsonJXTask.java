@@ -1,5 +1,7 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.netty.config.NettyConfig;
+import cn.dawnland.packdownload.netty.packet.request.DownloadRequestPacket;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
@@ -84,12 +86,24 @@ public class JsonJXTask implements Runnable {
             });
             while (iterator.hasNext()){
                 JSONObject object = iterator.next();
-                pool.submit(new FilesDownLoadTask(object));
+                request(object);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+
+    private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
+
+    private String baseUrl = "https://www.curseforge.com/minecraft/mc-mods/%s/download/%s/file";
+
+    public void request(JSONObject jsonObject){
+        String projectId = jsonObject.get("projectID").toString();
+        String fileId = jsonObject.get("fileID").toString();
+        String url = String.format(baseUrl, projectId, fileId);
+        NettyConfig.request(new DownloadRequestPacket(url, MODS_PATH));
     }
 
 }

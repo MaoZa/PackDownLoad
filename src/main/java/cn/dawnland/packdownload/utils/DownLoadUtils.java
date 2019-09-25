@@ -9,8 +9,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.io.*;
@@ -32,7 +30,7 @@ public class DownLoadUtils {
 
     private static Pattern FilePattern = Pattern.compile("[\\\\/:*?\"<>|]");
     public static String filenameFilter(String str) {
-        return str==null?null:FilePattern.matcher(str).replaceAll("");
+        return str == null ? null : FilePattern.matcher(str).replaceAll("");
     }
 
     private static String rootPath;

@@ -7,21 +7,18 @@ import java.io.File;
 
 public class ModDownLoadTask extends BaseTask<String> {
 
-    private String projectId;
-    private String fileId;
-    private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
-    private final String BASE_DOWNLOAD_URL = "https://www.curseforge.com/minecraft/mc-mods/%s/download/%s/file";
+    private final String url;
+    private final String path;
 
-    public ModDownLoadTask(Callback<String> callback, String projectId, String fileId) {
+    public ModDownLoadTask(Callback<String> callback, String url, String path) {
         super(callback);
-        this.projectId = projectId;
-        this.fileId = fileId;
+        this.url = url;
+        this.path = path;
     }
 
     @Override
-    void subTask() throws Exception {
-        String url = String.format(BASE_DOWNLOAD_URL, projectId, fileId);
-        DownLoadUtils.downLoadMod(url, MODS_PATH, new OkHttpUtils.OnDownloadListener() {
+    void subTask() {
+        DownLoadUtils.downLoadMod(url, path, new OkHttpUtils.OnDownloadListener() {
             @Override
             public void onDownloadSuccess(File file) {
                 callback.successCallback(file.getName());
