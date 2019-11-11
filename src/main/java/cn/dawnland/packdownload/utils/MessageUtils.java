@@ -57,10 +57,10 @@ public class MessageUtils {
             while (true) {
                 int size = sizeAI.get();
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                     int speed = sizeAI.get() - size;
                     if(speed > 0 && downloadSpeed != null){
-                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 2) + "/s");
+                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed) + "/s");
                         sizeAI.set(0);
                     }else if(downloadSpeed != null){
                         UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");

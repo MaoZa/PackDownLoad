@@ -45,6 +45,7 @@ public class JsonJXTask implements Runnable {
             if (jsonPath == null) {
                 jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
             }
+            MessageUtils.downloadSpeedStart();
             String fileJson = FileUtils.readJsonData(jsonPath);
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
