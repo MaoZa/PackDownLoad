@@ -106,7 +106,7 @@ public class JsonJXTask implements Runnable {
         String fileId = jsonObject.get("fileID").toString();
         String url = String.format(baseUrl, projectId, fileId);
         CurseModInfo curseModInfo = JSONObject.parseObject(doGet(new URL(url)), CurseModInfo.class);
-        Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getDisplayName());
+        Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getFileName());
         if(Files.exists(path)){
             File file = new File(path.toString());
             if(file.length() == curseModInfo.getFileLength()){

@@ -57,10 +57,10 @@ public class MessageUtils {
             while (true) {
                 int size = sizeAI.get();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                     int speed = sizeAI.get() - size;
                     if(speed > 0 && downloadSpeed != null){
-                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed) + "/s");
+                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 0.5) + "/s");
                         sizeAI.set(0);
                     }else if(downloadSpeed != null){
                         UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
@@ -72,7 +72,7 @@ public class MessageUtils {
         });
     }
 
-    public static String readableFileSize(long size) {
+    public static String readableFileSize(double size) {
         if (size <= 0) { return "0"; }
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
