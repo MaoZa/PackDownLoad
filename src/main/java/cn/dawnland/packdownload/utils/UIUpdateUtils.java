@@ -83,25 +83,11 @@ public class UIUpdateUtils {
     }
 
     public static void modsBarAddOne(){
-//        String[] split = modsLabel.getText().split("/");
-//        split[0] = (Integer.valueOf(split[0]) + 1) + "";
-//        UIUpdateUtils.updateLable(modsLabel, split[0] + "/" + split[1]);
-//        UIUpdateUtils.updateProgress(modsBar, modsCount);
         modsPoint.addAndGet(1);
     }
 
     public static void unzipBarAddOne(){
-//        String[] split = unzipLabel.getText().split("/");
-//        split[0] = (Integer.valueOf(split[0]) + 1) + "";
-//        UIUpdateUtils.updateLable(unzipLabel, split[0] + "/" + split[1]);
-//        UIUpdateUtils.updateProgress(unzipBar, unzipCount);
         unzipPoint.addAndGet(1);
-    }
-
-    public static void textAreaAppend(TextArea logText, String appendStr) {
-        Platform.runLater(() -> {
-            logText.setText(encode(appendStr));
-        });
     }
 
     public static String encode(String souStr){
@@ -124,12 +110,6 @@ public class UIUpdateUtils {
 
     public static synchronized void updateLable(Label label, String values){
         Platform.runLater(() -> label.setText(values));
-    }
-
-    public static VBox taskListVbox;
-    public static ConcurrentMap taskMap = new ConcurrentHashMap();
-    public static void updateTaskList(){
-
     }
 
 }

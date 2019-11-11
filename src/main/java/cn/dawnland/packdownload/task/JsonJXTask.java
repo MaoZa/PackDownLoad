@@ -53,8 +53,6 @@ public class JsonJXTask implements Runnable {
             ForgeUtils.downloadForge(mcVersion, forgeVersion);
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
-            //下载路径格式https://minecraft.curseforge.com/projects/319466/files/2706079/download
-            //                                                     项目id        文件id
             Iterator<JSONObject> iterator = files.iterator();
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
@@ -98,7 +96,6 @@ public class JsonJXTask implements Runnable {
 
     }
 
-
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
 
     private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
@@ -113,6 +110,7 @@ public class JsonJXTask implements Runnable {
             File file = new File(path.toString());
             if(file.length() == curseModInfo.getFileLength()){
                 UIUpdateUtils.modsBarAddOne();
+                LogUtils.info(file.getName() + "已下载{跳过}");
                 return;
             }
         }

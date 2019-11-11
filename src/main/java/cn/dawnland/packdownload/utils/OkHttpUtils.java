@@ -1,6 +1,5 @@
 package cn.dawnland.packdownload.utils;
 
-import cn.dawnland.packdownload.configs.OkHttpDns;
 import cn.dawnland.packdownload.configs.RetryIntercepter;
 import okhttp3.*;
 
@@ -34,9 +33,9 @@ public class OkHttpUtils{
     public OkHttpUtils() {
         okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.MINUTES) //读取超时
-                .writeTimeout(30, TimeUnit.SECONDS) //写超时
-                .addInterceptor(new RetryIntercepter(10)).dns(new OkHttpDns()).build();
+                .readTimeout(30, TimeUnit.MINUTES)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(new RetryIntercepter(10)).build();
         okHttpClient.dispatcher().setMaxRequests(1000);
         okHttpClient.dispatcher().setMaxRequests(1000);
     }

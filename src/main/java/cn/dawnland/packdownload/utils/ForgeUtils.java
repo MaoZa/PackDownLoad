@@ -1,10 +1,8 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.model.ForgeVersion;
-import com.alibaba.fastjson.JSONArray;
 import javafx.application.Platform;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,10 +37,6 @@ public class ForgeUtils {
                 }
             }
         });
-    }
-
-    public static JSONArray getLibs(File jarFile){
-        return null;
     }
 
 }
