@@ -9,8 +9,11 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.IOException;
 
 public class Launcher extends Application {
@@ -21,6 +24,7 @@ public class Launcher extends Application {
     }
 
     public void showPackDownLoad(Stage primaryStage) throws IOException {
+        primaryStage.getIcons().add(new Image("/img/logo.jpg"));
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setWidth(50D);
         alert.setHeight(10D);

@@ -34,7 +34,7 @@ public class OkHttpUtils{
     public OkHttpUtils() {
         okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.MINUTES) //读取超时
+                .readTimeout(30, TimeUnit.MINUTES) //读取超时
                 .writeTimeout(30, TimeUnit.SECONDS) //写超时
                 .addInterceptor(new RetryIntercepter(10)).dns(new OkHttpDns()).build();
         okHttpClient.dispatcher().setMaxRequests(1000);

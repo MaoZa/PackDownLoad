@@ -1,7 +1,6 @@
 package cn.dawnland.packdownload.task;
 
-import cn.dawnland.packdownload.netty.config.NettyConfig;
-import cn.dawnland.packdownload.netty.packet.request.DownloadRequestPacket;
+import cn.dawnland.packdownload.model.CurseModInfo;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
@@ -11,8 +10,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +101,68 @@ public class JsonJXTask implements Runnable {
 
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
 
-    private String baseUrl = "https://www.curseforge.com/minecraft/mc-mods/%s/download/%s/file";
+    private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
 
-    public void request(JSONObject jsonObject){
+    public void request(JSONObject jsonObject) throws IOException {
         String projectId = jsonObject.get("projectID").toString();
         String fileId = jsonObject.get("fileID").toString();
         String url = String.format(baseUrl, projectId, fileId);
-        NettyConfig.request(new DownloadRequestPacket(url, MODS_PATH));
+        CurseModInfo curseModInfo = JSONObject.parseObject(doGet(new URL(url)), CurseModInfo.class);
+        Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getDisplayName());
+        if(Files.exists(path)){
+            File file = new File(path.toString());
+            if(file.length() == curseModInfo.getFileLength()){
+                UIUpdateUtils.modsBarAddOne();
+                return;
+            }
+        }
+        pool.submit(new ModDownLoadTask(new Callback<String>() {
+            @Override
+            public String progressCallback(int progress, Object temp) {
+                return null;
+            }
+
+            @Override
+            public String successCallback(String result) {
+                return null;
+            }
+
+            @Override
+            public String exceptionCallback(Exception e) {
+                return null;
+            }
+        }, curseModInfo, MODS_PATH));
     }
 
+    private String doGet(URL url) throws IOException {
+        return readFullyAsString(createConnection(url).getInputStream());
+    }
+    private String readFullyAsString(InputStream stream) throws IOException {
+        return readFully(stream).toString();
+    }
+    private HttpURLConnection createConnection(URL url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setUseCaches(false);
+        connection.setConnectTimeout(15000);
+        connection.setReadTimeout(15000);
+        return connection;
+    }
+    private ByteArrayOutputStream readFully(InputStream stream) throws IOException {
+        try (InputStream is = stream) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            copyTo(is, result);
+            return result;
+        }
+    }
+    private final int DEFAULT_BUFFER_SIZE = 8 * 1024;
+    private void copyTo(InputStream src, OutputStream dest) throws IOException {
+        copyTo(src, dest, new byte[DEFAULT_BUFFER_SIZE]);
+    }
+    private static void copyTo(InputStream src, OutputStream dest, byte[] buf) throws IOException {
+        while (true) {
+            int len = src.read(buf);
+            if (len == -1){ break; }
+            dest.write(buf, 0, len);
+        }
+    }
 }

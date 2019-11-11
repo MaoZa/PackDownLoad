@@ -21,74 +21,19 @@ public class ModPackZipDownLoadTask implements Runnable {
 
     private ExecutorService pool;
 
-    private String baseUrl = "https://www.curseforge.com";
-    private String projectUrl;
-    private String fileUrl;
-
     private String zipFilePath;
     private JFXListView taskList;
 
-    public ModPackZipDownLoadTask(String baseUrl, String projectUrl, JFXListView taskList,
-                                  ExecutorService pool) {
-        this.baseUrl = baseUrl == null ? this.baseUrl : baseUrl;
-        this.projectUrl = projectUrl;
+    public ModPackZipDownLoadTask(String zipFilePath, JFXListView taskList, ExecutorService pool) {
+        this.zipFilePath = zipFilePath;
         this.taskList = taskList;
         this.pool = pool;
     }
 
     @Override
     public void run() {
-        if(projectUrl.indexOf("/files") == -1){
-            projectUrl = projectUrl + "/files";
-        }
-        ConcurrentHashMap<String, String> resultMap = CurseUtils.getProjectNameAndDownloadUrl(projectUrl);
-        MessageUtils.downloadSpeedStart();
-        DownLoadUtils.downLoadFile(resultMap.get("downloadUrl"), null, new OkHttpUtils.OnDownloadListener() {
-
-            final Label modsLabel = new Label();
-            final JFXProgressBar modsBar = new JFXProgressBar();
-            final Label lable = new Label();
-            final HBox modsHb = new HBox();
-
-            private boolean flag = false;
-
-            @Override
-            public void onDownloadSuccess(File file) throws IOException {
-                PackDownLoadNewController.setDisplay();
-                MessageUtils.info("下载整合包Zip成功 正在解析...");
-                pool.submit(new JsonJXTask(file.getPath(), taskList, pool));
-                UIUpdateUtils.taskList.getItems().remove(modsHb);
-            }
-            @Override
-            public void onDownloading(int progress, String filename) {
-                if(!flag){
-                    modsHb.setPrefWidth(350D);
-                    modsHb.setSpacing(10D);
-                    modsHb.setAlignment(Pos.CENTER);
-                    modsBar.setPrefWidth(70D);
-                    modsBar.setMaxHeight(5D);
-                    modsBar.setProgress(0);
-                    modsLabel.setText(filename);
-                    modsLabel.setPrefWidth(150D);
-                    modsLabel.setMaxHeight(5);
-                    lable.setAlignment(Pos.CENTER_RIGHT);
-                    lable.setPrefWidth(30D);
-                    lable.setAlignment(Pos.CENTER_LEFT);
-                    Platform.runLater(() -> {
-                        modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                        DownLoadUtils.taskList.getItems().add(modsHb);
-                    });
-                    flag = true;
-                }
-                Platform.runLater(() -> {
-                    lable.setText(progress + "%");
-                    modsBar.setProgress(progress / 100D);
-                });
-            }
-            @Override
-            public void onDownloadFailed(Exception e) {
-                e.printStackTrace();
-            }
-        });
+        PackDownLoadNewController.setDisplay();
+        MessageUtils.info("正在解析整合包ZIP...");
+        pool.submit(new JsonJXTask(zipFilePath, taskList, pool));
     }
 }

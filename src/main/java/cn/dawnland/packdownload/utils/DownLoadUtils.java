@@ -1,6 +1,5 @@
 package cn.dawnland.packdownload.utils;
 
-import cn.dawnland.packdownload.configs.Config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
@@ -36,8 +35,8 @@ public class DownLoadUtils {
     private static String rootPath;
     private static String packPath;
 
-    public static String downloadServerHelloUrl = Config.dpsServer + "/hello";
-    public static String downloadServerUrl = "";
+//    public static String downloadServerHelloUrl = Config.dpsServer + "/hello";
+//    public static String downloadServerUrl = "";
 
     static {
         rootPath = DownLoadUtils.getRootPath();

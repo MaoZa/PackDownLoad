@@ -1,27 +1,37 @@
-package cn.dawnland.packdownload.utils;
-
-import cn.dawnland.packdownload.model.Project;
-import cn.dawnland.packdownload.netty.config.NettyConfig;
-import com.alibaba.fastjson.JSONArray;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+/*
+//package cn.dawnland.packdownload.utils;
+//
+//import cn.dawnland.packdownload.model.Project;
+//import cn.dawnland.packdownload.netty.config.NettyConfig;
+//import org.jsoup.Connection;
+//import org.jsoup.Jsoup;
+//import org.jsoup.nodes.Document;
+//import org.jsoup.nodes.Element;
+//
+//import java.io.*;
+//import java.util.Set;
+//import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentMap;
 
 public class CurseUtils {
 
-    public static String baseUrl = "https://www.curseforge.com";
-    public static String serverurl = "http://" + NettyConfig.host;
-
+//    public static Set<Project> searchProjectByName(String name) throws IOException {
+//        String s = OkHttpUtils.get().get(serverurl + "/search?key=" + name);
+//        HashSet<Project> projects = new HashSet<>(JSONArray.parseArray(s, Project.class));
+//        return projects;
+//    }
     public static Set<Project> searchProjectByName(String name) throws IOException {
-        String s = OkHttpUtils.get().get(serverurl + "/search?key=" + name);
-        HashSet<Project> projects = new HashSet<>(JSONArray.parseArray(s, Project.class));
-        return projects;
+//        HashSet<Project> projects = new HashSet<>(JSONArray.parseArray(s, Project.class));
+//        Connection connect = Jsoup.connect(baseUrl + "/minecraft/modpacks/search?search=" + name);
+        Connection connect = Jsoup.connect("https://www.curseforge.com/minecraft/modpacks/skyfactory-4/download/2767759/file");
+        connect.header("X-Api-Token", "58127124-e7c5-4e29-b49b-5156e08fd0a1");
+        Document document1 = connect.get();
+
+        return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        searchProjectByName("sky");
     }
 
     public static Document getDocumentByProjectUrl(String projectUrl){
@@ -62,7 +72,9 @@ public class CurseUtils {
             e.printStackTrace();
         }
         PrintStream ps = new PrintStream(fio);
-        /** 循环处理下载失败的mod */
+        */
+/** 循环处理下载失败的mod *//*
+
         ps.println("以下mod请尝试手动下载至目录:" + DownLoadUtils.getPackPath() + "/mods");
         String text = "MODID:{MODID}\tURL:{URL}";
         downloadFialdModS.forEach((p,f) ->{
@@ -83,3 +95,4 @@ public class CurseUtils {
     }
 
 }
+*/
