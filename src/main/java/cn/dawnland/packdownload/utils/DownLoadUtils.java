@@ -117,13 +117,11 @@ public class DownLoadUtils {
 
             @Override
             public void onDownloadSuccess(File file) throws IOException {
-
                 Platform.runLater(() -> {
                     if(modsHb.getParent() != null){
                         UIUpdateUtils.taskList.getItems().remove(modsHb);
                     }
                 });
-
                 String filename = file.getName();
                 MessageUtils.info("正在安装Forge...");
                 File universal = ZipUtils.getZipEntryFile(file.getPath(), filename.replaceFirst("installer", "universal"));
@@ -136,14 +134,11 @@ public class DownLoadUtils {
                 jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
                 jsonObject.put("mainClass", versionObject.get("mainClass"));
                 DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
-
                     final Label modsLabel = new Label();
                     final JFXProgressBar modsBar = new JFXProgressBar();
                     final Label lable = new Label();
                     final HBox modsHb = new HBox();
-
                     private boolean flag = false;
-
                     @Override
                     public void onDownloadSuccess(File file) {
                         Platform.runLater(() -> {
@@ -174,7 +169,6 @@ public class DownLoadUtils {
                         }
                         MessageUtils.info("安装完成");
                     }
-
                     @Override
                     public void onDownloading(int progress, String filename) {
                         if(!flag){
@@ -201,14 +195,12 @@ public class DownLoadUtils {
                             modsBar.setProgress(progress / 100D);
                         });
                     }
-
                     @Override
                     public void onDownloadFailed(Exception e) {
                         System.out.println(e.getMessage());
                     }
                 });
             }
-
             @Override
             public void onDownloading(int progress, String filename) {
                 if(!flag){
@@ -238,7 +230,6 @@ public class DownLoadUtils {
 
             @Override
             public void onDownloadFailed(Exception e) {
-
             }
         });
     }

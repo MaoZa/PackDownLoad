@@ -34,16 +34,16 @@ public class LogUtils {
         ps.append(LocalDateTime.now() + ": " + msg);
     }
 
-    public static void info(String msg){
+    public static void info(String msg) {
         File file = new File(DownLoadUtils.getRootPath() + "/info.txt");
-        FileOutputStream fos = null;
+        PrintStream ps = null;
         try {
-            fos = new FileOutputStream(file);
+            ps = new PrintStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        PrintStream ps = new PrintStream(fos);
         ps.append(LocalDateTime.now() + ": " + msg);
+        System.out.println(LocalDateTime.now() + ": " + msg);
     }
 
 }
