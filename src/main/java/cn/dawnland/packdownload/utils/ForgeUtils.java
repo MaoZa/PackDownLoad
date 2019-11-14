@@ -1,9 +1,8 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.model.ForgeVersion;
-import com.alibaba.fastjson.JSONArray;
+import javafx.application.Platform;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +23,10 @@ public class ForgeUtils {
                     }
                     MessageUtils.setStatus();
                     if(DownLoadUtils.downloadFaildModS.size() > 0){
-                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+//                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+                        Platform.runLater(() -> {
+                            LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
+                        });
                     }
                     break;
                 }
@@ -35,10 +37,6 @@ public class ForgeUtils {
                 }
             }
         });
-    }
-
-    public static JSONArray getLibs(File jarFile){
-        return null;
     }
 
 }

@@ -29,7 +29,6 @@ public class UnZipSubTask implements Runnable {
     public void run() {
         try {
             while ((ze = zin.getNextEntry()) != null) {
-
                 List<Integer> cs = new ArrayList<>();
                 try {
                     for (int c = zin.read(); c != -1; c = zin.read()) {

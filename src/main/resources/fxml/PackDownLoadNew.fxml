@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.paint.*?>
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="244.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadNewController">
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="244.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadNewController">
    <children>
       <JFXListView fx:id="taskList" layoutX="244.0" prefHeight="300.0" prefWidth="400.0" style="-fx-border-color: #87CEFA;" />
       <JFXButton fx:id="downloadButton" layoutX="172.0" layoutY="270.0" onAction="#startPackDownLoad" prefHeight="25.0" prefWidth="64.0" style="-fx-background-color: #87CEFA;" text="开始下载" />
@@ -31,19 +36,10 @@
          </unFocusColor>
       </JFXTextField>
       <JFXButton fx:id="selectDirButton" layoutX="12.0" layoutY="237.0" onAction="#selectedDir" prefHeight="25.0" prefWidth="224.0" style="-fx-background-color: #87CEFA;" text="下载目录(默认下载至运行目录)" />
-      <HBox fx:id="searchHbox" layoutX="12.0" layoutY="5.0" prefHeight="25.0" prefWidth="224.0">
+      <HBox fx:id="targetHbox" disable="false" layoutX="12.0" layoutY="5.0" prefHeight="25.0" prefWidth="224.0">
          <children>
-            <JFXTextField fx:id="searchText" prefHeight="25.0" prefWidth="174.0" style="-fx-border-color: #87CEFA;">
-               <unFocusColor>
-                  <LinearGradient endX="1.0" endY="0.6428571428571428">
-                     <stops>
-                        <Stop color="#c2ccff" />
-                        <Stop color="WHITE" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </unFocusColor>
-            </JFXTextField>
-            <JFXButton fx:id="searchButton" onAction="#searchPack" prefHeight="25.0" prefWidth="40.0" style="-fx-background-color: #87CEFA;" text="搜索" translateX="11.0" />
+            <JFXButton fx:id="selectZipDirButton" onAction="#selectedZipDir" prefHeight="25.0" prefWidth="224.0" style="-fx-background-color: #87CEFA;" text="选择整合包ZIP" />
+<!--            <JFXButton fx:id="installButton" onAction="#installPack" prefHeight="25.0" prefWidth="40.0" style="-fx-background-color: #87CEFA;" text="安装" translateX="11.0" />-->
          </children>
       </HBox>
       <JFXCheckBox fx:id="divideVersionCheckBox" layoutX="162.0" layoutY="41.0" style="-fx-background-color: #00000000;" text="版本隔离" textFill="LIGHTSKYBLUE" unCheckedColor="LIGHTSKYBLUE" />
