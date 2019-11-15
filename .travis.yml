@@ -1,7 +1,14 @@
 language: java
-
 jdk: oraclejdk8
-
 dist: trusty
-
 script: mvn clean package
+deploy:
+  provider: releases
+  api_key:
+    secure: b172bb5c72ea204a570545a71bee3e5af82323bf
+  file:
+    - ./target/Curse整合包下载器.exe
+    - ./target/PackDownLoad.jar
+  skip_cleanup: true
+  on:
+    tags: true
