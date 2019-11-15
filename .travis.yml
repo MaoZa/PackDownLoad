@@ -7,8 +7,8 @@ deploy:
   api_key:
     secure: 60784c76619f046f721cbd70d40d4b540a787913
   file:
-    - /home/travis/build/MaoZa/PackDownLoad/target/Curse整合包下载器.exe
-    - /home/travis/build/MaoZa/PackDownLoad/target/PackDownLoad.jar
+    - ./target/Curse整合包下载器.exe
+    - ./PackDownLoad/target/PackDownLoad.jar
   skip_cleanup: true
   on:
     tags: true
