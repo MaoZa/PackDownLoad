@@ -2,9 +2,6 @@ language: java
 
 jdk: oraclejdk8
 
-script: mvn clean package
+dist: trusty
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+script: mvn clean package
