@@ -4,8 +4,7 @@ dist: trusty
 script: mvn package
 deploy:
   provider: releases
-  api_key:
-    secure: 60784c76619f046f721cbd70d40d4b540a787913
+  api_key: 60784c76619f046f721cbd70d40d4b540a787913
   file:
     - ./target/Curse整合包下载器.exe
     - ./target/PackDownLoad.jar
