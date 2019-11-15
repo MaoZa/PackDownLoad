@@ -5,10 +5,10 @@ script: mvn clean package
 deploy:
   provider: releases
   api_key:
-    secure: b172bb5c72ea204a570545a71bee3e5af82323bf
+    secure: 60784c76619f046f721cbd70d40d4b540a787913
   file:
-    - ./target/Curse整合包下载器.exe
-    - ./target/PackDownLoad.jar
+    - /home/travis/build/MaoZa/PackDownLoad/target/Curse整合包下载器.exe
+    - /home/travis/build/MaoZa/PackDownLoad/target/PackDownLoad.jar
   skip_cleanup: true
   on:
     tags: true
