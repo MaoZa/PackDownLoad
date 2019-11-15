@@ -18,10 +18,7 @@ public class UnZipTask implements Runnable{
 
     private String location;
     private ZipEntry ze;
-    private ProgressBar progressBar;
     private List<Integer> cs;
-    private Double proSize;
-    private Label proLabel;
 
     private FileOutputStream fos;
 

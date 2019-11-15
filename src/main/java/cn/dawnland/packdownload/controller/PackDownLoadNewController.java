@@ -1,18 +1,13 @@
 package cn.dawnland.packdownload.controller;
 
-import cn.dawnland.packdownload.configs.Config;
-import cn.dawnland.packdownload.model.Project;
-import cn.dawnland.packdownload.netty.config.NettyConfig;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
-import cn.dawnland.packdownload.utils.*;
+import cn.dawnland.packdownload.utils.DownLoadUtils;
+import cn.dawnland.packdownload.utils.MessageUtils;
+import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
-import io.netty.bootstrap.Bootstrap;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -20,15 +15,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class PackDownLoadNewController implements Initializable {
 
@@ -39,14 +34,14 @@ public class PackDownLoadNewController implements Initializable {
     @FXML private JFXTextField threadCount;
     @FXML private JFXTextField projectUrlTextField;
     @FXML private JFXButton selectDirButton;
-    @FXML private JFXTextField searchText;
-    @FXML private JFXButton searchButton;
-    @FXML private HBox searchHbox;
     @FXML private CheckBox divideVersionCheckBox;
     @FXML private JFXListView<HBox> taskList;
+    @FXML private JFXButton selectZipDirButton;
+    @FXML private JFXButton installButton;
+    @FXML private HBox targetHbox;
+    private static File zipFile;
     private static JFXTextField projectUrlTextFieldStatic;
-    private static HBox seartchHboxStatic;
-    public Bootstrap bootstrap = new NettyConfig().bootstrap();
+    private static HBox targetHboxStatic;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -68,46 +63,21 @@ public class PackDownLoadNewController implements Initializable {
         }
     }
 
-    public void searchPack() throws IOException {
-        String s = null;
-        try {
-            s = OkHttpUtils.get().get(DownLoadUtils.downloadServerHelloUrl);
-        } catch (IOException e) {
-            DownLoadUtils.downloadServerUrl = "";
+    public void selectedZipDir(){
+        Stage stage = (Stage) resultLabel.getParent().getScene().getWindow();
+        if(stage != null){
+            final HBox modsHb = new HBox();
+            FileChooser fc = new FileChooser();
+            zipFile = fc.showOpenDialog(stage);
+            selectZipDirButton.setText(zipFile.getName());
         }
-        if(s.indexOf("Hello Dawnland!") >= 0){
-            DownLoadUtils.downloadServerUrl = Config.dpsServer + "/oss?url=";
-        }
-        String searchStr = searchText.getText();
-        Set<Project> projects = CurseUtils.searchProjectByName(searchStr);
-        if(projects.size() < 1){
-            MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
-            return;
-        }
-        ObservableList obs = FXCollections.observableArrayList();
-        projects.forEach(p -> obs.add(p.getName()+ " - " + p.getUrl()));
-        JFXComboBox comboBox = new JFXComboBox<>();
-        comboBox.setPromptText("请选择一个整合包.....");
-        searchHbox.getChildren().removeAll(searchText, searchButton);
-        comboBox.setPrefWidth(searchHbox.getWidth());
-        comboBox.setItems(obs);
-        comboBox.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldValue, newValue)
-                        -> projectUrlTextField.setText(comboBox.getValue().toString().split(" - ")[1]));
-        searchHbox.getChildren().add(comboBox);
     }
 
     public void startPackDownLoad(){
         UIUpdateUtils.startButton = downloadButton;
         projectUrlTextFieldStatic = projectUrlTextField;
-        seartchHboxStatic = searchHbox;
+        targetHboxStatic = targetHbox;
         Integer threadCount = 10;
-        String projectUrl = projectUrlTextField.getText();
-        if (projectUrlTextField.getText() == null && "".equals(projectUrlTextField.getText())) {
-            MessageUtils.info("请输入整合包链接");
-            return;
-        }
         if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
                 threadCount = Integer.valueOf(this.threadCount.getText());
@@ -116,17 +86,11 @@ public class PackDownLoadNewController implements Initializable {
                 return;
             }
         }
-        if(!projectUrlTextField.getText().startsWith("http://www.curseforge.com/minecraft/modpacks") && !projectUrlTextField.getText().startsWith("https://www.curseforge.com/minecraft/modpacks")){
-            MessageUtils.error("整合包链接错误", "请输入正确的整合包链接");
-            return;
-        }
-        String title = CurseUtils.getDocumentByProjectUrl(projectUrl).getElementsByClass("font-bold text-lg break-all").text();
-        title = title.split(" - ")[0];
         if(divideVersionCheckBox.isSelected()){
-            DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + DownLoadUtils.filenameFilter(title));
+            DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]);
         }
-        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
-        pool.submit(new ModPackZipDownLoadTask(null, projectUrl, taskList, pool));
+        ExecutorService pool = newFixedThreadPool(threadCount);
+        pool.submit(new ModPackZipDownLoadTask(zipFile.getPath(), taskList, pool));
         Platform.runLater(() -> {
             root.setMaxWidth(root.getMaxWidth() + 400D);
             root.setMinWidth(root.getMaxWidth());
@@ -140,8 +104,8 @@ public class PackDownLoadNewController implements Initializable {
     }
 
     public static void setDisplay(){
-        if(seartchHboxStatic != null && projectUrlTextFieldStatic != null){
-            seartchHboxStatic.setDisable(true);
+        if(targetHboxStatic != null && projectUrlTextFieldStatic != null){
+            targetHboxStatic.setDisable(true);
             projectUrlTextFieldStatic.setDisable(true);
         }
     }

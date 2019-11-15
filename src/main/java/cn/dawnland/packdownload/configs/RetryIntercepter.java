@@ -22,7 +22,6 @@ public class RetryIntercepter implements Interceptor {
     @Override
     public Response intercept(Chain chain){
         Request request = chain.request();
-        System.out.println("retryNum=" + retryNum);
         Response response = null;
         try{
             response = chain.proceed(request);

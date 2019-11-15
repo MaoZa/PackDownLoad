@@ -1,10 +1,12 @@
 package cn.dawnland.packdownload.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class LogUtils {
 
@@ -29,19 +31,19 @@ public class LogUtils {
             e.printStackTrace();
         }
         PrintStream ps = new PrintStream(fos);
-        ps.append(new Date() + ": " + msg);
+        ps.append(LocalDateTime.now() + ": " + msg);
     }
 
-    public static void info(String msg){
+    public static void info(String msg) {
         File file = new File(DownLoadUtils.getRootPath() + "/info.txt");
-        FileOutputStream fos = null;
+        PrintStream ps = null;
         try {
-            fos = new FileOutputStream(file);
+            ps = new PrintStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        PrintStream ps = new PrintStream(fos);
-        ps.append(new Date() + ": " + msg);
+        ps.append(LocalDateTime.now() + ": " + msg);
+        System.out.println(LocalDateTime.now() + ": " + msg);
     }
 
 }
