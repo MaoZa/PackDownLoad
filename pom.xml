@@ -57,6 +57,7 @@
     </dependencies>
 
     <build>
+        <directory>${project.basedir}/build</directory>
         <finalName>PackDownLoad</finalName>
         <plugins>
             <plugin>
