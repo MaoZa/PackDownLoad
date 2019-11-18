@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author Cap_Sub
+ * Mojang相关工具
+ */
 public class MojangUtils {
 
     private static ConcurrentHashMap<String, Version> mojangVersions;

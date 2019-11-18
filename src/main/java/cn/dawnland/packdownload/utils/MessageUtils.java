@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Cap_Sub
+ * 信息提示相关工具
  * @version 创建时间：2019/05/30 14:42
  */
 public class MessageUtils {
