@@ -18,6 +18,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * @author Cap_Sub
+ * ZIP相关工具 只针对该程序
  */
 public class ZipUtils {
 

@@ -25,6 +25,9 @@ import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
+/**
+ * @author Cap_Sub
+ */
 public class PackDownLoadNewController implements Initializable {
 
     @FXML private AnchorPane root;

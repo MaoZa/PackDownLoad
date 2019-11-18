@@ -1,5 +1,9 @@
 package cn.dawnland.packdownload.utils;
 
+/**
+ * @author Cap_Sub
+ * 公共工具
+ */
 public class CommonUtils {
 
     /**

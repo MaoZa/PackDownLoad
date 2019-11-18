@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * @author Cap_Sub
+ * Forge相关工具
+ */
 public class ForgeUtils {
 
     private static ExecutorService pool = Executors.newFixedThreadPool(5);

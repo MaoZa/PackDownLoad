@@ -1,13 +1,15 @@
 package cn.dawnland.packdownload.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 
+/**
+ * @author Cap_Sub
+ * 日志工具
+ */
 public class LogUtils {
 
     public static void error(Exception e){

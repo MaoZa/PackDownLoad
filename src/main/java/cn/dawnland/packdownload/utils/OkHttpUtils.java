@@ -12,10 +12,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by wanglingsheng on 2018/5/29.
+ * @author Cap_Sub
  * 文件下载工具类（单例模式）
  */
-
 public class OkHttpUtils{
 
     private static OkHttpUtils downloadUtil;
@@ -40,13 +39,11 @@ public class OkHttpUtils{
         okHttpClient.dispatcher().setMaxRequests(1000);
     }
 
-
     /**
      * @param url          下载连接
      * @param saveFilePath 文件储存完整路径+文件名
      * @param listener     下载监听
      */
-
     public void download(String url, final String saveFilePath, final OnDownloadListener listener) {
         Request request = new Request.Builder().url(url).build();
 

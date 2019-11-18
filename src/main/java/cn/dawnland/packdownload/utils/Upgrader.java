@@ -1,9 +1,10 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.configs.Config;
+import com.alibaba.fastjson.JSONObject;
+
+import javax.swing.*;
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -11,12 +12,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSONObject;
-import cn.dawnland.packdownload.configs.Config;
-
-import javax.swing.*;
-
-import static java.util.regex.Pattern.*;
+import static java.util.regex.Pattern.compile;
 
 /**
  * @author Cap_Sub
@@ -223,54 +219,22 @@ public class Upgrader {
      * @throws IOException
      */
     public static void downLoadFromUrl(String urlStr, String fileName, String savePath) {
-        try {
-            // 得到输入流
-            InputStream inputStream = HttpRequestUtils.getInputStream4Url(urlStr);
-            // 获取自己数组
-            byte[] getData = readInputStream(inputStream);
-
-            savePath = DownLoadUtils.getRootPath() + "/" + savePath;
-
-            // 文件保存位置
-            File saveDir = new File(savePath);
-            if (!saveDir.exists()) {
-                saveDir.mkdir();
-            }
-            File file = new File(saveDir + File.separator + fileName);
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(getData);
-            if (fos != null) {
-                fos.close();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
-
-            System.out.println("info:" + urlStr + " download success");
-        } catch (Exception e) {
-            MessageUtils.error(e);
-            System.exit(0);
+        if(savePath.trim() == null || "".equals(savePath.trim())){
+            savePath = DownLoadUtils.getRootPath();
         }
+        OkHttpUtils.get().download(urlStr, savePath, new OkHttpUtils.OnDownloadListener() {
+            @Override
+            public void onDownloadSuccess(File file) throws IOException {
+                MessageUtils.info(file.getName() + ":下载成功");
+            }
+            @Override
+            public void onDownloading(int progress, String filename) { }
+            @Override
+            public void onDownloadFailed(Exception e) {
+                MessageUtils.error(fileName + ":下载失败{}" + e.getMessage(), "文件下载失败");
+            }
+        });
 
-    }
-
-
-    /**
-     * 从输入流中获取字节数组
-     *
-     * @param inputStream
-     * @return
-     * @throws IOException
-     */
-    public static byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[128];
-        int len;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        while ((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
-        }
-        bos.close();
-        return bos.toByteArray();
     }
 }
 
