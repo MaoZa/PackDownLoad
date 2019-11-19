@@ -1,7 +1,13 @@
 language: java
-
-jdk:
-  - openjdk8
-  
-script:
-  - mvn clean package
+jdk: oraclejdk8
+dist: trusty
+script: mvn package
+deploy:
+  provider: releases
+  token: 60784c76619f046f721cbd70d40d4b540a787913
+  file:
+    - ./target/Curse整合包下载器.exe
+    - ./target/PackDownLoad.jar
+  skip_cleanup: true
+  on:
+    tags: true
