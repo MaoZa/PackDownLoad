@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ public class Upgrader {
     public static float newVersion;
     /** 下载完成与否 */
     public static boolean downloaded = false;
+    public static AtomicInteger tag = new AtomicInteger(0);
     /**下载出错与否 */
     public static boolean errored = false;
     /** 新版本更新信息 */
@@ -110,17 +112,29 @@ public class Upgrader {
                 }
             }
         }).run();
-
         JOptionPane.showMessageDialog(null, versionShowStr, "发现新版本 " + Upgrader.newVersion, 1);
     }
 
     /**
-     * 静默下载最新版本
+     * 下载最新版本
      */
     public static void dowload() {
-        downLoadFromUrl(Config.exeUrl, "dowloadtmp", "tmp");
-        downLoadFromUrl(Config.batUrl, "update.bat", "");
-        downloaded = true;
+        downLoadFromUrl(Config.batUrl, "update.bat", "", new OkHttpUtils.OnDownloadListener() {
+                    @Override
+                    public void onDownloadSuccess(File file) {
+                        downLoadFromUrl(Config.exeUrl, "dowloadtmp", DownLoadUtils.getRootPath() + File.separator + "tmp", new OkHttpUtils.OnDownloadListener() {
+                            @Override
+                            public void onDownloadSuccess(File file) {
+                                JOptionPane.showConfirmDialog(null, "点击确定重启软件", "下载成功", JOptionPane.PLAIN_MESSAGE);
+                                restart();
+                            }
+                            @Override
+                            public void onDownloadFailed(Exception e) {
+                                MessageUtils.error("自动更新失败，请检查网络后重试。仍无法更新请联系作者", "更新失败");
+                            }
+                        });
+                    }
+        });
     }
 
     /**
@@ -165,7 +179,11 @@ public class Upgrader {
             MessageUtils.error(e);
             System.exit(0);
         }
-        restart();
+        while(true){
+            if(tag.get() == 2){
+                restart();
+            }
+        }
     }
 
     /**
@@ -218,23 +236,11 @@ public class Upgrader {
      * @param savePath
      * @throws IOException
      */
-    public static void downLoadFromUrl(String urlStr, String fileName, String savePath) {
+    public static void downLoadFromUrl(String urlStr, String fileName, String savePath, OkHttpUtils.OnDownloadListener listener) {
         if(savePath.trim() == null || "".equals(savePath.trim())){
             savePath = DownLoadUtils.getRootPath();
         }
-        OkHttpUtils.get().download(urlStr, savePath, new OkHttpUtils.OnDownloadListener() {
-            @Override
-            public void onDownloadSuccess(File file) throws IOException {
-                MessageUtils.info(file.getName() + ":下载成功");
-            }
-            @Override
-            public void onDownloading(int progress, String filename) { }
-            @Override
-            public void onDownloadFailed(Exception e) {
-                MessageUtils.error(fileName + ":下载失败{}" + e.getMessage(), "文件下载失败");
-            }
-        });
-
+        OkHttpUtils.get().download(urlStr, savePath, listener);
     }
 }
 

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +32,9 @@ public class OkHttpUtils{
 
     public OkHttpUtils() {
         okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.MINUTES)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(3, TimeUnit.SECONDS)
                 .addInterceptor(new RetryIntercepter(10)).build();
         okHttpClient.dispatcher().setMaxRequests(1000);
         okHttpClient.dispatcher().setMaxRequests(1000);
@@ -67,7 +68,7 @@ public class OkHttpUtils{
                 FileOutputStream fos = null;
 
                 //储存下载文件
-                File file = new File(saveFilePath + File.separator + filename);
+                File file = Paths.get(saveFilePath + File.separator + filename).toFile();
                 if(file.exists() && file.length() == response.body().contentLength()){
                     listener.onDownloadSuccess(file);
                     return;
@@ -112,22 +113,19 @@ public class OkHttpUtils{
         });
     }
 
-    public interface OnDownloadListener{
+    public abstract static class OnDownloadListener{
 
-        /**
-         * 下载成功之后的文件
-         */
-        void onDownloadSuccess(File file) throws IOException;
+        public abstract void onDownloadSuccess(File file);
 
         /**
          * 下载进度
          */
-        void onDownloading(int progress, String  filename);
+        public void onDownloading(int progress, String  filename){}
 
         /**
          * 下载异常信息
          */
-        void onDownloadFailed(Exception e);
+        public void onDownloadFailed(Exception e){}
     }
 
     public String get(final String url) throws IOException {
