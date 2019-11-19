@@ -114,16 +114,19 @@ public class DownLoadUtils {
             private boolean flag = false;
 
             @Override
-            public void onDownloadSuccess(File file) throws IOException {
+            public void onDownloadSuccess(File file){
                 Platform.runLater(() -> {
                     if(modsHb.getParent() != null){
                         UIUpdateUtils.taskList.getItems().remove(modsHb);
                     }
                 });
-                String filename = file.getName();
                 MessageUtils.info("正在安装Forge...");
-                File universal = ZipUtils.getZipEntryFile(file.getPath(), filename.replaceFirst("installer", "universal"));
-                File versionJsonFile = ZipUtils.getZipEntryFile(universal.getPath(), "version.json");
+                File versionJsonFile = null;
+                try {
+                    versionJsonFile = ZipUtils.getZipEntryFile(file.getPath(), "version.json");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
                 JSONObject versionObject = JSONObject.parseObject(versionJson);
                 JSONArray libraries = (JSONArray) versionObject.get("libraries");

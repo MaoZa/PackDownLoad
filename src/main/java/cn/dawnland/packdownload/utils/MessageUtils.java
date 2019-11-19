@@ -24,10 +24,10 @@ public class MessageUtils {
     public static int status = 0;
 
     public static Boolean isOk(){
-        return status == 2 ? true : false;
+        return status >= 2 ? true : false;
     }
 
-    public synchronized static void setStatus(){
+    public static void setStatus(){
         status = status + 1;
     }
 
@@ -41,8 +41,7 @@ public class MessageUtils {
     }
 
     public static void error(String msg, String title){
-        Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, 0));
-
+        Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE));
     }
 
     public static void info(String msg, String title){

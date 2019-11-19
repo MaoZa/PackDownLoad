@@ -50,7 +50,7 @@ public class JsonJXTask implements Runnable {
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
             String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
-            String forgeVersion = ((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "";
+            String forgeVersion = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "").split("-")[1];
             ForgeUtils.downloadForge(mcVersion, forgeVersion);
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
@@ -58,7 +58,7 @@ public class JsonJXTask implements Runnable {
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
                 try {
-                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" , "");
+                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" , "", null);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

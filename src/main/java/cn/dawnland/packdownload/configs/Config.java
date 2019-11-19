@@ -5,8 +5,6 @@ import cn.dawnland.packdownload.utils.MessageUtils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
-import java.util.Properties;
-
 /**
  * @author Cap_Sub
  * @version 创建时间：19/02/29 11:29
@@ -14,7 +12,7 @@ import java.util.Properties;
 @Data
 public class Config {
 
-    public static float currentVersion = 2.02f;
+    public static float currentVersion = 2.03f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;

@@ -40,8 +40,13 @@ public class Launcher extends Application {
         }
         //自动更新
         //如果version.json 永远比当前版本高 实现每次打开强制更新
-        Upgrader.autoupgrade();
-
+        Scene scene = new Scene(FxmlUtils.LoadFxml("PackDownLoadNew.fxml"), 644, 300);;
+        if(Upgrader.isNewVersion()){
+            scene = new Scene(FxmlUtils.LoadFxml("Update.fxml"), 334, 118);
+            primaryStage.setTitle("自动更新");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        }
         // 为按钮添加事件——点击时打开新的窗口
 //        Button opinionButton = new Button("反馈");
 //        opinionButton.setLayoutX(396);
@@ -58,11 +63,9 @@ public class Launcher extends Application {
 //            primaryStage.initModality(Modality.APPLICATION_MODAL);
 //            primaryStage.show();
 //        });
-
-        Parent root = FxmlUtils.LoadFxml("PackDownLoadNew.fxml");
 //        ((AnchorPane)root).getChildren().add(opinionButton);
         primaryStage.setTitle("整合包下载器");
-        primaryStage.setScene(new Scene(root, 644, 300));
+        primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> CommonUtils.appExit());
     }

@@ -6,6 +6,8 @@ public class ForgeVersion {
             "maven/net/minecraftforge/" +
             "forge/{forgeVersion}/" +
             "{installVersion}-installer.jar";
+    private final static String BMCLAPIForgeInstallBaseUrl = "https://bmclapi2.bangbang93.com/forge/download?" +
+            "mcversion={mcVersion}&version={forgeVersion}&category=installer&format=jar";
 
     private String mcVersion;
     private String forgeVersion;
@@ -16,11 +18,8 @@ public class ForgeVersion {
     }
 
     public String getForgeInstallUrl(){
-        String temp = forgeInstallBaseUrl.
-                replaceFirst("\\{forgeVersion}",
-                        mcVersion + forgeVersion.replace("forge", ""));
-        temp = temp.replaceFirst("\\{installVersion}",
-                "forge-" + mcVersion + forgeVersion.replace("forge", ""));
+        String temp = BMCLAPIForgeInstallBaseUrl.replaceFirst("\\{mcVersion}", mcVersion);
+        temp = temp.replaceFirst("\\{forgeVersion}", forgeVersion);
         return temp;
     }
 
