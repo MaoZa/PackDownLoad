@@ -125,7 +125,7 @@ public class DownLoadUtils {
                 try {
                     versionJsonFile = ZipUtils.getZipEntryFile(file.getPath(), "version.json");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    MessageUtils.error(e);
                 }
                 String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
                 JSONObject versionObject = JSONObject.parseObject(versionJson);
