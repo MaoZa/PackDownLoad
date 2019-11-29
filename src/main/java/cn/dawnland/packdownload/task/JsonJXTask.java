@@ -46,6 +46,19 @@ public class JsonJXTask implements Runnable {
                 jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
             }
             MessageUtils.downloadSpeedStart();
+            pool.submit(() -> {
+                MessageUtils.info("正在下载启动器...");
+                try {
+                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe", "", new OkHttpUtils.OnDownloadListener() {
+                        @Override
+                        public void onDownloadSuccess(File file) {
+//                        MessageUtils.info("启动器下载成功");
+                        }
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            });
             String fileJson = FileUtils.readJsonData(jsonPath);
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
@@ -55,14 +68,6 @@ public class JsonJXTask implements Runnable {
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
             Iterator<JSONObject> iterator = files.iterator();
-            pool.submit(() -> {
-                MessageUtils.info("正在下载启动器...");
-                try {
-                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe" , "", null);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            });
             Platform.runLater(() -> {
                 JFXProgressBar modsBar = new JFXProgressBar();
                 Label modsLabel = new Label("下载进度");

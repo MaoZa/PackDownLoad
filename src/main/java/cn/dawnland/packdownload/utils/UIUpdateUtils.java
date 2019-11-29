@@ -32,7 +32,7 @@ public class UIUpdateUtils {
         UIUpdateUtils.modsBar = modsBar;
         UIUpdateUtils.modsLabel = modsLabel;
         UIUpdateUtils.modsCount = modsCount;
-        ((Runnable) () -> {
+        Platform.runLater(() -> {
             while(true){
                 updateLable(modsLabel, modsPoint.get() + "/" + modsCount);
                 updateProgress(modsBar, ((1D/modsCount) * modsPoint.get()));
@@ -50,16 +50,16 @@ public class UIUpdateUtils {
                     break;
                 }
             }
-        }).run();
+        });
     }
 
     public static void initUnzip(HBox hb, ProgressBar unzipBar, Label unzipLabel, int unzipCount){
         UIUpdateUtils.unzipBar = unzipBar;
         UIUpdateUtils.unzipLabel = unzipLabel;
         UIUpdateUtils.unzipCount = unzipCount;
-        ((Runnable) () -> {
+        Platform.runLater(() -> {
             while(true){
-                updateLable(unzipLabel, unzipPoint.get() + "/" + unzipCount);
+                privateUpdateLable(unzipLabel, unzipPoint.get() + "/" + unzipCount);
                 updateProgress(unzipBar, ((1D / unzipCount) * unzipPoint.get()));
                 try {
                     Thread.sleep(100);
@@ -67,7 +67,7 @@ public class UIUpdateUtils {
                     e.printStackTrace();
                 }
                 if(unzipPoint.get() == unzipCount){
-                    updateLable(unzipLabel, unzipPoint.get() + "/" + unzipCount);
+                    privateUpdateLable(unzipLabel, unzipPoint.get() + "/" + unzipCount);
                     updateProgress(unzipBar, ((1D / unzipCount) * unzipPoint.get()));
                     MessageUtils.setStatus();
                     MessageUtils.info("解压完成,请等待其他任务完成...");
@@ -75,7 +75,7 @@ public class UIUpdateUtils {
                     break;
                 }
             }
-        }).run();
+        });
     }
 
     public static void modsBarAddOne(){
@@ -97,7 +97,8 @@ public class UIUpdateUtils {
     }
 
     public static synchronized void updateProgress(ProgressBar progressBar, double point){
-        Platform.runLater(() -> progressBar.setProgress(point));
+//        progressBar.setProgress(point);
+        Platform.runLater(()-> progressBar.setProgress(point));
     }
 
     public static synchronized void updateProgress(ProgressBar progressBar, int count){
@@ -106,6 +107,10 @@ public class UIUpdateUtils {
 
     public static synchronized void updateLable(Label label, String values){
         Platform.runLater(() -> label.setText(values));
+    }
+
+    public static synchronized void privateUpdateLable(Label label, String values){
+        label.setText(values);
     }
 
 }

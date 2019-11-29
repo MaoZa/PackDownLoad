@@ -6,8 +6,10 @@ public class ForgeVersion {
             "maven/net/minecraftforge/" +
             "forge/{forgeVersion}/" +
             "{installVersion}-installer.jar";
+    //https://files.minecraftforge.net/maven/net/minecraftforge
+    // /forge/1.12.2-14.23.5.2847/forge-1.12.2-14.23.5.2847-installer.jar
     private final static String BMCLAPIForgeInstallBaseUrl = "https://bmclapi2.bangbang93.com/forge/download?" +
-            "mcversion={mcVersion}&version={forgeVersion}&category=installer&format=jar";
+            "mcversion={mcVersion}&version={forgeVersion}&category=universal&format=jar";
 
     private String mcVersion;
     private String forgeVersion;
