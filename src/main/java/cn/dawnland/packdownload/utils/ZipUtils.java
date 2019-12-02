@@ -51,10 +51,15 @@ public class ZipUtils {
                 unzipLabel.setMaxHeight(5);
                 label.setPrefWidth(60D);
                 label.setAlignment(Pos.CENTER_RIGHT);
+                label.setText("0/" + zf.size());
                 hb.getChildren().addAll(unzipLabel, unzipBar, label);
                 taskList.getItems().add((hb));
                 MessageUtils.info("正在读取压缩文件，稍等即可");
-                pool.submit(()-> UIUpdateUtils.initUnzip(hb, unzipBar, label, zf.size()));
+                pool.submit(()-> {
+                    UIUpdateUtils.unzipBar = unzipBar;
+                    UIUpdateUtils.unzipLabel = label;
+                    UIUpdateUtils.unzipCount = zf.size();
+                });
             });
             pool.submit(new UnZipSubTask(zin, pool, location));
         }

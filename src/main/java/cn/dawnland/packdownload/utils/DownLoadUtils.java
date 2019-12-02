@@ -100,7 +100,7 @@ public class DownLoadUtils {
     }
 
     public static void downloadVersionJson(String mcVersion, String forgeVersion, String installUrl) throws IOException {
-        MessageUtils.info("正在安装核心...");
+        MessageUtils.info("正在安装核心,获取Mojang配置中...");
         String s = OkHttpUtils.get().get(MojangUtils.getJsonUrl(mcVersion));
         JSONObject jsonObject = JSONObject.parseObject(s);
         MessageUtils.info("正在下载Forge...");
@@ -120,7 +120,7 @@ public class DownLoadUtils {
                         UIUpdateUtils.taskList.getItems().remove(modsHb);
                     }
                 });
-                MessageUtils.info("正在安装Forge...");
+                MessageUtils.info("Forge下载完成,正在安装Forge...");
                 File versionJsonFile = null;
                 try {
                     versionJsonFile = ZipUtils.getZipEntryFile(file.getPath(), "version.json");
@@ -131,9 +131,11 @@ public class DownLoadUtils {
                 JSONObject versionObject = JSONObject.parseObject(versionJson);
                 JSONArray libraries = (JSONArray) versionObject.get("libraries");
                 libraries.addAll((JSONArray)jsonObject.get("libraries"));
+                MessageUtils.info("正在添加依赖");
                 jsonObject.put("libraries", libraries);
                 jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
                 jsonObject.put("mainClass", versionObject.get("mainClass"));
+                MessageUtils.info("正在下载配置文件...");
                 DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
                     final Label modsLabel = new Label();
                     final JFXProgressBar modsBar = new JFXProgressBar();
