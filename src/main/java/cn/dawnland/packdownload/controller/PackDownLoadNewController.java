@@ -1,17 +1,23 @@
 package cn.dawnland.packdownload.controller;
 
+import cn.dawnland.packdownload.model.curse.CurseProjectInfo;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
@@ -19,8 +25,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -42,6 +51,9 @@ public class PackDownLoadNewController implements Initializable {
     @FXML private JFXButton selectZipDirButton;
     @FXML private JFXButton installButton;
     @FXML private HBox targetHbox;
+    @FXML private HBox searchHbox;
+    @FXML private TextField searchText;
+    @FXML private Button searchButton;
     private static File zipFile;
     private static JFXTextField projectUrlTextFieldStatic;
     private static HBox targetHboxStatic;
@@ -114,5 +126,30 @@ public class PackDownLoadNewController implements Initializable {
             targetHboxStatic.setDisable(true);
             projectUrlTextFieldStatic.setDisable(true);
         }
+    }
+
+    public void searchPack() throws IOException {
+        String searchStr = searchText.getText();
+        List<CurseProjectInfo> projects = CurseUtils.searchProjectByName(searchStr);
+        if(projects.size() < 1){
+            MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
+            return;
+        }
+        ObservableList obs = FXCollections.observableArrayList();
+        projects.forEach(p -> obs.add(p.getName()));
+        JFXComboBox projectComboBox = new JFXComboBox<>();
+        JFXComboBox latestComboBox = new JFXComboBox<>();
+        projectComboBox.setPromptText("请选择一个整合包.....");
+        searchHbox.getChildren().removeAll(searchText, searchButton);
+        projectComboBox.setPrefWidth(searchHbox.getWidth());
+        projectComboBox.setItems(obs);
+        projectComboBox.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue)
+                        -> {
+
+                });
+        projectUrlTextField.setText(projectComboBox.getValue().toString().split(" - ")[1])
+        searchHbox.getChildren().add(projectComboBox);
     }
 }
