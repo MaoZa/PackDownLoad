@@ -62,8 +62,10 @@ public class PackDownLoadNewController implements Initializable {
         if(stage != null){
             DirectoryChooser dc = new DirectoryChooser();
             File file = dc.showDialog(stage);
-            DownLoadUtils.setRootPath(file.getPath());
-            Platform.runLater(() -> selectDirButton.setText(file.getPath()));
+            if(file != null){
+                DownLoadUtils.setRootPath(file.getPath());
+                Platform.runLater(() -> selectDirButton.setText(file.getPath()));
+            }
         }
     }
 

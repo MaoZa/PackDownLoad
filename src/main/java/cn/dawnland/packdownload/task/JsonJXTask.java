@@ -85,17 +85,22 @@ public class JsonJXTask implements Runnable {
                 modsLabel.setAlignment(Pos.CENTER_LEFT);
                 label.setPrefWidth(60D);
                 label.setAlignment(Pos.CENTER_RIGHT);
+                label.setText("0/" + files.size());
                 MessageUtils.info("正在安装整合包，请耐心等待");
                 Platform.runLater(() -> {
                     hb.getChildren().addAll(modsLabel, modsBar, label);
                     DownLoadUtils.taskList.getItems().add(hb);
                 });
-                pool.submit(()-> UIUpdateUtils.initMods(hb, modsBar, label, files.size()));
+                UIUpdateUtils.modsBar = modsBar;
+                UIUpdateUtils.modsLabel = label;
+                UIUpdateUtils.modsCount = files.size();
             });
-            while (iterator.hasNext()){
-                JSONObject object = iterator.next();
-                request(object);
-            }
+            ((Runnable)() -> {
+                while (iterator.hasNext()){
+                    JSONObject object = iterator.next();
+                    request(object);
+                }
+            }).run();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,7 +111,7 @@ public class JsonJXTask implements Runnable {
 
     private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
 
-    public void request(JSONObject jsonObject) throws IOException {
+    public void request(JSONObject jsonObject) {
         pool.submit(() -> {
             String projectId = jsonObject.get("projectID").toString();
             String fileId = jsonObject.get("fileID").toString();
