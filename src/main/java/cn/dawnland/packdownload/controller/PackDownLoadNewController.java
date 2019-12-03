@@ -145,6 +145,7 @@ public class PackDownLoadNewController implements Initializable {
             MessageUtils.info("请确认后重新搜索", "未搜索到整合包");
             return;
         }
+        MessageUtils.info("");
         targetHbox.getChildren().remove(0);
         ObservableList projectObs = FXCollections.observableArrayList();
         ObservableList fileObs = FXCollections.observableArrayList();
