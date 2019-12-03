@@ -119,10 +119,10 @@ public class Upgrader {
      * 下载最新版本
      */
     public static void dowload() {
-        downLoadFromUrl(Config.batUrl, "update.bat", "", new OkHttpUtils.OnDownloadListener() {
+        downLoadFromUrl(Config.batUrl, new OkHttpUtils.OnDownloadListener() {
                     @Override
                     public void onDownloadSuccess(File file) {
-                        downLoadFromUrl(Config.exeUrl, "dowloadtmp", DownLoadUtils.getRootPath() + File.separator + "tmp", new OkHttpUtils.OnDownloadListener() {
+                        downLoadFromUrl(Config.exeUrl, DownLoadUtils.getRootPath() + File.separator + "tmp", new OkHttpUtils.OnDownloadListener() {
                             @Override
                             public void onDownloadSuccess(File file) {
                                 JOptionPane.showConfirmDialog(null, "点击确定重启软件", "下载成功", JOptionPane.PLAIN_MESSAGE);
@@ -232,14 +232,17 @@ public class Upgrader {
      * 从网络Url中下载文件
      *
      * @param urlStr
-     * @param fileName
      * @param savePath
      * @throws IOException
      */
-    public static void downLoadFromUrl(String urlStr, String fileName, String savePath, OkHttpUtils.OnDownloadListener listener) {
+    public static void downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener listener) {
         if(savePath.trim() == null || "".equals(savePath.trim())){
             savePath = DownLoadUtils.getRootPath();
         }
+        OkHttpUtils.get().download(urlStr, savePath, listener);
+    }
+    public static void downLoadFromUrl(String urlStr, OkHttpUtils.OnDownloadListener listener) {
+        String savePath = DownLoadUtils.getRootPath();
         OkHttpUtils.get().download(urlStr, savePath, listener);
     }
 }

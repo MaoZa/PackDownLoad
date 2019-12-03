@@ -3,13 +3,14 @@ package cn.dawnland.packdownload.model.curse;
 import cn.dawnland.packdownload.model.curse.project.*;
 import cn.dawnland.packdownload.utils.OkHttpUtils;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Created by cap_sub@dawnland.cn
@@ -55,12 +56,13 @@ public class CurseProjectInfo {
     private ZonedDateTime dateCreated;
     private ZonedDateTime dateModified;
 
-    public static void main(String[] args) throws IOException {
-        String url = "https://addons-ecs.forgesvc.net/api/v2/addon/search?gameId=432&gameVersion=&searchFilter=sky&pageSize=10&sectionId=4471";
+    public static Map<String, Map<String, String>> searchProject(String searchText) throws IOException {
+        String url = "https://addons-ecs.forgesvc.net/api/v2/addon/search?gameId=432&gameVersion=&pageSize=10&sectionId=4471&searchFilter=" + searchText;
         String s = OkHttpUtils.get().get(url);
-        System.out.println(s);
         List<CurseProjectInfo> curseProjectInfos = JSONArray.parseArray(s, CurseProjectInfo.class);
-        System.out.println(curseProjectInfos);
+        return curseProjectInfos.stream()
+                .collect(Collectors.toMap(CurseProjectInfo::getName, curseProjectInfo ->
+                        curseProjectInfo.latestFiles.stream().collect(Collectors.toMap(LatestFile::getDisplayName, LatestFile::getDownloadUrl))));
     }
 
 }

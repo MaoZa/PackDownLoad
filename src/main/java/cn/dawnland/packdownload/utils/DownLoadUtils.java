@@ -11,6 +11,8 @@ import javafx.scene.layout.HBox;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -42,6 +44,13 @@ public class DownLoadUtils {
     }
 
     public static void setPackPath(String path){
+        if(!Paths.get(path).toFile().exists()){
+            try {
+                Files.createDirectories(Paths.get(path));
+            } catch (IOException e) {
+                MessageUtils.error(e);
+            }
+        }
         packPath = path;
     }
 
@@ -105,19 +114,11 @@ public class DownLoadUtils {
         JSONObject jsonObject = JSONObject.parseObject(s);
         MessageUtils.info("正在下载Forge...");
         DownLoadUtils.downLoadFromUrl(installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
-
-            final Label modsLabel = new Label();
-            final JFXProgressBar modsBar = new JFXProgressBar();
-            final Label lable = new Label();
-            final HBox modsHb = new HBox();
-
-            private boolean flag = false;
-
             @Override
             public void onDownloadSuccess(File file){
                 Platform.runLater(() -> {
-                    if(modsHb.getParent() != null){
-                        UIUpdateUtils.taskList.getItems().remove(modsHb);
+                    if(this.hb.getParent() != null){
+                        UIUpdateUtils.taskList.getItems().remove(this.hb);
                     }
                 });
                 MessageUtils.info("Forge下载完成,正在安装Forge...");
@@ -137,16 +138,11 @@ public class DownLoadUtils {
                 jsonObject.put("mainClass", versionObject.get("mainClass"));
                 MessageUtils.info("正在下载配置文件...");
                 DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
-                    final Label modsLabel = new Label();
-                    final JFXProgressBar modsBar = new JFXProgressBar();
-                    final Label lable = new Label();
-                    final HBox modsHb = new HBox();
-                    private boolean flag = false;
                     @Override
                     public void onDownloadSuccess(File file) {
                         Platform.runLater(() -> {
-                            if(modsHb.getParent() != null){
-                                UIUpdateUtils.taskList.getItems().remove(modsHb);
+                            if(this.hb.getParent() != null){
+                                UIUpdateUtils.taskList.getItems().remove(this.hb);
                             }
                         });
                         String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
@@ -172,67 +168,7 @@ public class DownLoadUtils {
                         }
                         MessageUtils.info("安装完成");
                     }
-                    @Override
-                    public void onDownloading(int progress, String filename) {
-                        if(!flag){
-                            modsHb.setPrefWidth(350D);
-                            modsHb.setSpacing(10D);
-                            modsHb.setAlignment(Pos.CENTER);
-                            modsBar.setPrefWidth(70D);
-                            modsBar.setMaxHeight(5D);
-                            modsBar.setProgress(0);
-                            modsLabel.setText(filename);
-                            modsLabel.setPrefWidth(150D);
-                            modsLabel.setMaxHeight(5);
-                            modsLabel.setAlignment(Pos.CENTER_LEFT);
-                            lable.setPrefWidth(30D);
-                            lable.setAlignment(Pos.CENTER_RIGHT);
-                            Platform.runLater(() -> {
-                                modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                                DownLoadUtils.taskList.getItems().add(modsHb);
-                            });
-                            flag = true;
-                        }
-                        Platform.runLater(() -> {
-                            lable.setText(progress + "%");
-                            modsBar.setProgress(progress / 100D);
-                        });
-                    }
-                    @Override
-                    public void onDownloadFailed(Exception e) {
-                        System.out.println(e.getMessage());
-                    }
                 });
-            }
-            @Override
-            public void onDownloading(int progress, String filename) {
-                if(!flag){
-                    modsHb.setPrefWidth(350D);
-                    modsHb.setSpacing(10D);
-                    modsHb.setAlignment(Pos.CENTER);
-                    modsBar.setPrefWidth(70D);
-                    modsBar.setMaxHeight(5D);
-                    modsBar.setProgress(0);
-                    modsLabel.setText(filename);
-                    modsLabel.setPrefWidth(150D);
-                    modsLabel.setMaxHeight(5);
-                    modsLabel.setAlignment(Pos.CENTER_LEFT);
-                    lable.setPrefWidth(30D);
-                    lable.setAlignment(Pos.CENTER_RIGHT);
-                    Platform.runLater(() -> {
-                        modsHb.getChildren().addAll(modsLabel, modsBar, lable);
-                        DownLoadUtils.taskList.getItems().add(modsHb);
-                    });
-                    flag = true;
-                }
-                Platform.runLater(() -> {
-                    lable.setText(progress + "%");
-                    modsBar.setProgress(progress / 100D);
-                });
-            }
-
-            @Override
-            public void onDownloadFailed(Exception e) {
             }
         });
     }

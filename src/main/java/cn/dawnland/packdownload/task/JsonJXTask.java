@@ -10,9 +10,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,12 +49,8 @@ public class JsonJXTask implements Runnable {
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
                 try {
-                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "黎明大陆伪正版启动器.exe", "", new OkHttpUtils.OnDownloadListener() {
-                        @Override
-                        public void onDownloadSuccess(File file) {
-//                        MessageUtils.info("启动器下载成功");
-                        }
-                    });
+                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "",
+                            new OkHttpUtils.OnDownloadListener() {});
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
