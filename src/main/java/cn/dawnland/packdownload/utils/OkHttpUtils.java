@@ -1,12 +1,18 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.configs.RetryIntercepter;
+import com.jfoenix.controls.JFXProgressBar;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import okhttp3.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -46,6 +52,13 @@ public class OkHttpUtils{
      * @param listener     下载监听
      */
     public void download(String url, final String saveFilePath, final OnDownloadListener listener) {
+        if(!Paths.get(saveFilePath).toFile().exists()){
+            try {
+                Files.createDirectories(Paths.get(saveFilePath));
+            } catch (IOException e) {
+                listener.onDownloadFailed(e);
+            }
+        }
         Request request = new Request.Builder().url(url).build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -115,17 +128,60 @@ public class OkHttpUtils{
 
     public abstract static class OnDownloadListener{
 
-        public abstract void onDownloadSuccess(File file);
+        public OnDownloadListener() {}
+
+        public final Label titleLabel = new Label();
+        public final JFXProgressBar modsBar = new JFXProgressBar();
+        public final Label barlabel = new Label();
+        public final HBox hb = new HBox();
+
+        public boolean flag = false;
+
+        /**
+         * 下载完成后的回调方法
+         * 如果重写此方法则必须在方法首行执行super.onDownloadSuccess(file)
+         * @param file
+         */
+        public void onDownloadSuccess(File file){
+            DownLoadUtils.taskList.getItems().remove(this.hb);
+        }
 
         /**
          * 下载进度
          */
-        public void onDownloading(int progress, String  filename){}
+        public void onDownloading(int progress, String  filename){
+            if(!flag){
+                hb.setPrefWidth(360D);
+                hb.setSpacing(10D);
+                hb.setAlignment(Pos.CENTER);
+                modsBar.setPrefWidth(70D);
+                modsBar.setMaxHeight(5D);
+                modsBar.setProgress(0);
+                titleLabel.setText(filename);
+                titleLabel.setPrefWidth(150D);
+                titleLabel.setMaxHeight(5);
+                barlabel.setAlignment(Pos.CENTER_RIGHT);
+                barlabel.setPrefWidth(30D);
+                barlabel.setAlignment(Pos.CENTER_LEFT);
+                Platform.runLater(() -> {
+                    hb.getChildren().addAll(titleLabel, modsBar, barlabel);
+                    DownLoadUtils.taskList.getItems().add(hb);
+                });
+                flag = true;
+            }
+            Platform.runLater(() -> {
+                barlabel.setText(progress + "%");
+                modsBar.setProgress(progress / 100D);
+            });
+        }
 
         /**
          * 下载异常信息
          */
-        public void onDownloadFailed(Exception e){}
+        public void onDownloadFailed(Exception e){
+            System.out.println(e.getMessage());
+            MessageUtils.error(e);
+        }
     }
 
     public String get(final String url) throws IOException {

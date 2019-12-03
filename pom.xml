@@ -125,11 +125,11 @@
                                 <jdkPreference>preferJre</jdkPreference>
                             </jre>
                             <versionInfo>
-                                <fileVersion>2.0.1.0</fileVersion>
+                                <fileVersion>2.0.6.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
                                 <copyright>2019 DawnLand Cap_Sub</copyright>
-                                <productVersion>2.0.1.0</productVersion>
+                                <productVersion>2.0.6.0</productVersion>
                                 <txtProductVersion>1.0.0.0</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <companyName>dawnland.cn</companyName>

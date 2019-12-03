@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -118,21 +119,21 @@ public class ZipUtils {
 
     public static File getZipEntryFile(String zipFilePath, String key) throws IOException {
         FileInputStream fis = new FileInputStream(zipFilePath);
-                ZipInputStream zis = new ZipInputStream(fis);
-                ZipFile zipFile = new ZipFile(zipFilePath);
-                ZipEntry zipEntry = null;
-                while((zipEntry = zis.getNextEntry()) != null){
-                    if(key.equals(zipEntry.getName())){
-                        InputStream is = zipFile.getInputStream(zipEntry);
-                        FileOutputStream fos = new FileOutputStream(zipEntry.getName());
-                        int len;
-                        while((len = is.read()) != -1){
-                            fos.write(len);
-                        }
+        ZipInputStream zis = new ZipInputStream(fis);
+        ZipFile zipFile = new ZipFile(zipFilePath);
+        ZipEntry zipEntry = null;
+        while ((zipEntry = zis.getNextEntry()) != null) {
+            if (key.equals(zipEntry.getName())) {
+                InputStream is = zipFile.getInputStream(zipEntry);
+                FileOutputStream fos = new FileOutputStream(DownLoadUtils.getPackPath() + File.separator + zipEntry.getName());
+                int len;
+                while ((len = is.read()) != -1) {
+                    fos.write(len);
+                }
                 break;
             }
         }
-        return new File(zipEntry.getName());
+        return Paths.get(DownLoadUtils.getPackPath() + File.separator + zipEntry.getName()).toFile();
     }
 
 

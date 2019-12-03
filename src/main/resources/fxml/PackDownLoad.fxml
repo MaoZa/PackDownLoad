@@ -6,10 +6,10 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane fx:id="root" prefHeight="291.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.dawnland.packdownload.controller.PackDownLoadController">
    <children>
-      <HBox fx:id="seartchHbox" layoutX="126.0" layoutY="14.0" prefHeight="23.0" prefWidth="200.0">
+      <HBox fx:id="searchHbox" layoutX="126.0" layoutY="14.0" prefHeight="23.0" prefWidth="200.0">
          <children>
-            <TextField fx:id="projectNameSearchText" promptText="搜索整合包" />
-            <Button fx:id="projectNameSearchButton" mnemonicParsing="false" onAction="#searchPack" text="搜索" />
+            <TextField fx:id="searchText" promptText="搜索整合包" />
+            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchPack" text="搜索" />
          </children>
       </HBox>
       <Label fx:id="downloadSpeed" layoutX="348.0" layoutY="236.0" prefHeight="15.0" prefWidth="89.0" />

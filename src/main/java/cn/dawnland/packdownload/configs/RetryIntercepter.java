@@ -1,6 +1,7 @@
 package cn.dawnland.packdownload.configs;
 
 import cn.dawnland.packdownload.utils.LogUtils;
+import cn.dawnland.packdownload.utils.MessageUtils;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,7 +38,7 @@ public class RetryIntercepter implements Interceptor {
         }
         while (response == null || (!response.isSuccessful() && retryNum < maxRetry)) {
             retryNum++;
-            System.out.println("retryNum=" + retryNum);
+            System.out.println("retryNum=" + retryNum + request.url());
             try {
                 response = chain.proceed(request);
             } catch (IOException e) {
