@@ -161,7 +161,7 @@ public class OkHttpUtils{
                 titleLabel.setPrefWidth(150D);
                 titleLabel.setMaxHeight(5);
                 barlabel.setAlignment(Pos.CENTER_RIGHT);
-                barlabel.setPrefWidth(30D);
+                barlabel.setPrefWidth(40D);
                 barlabel.setAlignment(Pos.CENTER_LEFT);
                 Platform.runLater(() -> {
                     hb.getChildren().addAll(titleLabel, modsBar, barlabel);

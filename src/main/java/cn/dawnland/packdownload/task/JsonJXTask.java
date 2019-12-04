@@ -79,7 +79,7 @@ public class JsonJXTask implements Runnable {
                 modsLabel.setPrefWidth(60D);
                 modsLabel.setMaxHeight(5);
                 modsLabel.setAlignment(Pos.CENTER_LEFT);
-                label.setPrefWidth(60D);
+                label.setPrefWidth(100D);
                 label.setAlignment(Pos.CENTER_RIGHT);
                 label.setText("0/" + files.size());
                 MessageUtils.info("正在安装整合包，请耐心等待");
