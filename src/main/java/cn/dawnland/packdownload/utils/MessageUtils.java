@@ -49,7 +49,11 @@ public class MessageUtils {
     }
 
     public static void info (String msg){
-        Platform.runLater(() -> resultLabel.setText(msg));
+        try{
+            Platform.runLater(() -> resultLabel.setText(msg));
+        }catch (Exception e){
+            LogUtils.info(msg);
+        }
     }
 
     public static void downloadSpeedStart(){

@@ -50,7 +50,7 @@ public class ZipUtils {
                 unzipLabel.setAlignment(Pos.CENTER_LEFT);
                 unzipLabel.setPrefWidth(60D);
                 unzipLabel.setMaxHeight(5);
-                label.setPrefWidth(60D);
+                label.setPrefWidth(100D);
                 label.setAlignment(Pos.CENTER_RIGHT);
                 label.setText("0/" + zf.size());
                 hb.getChildren().addAll(unzipLabel, unzipBar, label);
