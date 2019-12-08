@@ -1,17 +1,9 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.controller.PackDownLoadNewController;
-import cn.dawnland.packdownload.utils.*;
+import cn.dawnland.packdownload.utils.MessageUtils;
 import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXProgressBar;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 /**

@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.controller.PackDownLoadNewController;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
@@ -38,20 +39,22 @@ public class MessageUtils {
         });
         LogUtils.error(e);
         e.printStackTrace();
+        PackDownLoadNewController.restart();
     }
 
     public static void error(String msg, String title){
         Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE));
+        PackDownLoadNewController.restart();
     }
 
     public static void info(String msg, String title){
         Platform.runLater(() -> JOptionPane.showMessageDialog(null, msg, title, 1));
     }
 
-    public static void info (String msg){
-        try{
+    public static void info (String msg) {
+        try {
             Platform.runLater(() -> resultLabel.setText(msg));
-        }catch (Exception e){
+        } catch (Exception e) {
             LogUtils.info(msg);
         }
     }
