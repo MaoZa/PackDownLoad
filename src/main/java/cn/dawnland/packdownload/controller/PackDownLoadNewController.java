@@ -55,6 +55,11 @@ public class PackDownLoadNewController implements Initializable {
     private static JFXTextField projectUrlTextFieldStatic;
     private static HBox targetHboxStatic;
     private static HBox searchHboxStatic;
+    private static Button selectZipDirButtonStatic;
+    private static Button startButtonStatic;
+    private static Button selectDirButtonStatic;
+    private static JFXTextField threadCountStatic;
+    private static CheckBox divideVersionCheckBoxStatic;
 //    public static ExecutorService initPool = newFixedThreadPool(5);
 
     @Override
@@ -90,6 +95,11 @@ public class PackDownLoadNewController implements Initializable {
     }
 
     public void startPackDownLoad(){
+        divideVersionCheckBoxStatic = divideVersionCheckBox;
+        threadCountStatic = threadCount;
+        selectDirButtonStatic = selectDirButton;
+        startButtonStatic = downloadButton;
+        selectZipDirButtonStatic = selectZipDirButton;
         UIUpdateUtils.startButton = downloadButton;
         projectUrlTextFieldStatic = projectUrlTextField;
         targetHboxStatic = targetHbox;
@@ -130,10 +140,26 @@ public class PackDownLoadNewController implements Initializable {
     }
 
     public static void setDisplay(){
+        targetHboxStatic.setDisable(true);
+        searchHboxStatic.setDisable(true);
+        projectUrlTextFieldStatic.setDisable(true);
+        selectZipDirButtonStatic.setDisable(true);
+        selectDirButtonStatic.setDisable(true);
+        threadCountStatic.setDisable(true);
+        divideVersionCheckBoxStatic.setDisable(true);
+    }
+
+    public static void restart(){
         if(targetHboxStatic != null && projectUrlTextFieldStatic != null && searchHboxStatic != null){
-            targetHboxStatic.setDisable(true);
-            searchHboxStatic.setDisable(true);
-            projectUrlTextFieldStatic.setDisable(true);
+            Platform.runLater(() -> {
+                targetHboxStatic.setDisable(false);
+                searchHboxStatic.setDisable(false);
+                projectUrlTextFieldStatic.setDisable(false);
+                startButtonStatic.setDisable(false);
+                startButtonStatic.setText("开始下载");
+                selectZipDirButtonStatic.setText("请选择整合包ZIP");
+                selectZipDirButtonStatic.setDisable(false);
+            });
         }
     }
 
@@ -189,4 +215,5 @@ public class PackDownLoadNewController implements Initializable {
             downloadButton.setDisable(true);
         });
     }
+
 }

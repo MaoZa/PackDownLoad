@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.controller.PackDownLoadNewController;
 import cn.dawnland.packdownload.model.CurseModInfo;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
@@ -43,7 +44,13 @@ public class JsonJXTask implements Runnable {
     public void run() {
         try {
             if (jsonPath == null) {
-                jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
+                try{
+                    jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
+                }catch (Exception e){
+                    MessageUtils.error("不支持的整合包ZIP", "异常");
+                    MessageUtils.info("不支持的整合包ZIP");
+                    Thread.currentThread().stop();
+                }
             }
             MessageUtils.downloadSpeedStart();
             pool.submit(() -> {
@@ -98,7 +105,7 @@ public class JsonJXTask implements Runnable {
                 }
             }).run();
         } catch (Exception e) {
-            e.printStackTrace();
+            MessageUtils.error(e);
         }
 
     }
