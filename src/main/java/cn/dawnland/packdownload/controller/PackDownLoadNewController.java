@@ -120,6 +120,10 @@ public class PackDownLoadNewController implements Initializable {
                 startInstall(pool);
             }else {
                 String projectName = (String) ((ComboBox)searchHbox.getChildren().get(0)).getValue();
+                String[] split = "\\,/,:,*,?,\",<,>,|".split(",");
+                for (int i = 0; i < split.length; i++) {
+                    projectName = projectName.replace(split[i], " ");
+                }
                 DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + projectName);
                 pool.submit(() -> {
                     // TODO: 2019/12/3 下载整合包zip
