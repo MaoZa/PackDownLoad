@@ -67,7 +67,8 @@ public class JsonJXTask implements Runnable {
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
             String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
             String forgeVersion = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "").split("-")[1];
-            ForgeUtils.downloadForge(mcVersion, forgeVersion);
+            String forgeVersionStr = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "");
+            ForgeUtils.downloadForgeNew(mcVersion, forgeVersionStr);
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
             Iterator<JSONObject> iterator = files.iterator();
