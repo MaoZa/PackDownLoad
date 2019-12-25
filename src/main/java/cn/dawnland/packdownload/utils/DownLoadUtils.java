@@ -1,13 +1,11 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.model.ForgeVersion;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
 import javax.swing.*;
 import java.io.*;
@@ -169,6 +167,58 @@ public class DownLoadUtils {
                         MessageUtils.info("安装完成");
                     }
                 });
+            }
+        });
+    }
+
+    public static void installForge(ForgeVersion forgeVersion) throws IOException {
+        String mcVersion = forgeVersion.getMcVersion();
+        MessageUtils.info("正在安装核心,获取Mojang配置中...");
+        String s = OkHttpUtils.get().get(MojangUtils.getJsonUrl(mcVersion));
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        MessageUtils.info("正在获取Forge配置...");
+        String versionJson = forgeVersion.getForgeVersionJson();
+        String versionJsonStr = (String) JSONObject.parseObject(versionJson).get("versionJson");
+        versionJsonStr = versionJsonStr.replaceAll("\r\n", "");
+        JSONObject versionObject = JSONObject.parseObject(versionJsonStr);
+
+        JSONArray libraries = (JSONArray) versionObject.get("libraries");
+        libraries.addAll((JSONArray)jsonObject.get("libraries"));
+        MessageUtils.info("正在添加依赖");
+        jsonObject.put("libraries", libraries);
+        jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
+        jsonObject.put("mainClass", versionObject.get("mainClass"));
+        MessageUtils.info("正在下载配置文件...");
+        DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+            @Override
+            public void onDownloadSuccess(File file) {
+                Platform.runLater(() -> {
+                    if(this.hb.getParent() != null){
+                        UIUpdateUtils.taskList.getItems().remove(this.hb);
+                    }
+                });
+                String tempStr = packPath.substring(packPath.lastIndexOf("/") + 1);
+                File f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+                if(!f.isDirectory()) {
+                    File tempF = new File(f.getPath().substring(0, f.getPath().lastIndexOf("\\")));
+                    tempF.mkdirs();
+                    f = new File(packPath + "/" + (".minecraft".equals(tempStr) ? "versions/" + mcVersion + "/" + mcVersion + ".json" : tempStr + ".json"));
+                }
+                FileOutputStream fio = null;
+                try {
+                    fio = new FileOutputStream(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                PrintStream ps = new PrintStream(fio);
+                ps.print(jsonObject.toJSONString());
+                ps.close();
+                try {
+                    fio.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                MessageUtils.info("安装完成");
             }
         });
     }

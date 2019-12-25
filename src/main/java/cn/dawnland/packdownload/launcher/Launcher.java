@@ -6,14 +6,11 @@ import cn.dawnland.packdownload.utils.FxmlUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.Upgrader;
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.IOException;
 
 public class Launcher extends Application {
