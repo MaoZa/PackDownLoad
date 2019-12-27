@@ -1,7 +1,16 @@
 # PackDownLoad
 用于下载Curse整合包
 
-食用方法：
+食用方法1：
+1. 搜索整合包
+
+2. 选择整合包
+
+3. 选择版本
+
+4. 点击开始下载
+
+食用方法2：
 1. 到这里找你要的整合包呢-》https://www.curseforge.com/minecraft/modpacks
 
 2. 复制整合包详情页面路径呢 例如: https://www.curseforge.com/minecraft/modpacks/skyfactory-4
