@@ -1,6 +1,6 @@
 package cn.dawnland.packdownload.task;
 
-import cn.dawnland.packdownload.controller.PackDownLoadNewController;
+import cn.dawnland.packdownload.listener.DownloadListener;
 import cn.dawnland.packdownload.model.CurseModInfo;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +57,7 @@ public class JsonJXTask implements Runnable {
                 MessageUtils.info("正在下载启动器...");
                 try {
                     Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "",
-                            new OkHttpUtils.OnDownloadListener() {});
+                            new DownloadListener() {});
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -67,7 +67,8 @@ public class JsonJXTask implements Runnable {
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
             String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
             String forgeVersion = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "").split("-")[1];
-            ForgeUtils.downloadForge(mcVersion, forgeVersion);
+            String forgeVersionStr = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "");
+            ForgeUtils.downloadForgeNew(mcVersion, forgeVersionStr);
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
             Iterator<JSONObject> iterator = files.iterator();

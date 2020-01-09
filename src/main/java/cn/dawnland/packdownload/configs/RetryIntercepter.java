@@ -1,7 +1,6 @@
 package cn.dawnland.packdownload.configs;
 
 import cn.dawnland.packdownload.utils.LogUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;

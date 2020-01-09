@@ -19,7 +19,7 @@ public class ForgeUtils {
         pool.submit(() -> {
             while(true){
                 if(MessageUtils.isOk()){
-                    String installUrl = new ForgeVersion(mcVersion, forgeVersion).getForgeInstallUrl();
+                    String installUrl = new ForgeVersion(mcVersion, forgeVersion, null).getForgeInstallUrl();
                     try {
                         DownLoadUtils.downloadVersionJson(mcVersion, forgeVersion, installUrl);
                     } catch (IOException e) {
@@ -43,4 +43,30 @@ public class ForgeUtils {
         });
     }
 
+    public static void downloadForgeNew(String mcVersion, String forgeVersionStr){
+        pool.submit(() -> {
+            while(true){
+                if(MessageUtils.isOk()){
+                    try {
+                        DownLoadUtils.installForge(new ForgeVersion(mcVersion, null, forgeVersionStr));
+                    } catch (IOException e) {
+                        MessageUtils.error(e);
+                    }
+                    MessageUtils.setStatus();
+                    if(DownLoadUtils.downloadFaildModS.size() > 0){
+//                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+                        Platform.runLater(() -> {
+                            LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
+                        });
+                    }
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }
