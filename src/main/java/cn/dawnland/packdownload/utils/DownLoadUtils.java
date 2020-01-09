@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 
 import javax.swing.*;
 import java.io.*;
@@ -230,30 +229,31 @@ public class DownLoadUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+//                if(DownLoadUtils.downloadFaildModS.size() > 0){
+////                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+//                    Platform.runLater(() -> {
+//                        LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
+//                    });
+//                }
                 MessageUtils.info("安装完成");
+                isOpenLanauch();
             }
         });
     }
 
-    public static void isOpenLanauch(Label resultLabel){
+    public static void isOpenLanauch(){
         JOptionPane.showMessageDialog(null, "打开启动器开始玩耍吧!", "安装完成", 1);
+        Runtime runtime = null;
+        try {
+            Runtime.getRuntime().exec("cmd /c start explorer " + DownLoadUtils.getRootPath());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (null != runtime) {
+                runtime.runFinalization();
+            }
+        }
         CommonUtils.appExit();
-
-//        resultLabel.setText("安装完成");
-//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("安装完成");
-//        alert.setHeaderText("");
-//        alert.setContentText("是否打开启动器");
-//        Optional result = alert.showAndWait();
-//        if (result.get() == ButtonType.OK) {
-//            /** 执行cmd命令打开启动器 */
-//            try {
-//                Desktop.getDesktop().open(new File(DownLoadUtils.getRootPath() + "/黎明大陆伪正版启动器.exe"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            System.exit(0);
-//        }
     }
 
     public static void downloadFailModsAdd(String filename, String url, String savePath, DownloadListener listener){

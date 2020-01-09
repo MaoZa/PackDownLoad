@@ -9,10 +9,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -59,7 +57,11 @@ public class DownloadTask {
         //记录已经下载的文件长度
         long downloadLength = 0;
         //下载文件的名称
-        this.filename = url.substring(url.lastIndexOf("/") + 1);
+        try {
+            this.filename = URLDecoder.decode(url.substring(url.lastIndexOf("/") + 1), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            this.filename = url.substring(url.lastIndexOf("/") + 1);
+        }
         //下载文件存放的目录
         String directory = savePath;
         //创建一个文件
@@ -87,19 +89,19 @@ public class DownloadTask {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        try {
-            /**
-             * 此处需要注意 Curse下载地址均经过302跳转 如果在跳转前加上断点续传头 则会出现请求异常
-             * 所以得获得最终重定向的url后再添加断点续传头
-             * 但需要找到更好的解决方案 目前每个下载均需建立两次HTTP连接 严重增加耗时
-             */
-            request = client.newCall(request).execute()
-                    .request().newBuilder()
-                    .header("RANGE", "bytes=" + downloadLength + "-")
-                    .build();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            /**
+//             * 此处需要注意 Curse下载地址均经过302跳转 如果在跳转前加上断点续传头 则会出现请求异常
+//             * 所以得获得最终重定向的url后再添加断点续传头
+//             * 但需要找到更好的解决方案 目前每个下载均需建立两次HTTP连接 严重增加耗时
+//             */
+//            request = client.newCall(request).execute()
+//                    .request().newBuilder()
+//                    .header("RANGE", "bytes=" + downloadLength + "-")
+//                    .build();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         try {
             Response response = client.newCall(request).execute();

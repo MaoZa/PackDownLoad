@@ -1,7 +1,7 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.listener.DownloadListener;
-import cn.dawnland.packdownload.model.CurseModInfo;
+import cn.dawnland.packdownload.model.curse.CurseModInfo;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
@@ -66,7 +66,6 @@ public class JsonJXTask implements Runnable {
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
             List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
             String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
-            String forgeVersion = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "").split("-")[1];
             String forgeVersionStr = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "");
             ForgeUtils.downloadForgeNew(mcVersion, forgeVersionStr);
 

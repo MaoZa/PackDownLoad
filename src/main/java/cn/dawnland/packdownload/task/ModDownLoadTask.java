@@ -1,7 +1,7 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.listener.DownloadListener;
-import cn.dawnland.packdownload.model.CurseModInfo;
+import cn.dawnland.packdownload.model.curse.CurseModInfo;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.application.Platform;
@@ -20,7 +20,7 @@ public class ModDownLoadTask extends BaseTask<String> {
     }
     @Override
     void subTask() {
-        DownLoadUtils.downLoadMod(curseModInfo.getDownloadUrl(), path, new DownloadListener() {
+        DownLoadUtils.downLoadMod(curseModInfo.getDownloadUrl(), path, new DownloadListener(curseModInfo.getDisplayName()) {
             @Override
             public void onSuccess(File file) {
                 Platform.runLater(() -> {

@@ -38,10 +38,15 @@ public class OkHttpUtils{
 
     public OkHttpUtils() {
         okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(3, TimeUnit.SECONDS)
-                .addInterceptor(new RetryIntercepter(10)).build();
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(new RetryIntercepter(10))
+                .addNetworkInterceptor(chain -> {
+                    System.out.println("url: " + chain.request().url());
+                    return chain.proceed(chain.request());
+                })
+                .build();
         okHttpClient.dispatcher().setMaxRequests(20);
     }
 

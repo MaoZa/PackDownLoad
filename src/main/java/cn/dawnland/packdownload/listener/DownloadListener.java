@@ -18,10 +18,35 @@ public abstract class DownloadListener{
     public final JFXProgressBar modsBar = new JFXProgressBar();
     public final Label barlabel = new Label();
     public final HBox hb = new HBox();
+    public String defaultText;
     private boolean flag = false;
 
     public DownloadListener() {
+        init();
+    }
 
+    public DownloadListener(String defaultText) {
+        this.defaultText = defaultText;
+        init();
+    }
+
+    private void init(){
+        hb.setPrefWidth(360D);
+        hb.setSpacing(10D);
+        hb.setAlignment(Pos.CENTER);
+        modsBar.setPrefWidth(70D);
+        modsBar.setMaxHeight(5D);
+        modsBar.setProgress(0);
+        titleLabel.setText("解析中:" + (defaultText == null || "".equals(defaultText) ? Thread.currentThread().getName() : defaultText));
+        titleLabel.setPrefWidth(150D);
+        titleLabel.setMaxHeight(5);
+        barlabel.setAlignment(Pos.CENTER_RIGHT);
+        barlabel.setPrefWidth(40D);
+        barlabel.setAlignment(Pos.CENTER_LEFT);
+        Platform.runLater(() -> {
+            hb.getChildren().addAll(titleLabel, modsBar, barlabel);
+            DownLoadUtils.taskList.getItems().add(hb);
+        });
     }
 
     /**
@@ -38,25 +63,11 @@ public abstract class DownloadListener{
      */
     public void onProgress(int progress, String filename){
         if(!flag){
-            hb.setPrefWidth(360D);
-            hb.setSpacing(10D);
-            hb.setAlignment(Pos.CENTER);
-            modsBar.setPrefWidth(70D);
-            modsBar.setMaxHeight(5D);
-            modsBar.setProgress(0);
-            titleLabel.setText(filename);
-            titleLabel.setPrefWidth(150D);
-            titleLabel.setMaxHeight(5);
-            barlabel.setAlignment(Pos.CENTER_RIGHT);
-            barlabel.setPrefWidth(40D);
-            barlabel.setAlignment(Pos.CENTER_LEFT);
-            Platform.runLater(() -> {
-                hb.getChildren().addAll(titleLabel, modsBar, barlabel);
-                DownLoadUtils.taskList.getItems().add(hb);
-            });
+
             flag = true;
         }
         Platform.runLater(() -> {
+            titleLabel.setText("下载中:" + filename);
             barlabel.setText(progress + "%");
             modsBar.setProgress(progress / 100D);
         });

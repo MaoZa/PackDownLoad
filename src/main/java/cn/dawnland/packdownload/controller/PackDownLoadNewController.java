@@ -61,7 +61,6 @@ public class PackDownLoadNewController implements Initializable {
     private static JFXTextField threadCountStatic;
     private static CheckBox divideVersionCheckBoxStatic;
     private static int count;
-//    public static ExecutorService initPool = newFixedThreadPool(5);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
