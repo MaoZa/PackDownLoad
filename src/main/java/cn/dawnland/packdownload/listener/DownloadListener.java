@@ -62,10 +62,6 @@ public abstract class DownloadListener{
      * 下载进度通知
      */
     public void onProgress(int progress, String filename){
-        if(!flag){
-
-            flag = true;
-        }
         Platform.runLater(() -> {
             titleLabel.setText("下载中:" + filename);
             barlabel.setText(progress + "%");
