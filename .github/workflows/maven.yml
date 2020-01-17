@@ -17,5 +17,7 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Scope for Gradle
       uses: undefinedlabs/scope-for-gradle-action@v1
+      with:
+        dsn: ${{secrets.SCOPE_DSN}}
 
 
