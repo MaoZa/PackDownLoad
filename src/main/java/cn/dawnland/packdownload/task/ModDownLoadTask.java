@@ -3,6 +3,7 @@ package cn.dawnland.packdownload.task;
 import cn.dawnland.packdownload.listener.DownloadListener;
 import cn.dawnland.packdownload.model.curse.CurseModInfo;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
+import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.application.Platform;
 
@@ -24,6 +25,7 @@ public class ModDownLoadTask extends BaseTask<String> {
             public void onSuccess(File file) {
                 Platform.runLater(() -> {
                     super.onSuccess(file);
+                    LogUtils.addSuccessMod(curseModInfo);
                     UIUpdateUtils.modsBarAddOne();
                 });
             }

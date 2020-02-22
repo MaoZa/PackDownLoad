@@ -119,10 +119,10 @@ public class DownloadTask {
                         return DownloadStatusType.PAUSED;
                     } else {
                         total += len;
-                        savedFile.write(b, 0, len);
+                        url:          savedFile.write(b, 0, len);
                         MessageUtils.sizeAI.addAndGet(len);
                         //计算已经下载的百分比
-                        int progress = (int) ((total + downloadLength) * 100 / contentLength);
+                        int progress = (int) ((long) total * 100 / contentLength);
                         //注意：在doInBackground()中是不可以进行UI操作的，如果需要更新UI,比如说反馈当前任务的执行进度，
                         //可以调用publishProgress()方法完成。
                         listener.onProgress(progress, this.filename);

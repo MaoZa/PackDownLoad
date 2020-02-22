@@ -1,9 +1,8 @@
 package cn.dawnland.packdownload.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import cn.dawnland.packdownload.model.curse.CurseModInfo;
+
+import java.io.*;
 import java.time.LocalDateTime;
 
 /**
@@ -46,6 +45,25 @@ public class LogUtils {
         }
         ps.append(LocalDateTime.now() + ": " + msg);
         System.out.println(LocalDateTime.now() + ": " + msg);
+    }
+
+    public static void addSuccessMod(CurseModInfo curseModInfo) {
+        File file = new File(DownLoadUtils.getRootPath() + "/successMod.txt");
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(file, true);
+            fileWriter.append(curseModInfo.getDisplayName() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(fileWriter != null){
+                try {
+                    fileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

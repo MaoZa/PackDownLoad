@@ -11,13 +11,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +70,18 @@ public class JsonJXTask implements Runnable {
 
             ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
             Iterator<JSONObject> iterator = files.iterator();
+
+            //获取已成功下载的文件(mod)列表
+            File successModFile = new File(DownLoadUtils.getRootPath() + "/successMod.txt");
+            if(successModFile.exists()){
+                BufferedReader br = new BufferedReader(new FileReader(successModFile));
+                String s = null;
+                while ((s = br.readLine())!=null){
+                    String[] split = s.split(":");
+                    successModMap.put(split[0], split[1]);
+                }
+            }
+
             Platform.runLater(() -> {
                 JFXProgressBar modsBar = new JFXProgressBar();
                 Label modsLabel = new Label("下载进度");
@@ -88,7 +99,7 @@ public class JsonJXTask implements Runnable {
                 modsLabel.setAlignment(Pos.CENTER_LEFT);
                 label.setPrefWidth(100D);
                 label.setAlignment(Pos.CENTER_RIGHT);
-                label.setText("0/" + files.size());
+                label.setText("0/" + (files.size() - successModMap.size()));
                 MessageUtils.info("正在安装整合包，请耐心等待");
                 Platform.runLater(() -> {
                     hb.getChildren().addAll(modsLabel, modsBar, label);
@@ -96,11 +107,16 @@ public class JsonJXTask implements Runnable {
                 });
                 UIUpdateUtils.modsBar = modsBar;
                 UIUpdateUtils.modsLabel = label;
-                UIUpdateUtils.modsCount = files.size();
+                UIUpdateUtils.modsCount = (files.size() - successModMap.size());
             });
             ((Runnable)() -> {
                 while (iterator.hasNext()){
                     JSONObject object = iterator.next();
+                    String projectID = object.get("projectID").toString();
+                    String fileId = object.get("fileID").toString();
+                    if(successModMap.get(projectID) != null && successModMap.get(projectID).equals(fileId)){
+                        continue;
+                    }
                     request(object);
                 }
             }).run();
@@ -114,6 +130,8 @@ public class JsonJXTask implements Runnable {
 
     private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
     private String addonUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s/download-url";
+
+    private Map<String, String> successModMap = new HashMap<>();
 
     public void request(JSONObject jsonObject) {
         pool.submit(() -> {
