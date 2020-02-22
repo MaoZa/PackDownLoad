@@ -10,6 +10,9 @@ public abstract class BaseTask<T> extends Task<T> {
         this.callback = callback;
     }
 
+    public BaseTask() {
+    }
+
     @Override
     protected T call() { return null; }
 

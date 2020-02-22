@@ -13,8 +13,7 @@ public class ModDownLoadTask extends BaseTask<String> {
     private final CurseModInfo curseModInfo;
     private final String path;
 
-    public ModDownLoadTask(Callback<String> callback, CurseModInfo curseModInfo, String path) {
-        super(callback);
+    public ModDownLoadTask(CurseModInfo curseModInfo, String path) {
         this.curseModInfo = curseModInfo;
         this.path = path;
     }

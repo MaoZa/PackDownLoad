@@ -70,14 +70,7 @@ public class DownloadTask {
             //如果文件存在的话，得到文件的大小
             downloadLength = this.file.length();
         }
-        //得到下载内容的大小
-        long contentLength = getContentLength(url);
-        if (contentLength == 0) {
-            return DownloadStatusType.FAILED;
-        } else if (contentLength == downloadLength) {
-            //已下载字节和文件总字节相等，说明已经下载完成了
-            return DownloadStatusType.SUCCESS;
-        }
+
         OkHttpClient client = OkHttpUtils.get().getOkHttpClient();
         /**
          * HTTP请求是有一个Header的，里面有个Range属性是定义下载区域的，它接收的值是一个区间范围，
@@ -102,9 +95,16 @@ public class DownloadTask {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
         try {
             Response response = client.newCall(request).execute();
+            //得到下载内容的大小
+            long contentLength = response.body().contentLength();
+            if (contentLength == 0) {
+                return DownloadStatusType.FAILED;
+            } else if (contentLength == downloadLength) {
+                //已下载字节和文件总字节相等，说明已经下载完成了
+                return DownloadStatusType.SUCCESS;
+            }
             if (response != null) {
                 is = response.body().byteStream();
                 savedFile = new RandomAccessFile(file, "rw");

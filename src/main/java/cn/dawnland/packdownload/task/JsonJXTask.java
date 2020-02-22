@@ -113,43 +113,36 @@ public class JsonJXTask implements Runnable {
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
 
     private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
+    private String addonUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s/download-url";
 
     public void request(JSONObject jsonObject) {
         pool.submit(() -> {
             String projectId = jsonObject.get("projectID").toString();
             String fileId = jsonObject.get("fileID").toString();
-            String url = String.format(baseUrl, projectId, fileId);
-            CurseModInfo curseModInfo = null;
+//            String url = String.format(baseUrl, projectId, fileId);
+//            CurseModInfo curseModInfo = null;
+//            try {
+//                curseModInfo = JSONObject.parseObject(OkHttpUtils.get().get(url), CurseModInfo.class);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getFileName());
+//            if(Files.exists(path)){
+//                File file = new File(path.toString());
+//                if(file.length() == curseModInfo.getFileLength()){
+//                    UIUpdateUtils.modsBarAddOne();
+//                    LogUtils.info(file.getName() + "已下载{跳过}");
+//                    return;
+//                }
+//            }
+            CurseModInfo curseModInfo = new CurseModInfo();
             try {
-                curseModInfo = JSONObject.parseObject(OkHttpUtils.get().get(url), CurseModInfo.class);
+                curseModInfo.setDownloadUrl(OkHttpUtils.get().get(String.format(addonUrl, projectId, fileId)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getFileName());
-            if(Files.exists(path)){
-                File file = new File(path.toString());
-                if(file.length() == curseModInfo.getFileLength()){
-                    UIUpdateUtils.modsBarAddOne();
-                    LogUtils.info(file.getName() + "已下载{跳过}");
-                    return;
-                }
-            }
-            new ModDownLoadTask(new Callback<String>() {
-                @Override
-                public String progressCallback(int progress, Object temp) {
-                    return null;
-                }
-
-                @Override
-                public String successCallback(String result) {
-                    return null;
-                }
-
-                @Override
-                public String exceptionCallback(Exception e) {
-                    return null;
-                }
-            }, curseModInfo, MODS_PATH).subTask();
+            curseModInfo.setDisplayName(projectId + ":" + fileId);
+            new ModDownLoadTask(curseModInfo, MODS_PATH).subTask();
         });
     }
 }
