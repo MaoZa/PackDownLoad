@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.configs.Config;
 import cn.dawnland.packdownload.listener.DownloadListener;
 import cn.dawnland.packdownload.model.curse.CurseModInfo;
 import cn.dawnland.packdownload.utils.*;
@@ -54,12 +55,8 @@ public class JsonJXTask implements Runnable {
             MessageUtils.downloadSpeedStart();
             pool.submit(() -> {
                 MessageUtils.info("正在下载启动器...");
-                try {
-                    Upgrader.downLoadFromUrl("https://dawnland.cn/" + URLEncoder.encode("黎明大陆伪正版启动器", "UTF-8") + ".exe", "",
-                            new DownloadListener() {});
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                Upgrader.downLoadFromUrl(Config.lancherUrl, "", new DownloadListener() {});
+                Upgrader.downLoadFromUrl(Config.authlibInjectorsUrl, "", new DownloadListener() {});
             });
             String fileJson = FileUtils.readJsonData(jsonPath);
             JSONObject jsonObject = JSONObject.parseObject(fileJson);
