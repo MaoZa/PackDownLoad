@@ -69,7 +69,7 @@ public class JsonJXTask implements Runnable {
             Iterator<JSONObject> iterator = files.iterator();
 
             //获取已成功下载的文件(mod)列表
-            File successModFile = new File(DownLoadUtils.getRootPath() + "/successMod.txt");
+            File successModFile = new File(DownLoadUtils.getPackPath() + "/successMod.txt");
             if(successModFile.exists()){
                 BufferedReader br = new BufferedReader(new FileReader(successModFile));
                 String s = null;

@@ -238,7 +238,7 @@ public class DownLoadUtils {
 //                }
                 MessageUtils.info("安装完成");
                 try {
-                    Files.deleteIfExists(Paths.get(DownLoadUtils.getRootPath() + "/successMod.txt"));
+                    Files.deleteIfExists(Paths.get(DownLoadUtils.getPackPath() + "/successMod.txt"));
                 } catch (IOException e) {
                     Platform.runLater(() -> JOptionPane.showMessageDialog(null, "请手动删除目录下的successMod.txt", "啊删除临时文件失败啦", JOptionPane.ERROR_MESSAGE));
                 }

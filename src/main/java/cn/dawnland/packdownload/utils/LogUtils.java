@@ -46,7 +46,7 @@ public class LogUtils {
     }
 
     public static void addSuccessMod(CurseModInfo curseModInfo) {
-        File file = new File(DownLoadUtils.getRootPath() + "/successMod.txt");
+        File file = new File(DownLoadUtils.getPackPath() + "/successMod.txt");
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(file, true);
