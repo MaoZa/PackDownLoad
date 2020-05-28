@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -236,6 +237,11 @@ public class DownLoadUtils {
 //                    });
 //                }
                 MessageUtils.info("安装完成");
+                try {
+                    Files.deleteIfExists(Paths.get(DownLoadUtils.getPackPath() + "/successMod.txt"));
+                } catch (IOException e) {
+                    Platform.runLater(() -> JOptionPane.showMessageDialog(null, "请手动删除目录下的successMod.txt", "啊删除临时文件失败啦", JOptionPane.ERROR_MESSAGE));
+                }
                 isOpenLanauch();
             }
         });

@@ -12,11 +12,13 @@ import lombok.Data;
 @Data
 public class Config {
 
-    public static float currentVersion = 2.09f;
+    public static float currentVersion = 2.13f;
     public static String batUrl;
     public static String versionUrl;
     public static String exeUrl;
     public static String string2download;
+    public static String lancherUrl;
+    public static String authlibInjectorsUrl;
 
     public static boolean init(){
         try{
@@ -26,6 +28,8 @@ public class Config {
             versionUrl = jsonObject.get("versionUrl").toString();
             exeUrl = jsonObject.get("exeUrl").toString();
             string2download = jsonObject.get("string2download").toString();
+            lancherUrl = jsonObject.get("lancherUrl").toString();
+            authlibInjectorsUrl = jsonObject.get("authlib-injectors-url").toString();
             return true;
         }catch (Exception e){
             MessageUtils.error(e);
