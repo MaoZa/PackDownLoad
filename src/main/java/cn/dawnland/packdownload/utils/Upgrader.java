@@ -1,6 +1,8 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.configs.Config;
+import cn.dawnland.packdownload.listener.DownloadListener;
+import cn.dawnland.packdownload.task.DownloadTask;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.swing.*;
@@ -119,18 +121,19 @@ public class Upgrader {
      * 下载最新版本
      */
     public static void dowload() {
-        downLoadFromUrl(Config.batUrl, new OkHttpUtils.OnDownloadListener() {
+        downLoadFromUrl(Config.batUrl, new DownloadListener() {
                     @Override
-                    public void onDownloadSuccess(File file) {
-                        downLoadFromUrl(Config.exeUrl, DownLoadUtils.getRootPath() + File.separator + "tmp", new OkHttpUtils.OnDownloadListener() {
+                    public void onSuccess(File file) {
+                        downLoadFromUrl(Config.exeUrl, DownLoadUtils.getRootPath() + File.separator + "tmp", new DownloadListener() {
                             @Override
-                            public void onDownloadSuccess(File file) {
+                            public void onSuccess(File file) {
                                 JOptionPane.showConfirmDialog(null, "点击确定重启软件", "下载成功", JOptionPane.PLAIN_MESSAGE);
                                 restart();
                             }
                             @Override
-                            public void onDownloadFailed(Exception e) {
-                                MessageUtils.error("自动更新失败，请检查网络后重试。仍无法更新请联系作者", "更新失败");
+                            public void onFailed(String filename, String url) {
+                                super.onFailed(filename, url);
+                                MessageUtils.error("仍无法更新可联系作者或前往https://dawnland.cn/PackDownload下载最新版", "自动更新失败，请检查网络后重试。");
                             }
                         });
                     }
@@ -235,15 +238,17 @@ public class Upgrader {
      * @param savePath
      * @throws IOException
      */
-    public static void downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener listener) {
+    public static void downLoadFromUrl(String urlStr, String savePath, DownloadListener listener) {
         if(savePath.trim() == null || "".equals(savePath.trim())){
             savePath = DownLoadUtils.getRootPath();
         }
-        OkHttpUtils.get().download(urlStr, savePath, listener);
+//        OkHttpUtils.get().download(urlStr, savePath, listener);
+        new DownloadTask(savePath, listener).startDownload(urlStr);
     }
-    public static void downLoadFromUrl(String urlStr, OkHttpUtils.OnDownloadListener listener) {
+    public static void downLoadFromUrl(String urlStr, DownloadListener listener) {
         String savePath = DownLoadUtils.getRootPath();
-        OkHttpUtils.get().download(urlStr, savePath, listener);
+//        OkHttpUtils.get().download(urlStr, savePath, listener);
+        new DownloadTask(savePath, listener).startDownload(urlStr);
     }
 }
 

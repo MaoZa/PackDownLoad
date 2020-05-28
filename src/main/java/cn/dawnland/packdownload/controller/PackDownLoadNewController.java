@@ -1,10 +1,10 @@
 package cn.dawnland.packdownload.controller;
 
+import cn.dawnland.packdownload.listener.DownloadListener;
 import cn.dawnland.packdownload.model.curse.CurseProjectInfo;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.OkHttpUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -60,7 +60,7 @@ public class PackDownLoadNewController implements Initializable {
     private static Button selectDirButtonStatic;
     private static JFXTextField threadCountStatic;
     private static CheckBox divideVersionCheckBoxStatic;
-//    public static ExecutorService initPool = newFixedThreadPool(5);
+    private static int count;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -95,6 +95,7 @@ public class PackDownLoadNewController implements Initializable {
     }
 
     public void startPackDownLoad(){
+        count += 1;
         divideVersionCheckBoxStatic = divideVersionCheckBox;
         threadCountStatic = threadCount;
         selectDirButtonStatic = selectDirButton;
@@ -104,6 +105,7 @@ public class PackDownLoadNewController implements Initializable {
         projectUrlTextFieldStatic = projectUrlTextField;
         targetHboxStatic = targetHbox;
         searchHboxStatic = searchHbox;
+        startButtonStatic.setDisable(true);
         Integer threadCount = 10;
         if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
@@ -116,7 +118,7 @@ public class PackDownLoadNewController implements Initializable {
         ExecutorService pool = newFixedThreadPool(threadCount);
         if(divideVersionCheckBox.isSelected()){
             if(zipFile != null){
-                DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]);
+                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]); }
                 startInstall(pool);
             }else {
                 String projectName = (String) ((ComboBox)searchHbox.getChildren().get(0)).getValue();
@@ -124,14 +126,13 @@ public class PackDownLoadNewController implements Initializable {
                 for (int i = 0; i < split.length; i++) {
                     projectName = projectName.replace(split[i], " ");
                 }
-                DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + projectName);
+                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + projectName); }
                 pool.submit(() -> {
-                    // TODO: 2019/12/3 下载整合包zip
                     MessageUtils.info("正在下载整合包zip...");
-                    DownLoadUtils.downLoadFromUrl(projectUrlTextField.getText(), DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+                    DownLoadUtils.downLoadFromUrl(projectUrlTextField.getText(), DownLoadUtils.getPackPath(), new DownloadListener() {
                         @Override
-                        public void onDownloadSuccess(File file) {
-                            super.onDownloadSuccess(file);
+                        public void onSuccess(File file) {
+                            super.onSuccess(file);
                             zipFile = file;
                             startInstall(pool);
                         }

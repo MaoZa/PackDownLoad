@@ -1,11 +1,7 @@
 package cn.dawnland.packdownload.utils;
 
 import cn.dawnland.packdownload.configs.RetryIntercepter;
-import com.jfoenix.controls.JFXProgressBar;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import cn.dawnland.packdownload.listener.DownloadListener;
 import okhttp3.*;
 
 import java.io.File;
@@ -29,6 +25,10 @@ public class OkHttpUtils{
 
     public final static ConcurrentMap<String, Object> cells = new ConcurrentHashMap<>();
 
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
+    }
+
     public static OkHttpUtils get() {
         if (downloadUtil == null) {
             downloadUtil = new OkHttpUtils();
@@ -38,12 +38,16 @@ public class OkHttpUtils{
 
     public OkHttpUtils() {
         okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(3, TimeUnit.SECONDS)
-                .addInterceptor(new RetryIntercepter(10)).build();
-        okHttpClient.dispatcher().setMaxRequests(1000);
-        okHttpClient.dispatcher().setMaxRequests(1000);
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(new RetryIntercepter(10))
+                .addNetworkInterceptor(chain -> {
+                    System.out.println("url: " + chain.request().url());
+                    return chain.proceed(chain.request());
+                })
+                .build();
+        okHttpClient.dispatcher().setMaxRequests(20);
     }
 
     /**
@@ -51,12 +55,12 @@ public class OkHttpUtils{
      * @param saveFilePath 文件储存完整路径+文件名
      * @param listener     下载监听
      */
-    public void download(String url, final String saveFilePath, final OnDownloadListener listener) {
+    public void download(String url, final String saveFilePath, final DownloadListener listener) {
         if(!Paths.get(saveFilePath).toFile().exists()){
             try {
                 Files.createDirectories(Paths.get(saveFilePath));
             } catch (IOException e) {
-                listener.onDownloadFailed(e);
+                listener.onFailed(null, url);
             }
         }
         Request request = new Request.Builder().url(url).build();
@@ -65,7 +69,7 @@ public class OkHttpUtils{
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败监听回调
-                listener.onDownloadFailed(e);
+                listener.onFailed(null, url);
                 System.out.println(e.getMessage());
             }
 
@@ -83,7 +87,7 @@ public class OkHttpUtils{
                 //储存下载文件
                 File file = Paths.get(saveFilePath + File.separator + filename).toFile();
                 if(file.exists() && file.length() == response.body().contentLength()){
-                    listener.onDownloadSuccess(file);
+                    listener.onSuccess(file);
                     return;
                 }
                 try {
@@ -98,13 +102,13 @@ public class OkHttpUtils{
                         MessageUtils.sizeAI.addAndGet(len);
                         int progress = (int) (sum * 1.0f / total * 100);
                         //下载中更新进度条
-                        listener.onDownloading(progress, filename);
+                        listener.onProgress(progress, filename);
                     }
                     fos.flush();
                     //下载完成
-                    listener.onDownloadSuccess(file);
+                    listener.onSuccess(file);
                 } catch (Exception e) {
-                    listener.onDownloadFailed(e);
+                    listener.onFailed(null, url);
 
                 }finally {
 
@@ -124,64 +128,6 @@ public class OkHttpUtils{
 
             }
         });
-    }
-
-    public abstract static class OnDownloadListener{
-
-        public OnDownloadListener() {}
-
-        public final Label titleLabel = new Label();
-        public final JFXProgressBar modsBar = new JFXProgressBar();
-        public final Label barlabel = new Label();
-        public final HBox hb = new HBox();
-
-        public boolean flag = false;
-
-        /**
-         * 下载完成后的回调方法
-         * 如果重写此方法则必须在方法首行执行super.onDownloadSuccess(file)
-         * @param file
-         */
-        public void onDownloadSuccess(File file){
-            DownLoadUtils.taskList.getItems().remove(this.hb);
-        }
-
-        /**
-         * 下载进度
-         */
-        public void onDownloading(int progress, String  filename){
-            if(!flag){
-                hb.setPrefWidth(360D);
-                hb.setSpacing(10D);
-                hb.setAlignment(Pos.CENTER);
-                modsBar.setPrefWidth(70D);
-                modsBar.setMaxHeight(5D);
-                modsBar.setProgress(0);
-                titleLabel.setText(filename);
-                titleLabel.setPrefWidth(150D);
-                titleLabel.setMaxHeight(5);
-                barlabel.setAlignment(Pos.CENTER_RIGHT);
-                barlabel.setPrefWidth(40D);
-                barlabel.setAlignment(Pos.CENTER_LEFT);
-                Platform.runLater(() -> {
-                    hb.getChildren().addAll(titleLabel, modsBar, barlabel);
-                    DownLoadUtils.taskList.getItems().add(hb);
-                });
-                flag = true;
-            }
-            Platform.runLater(() -> {
-                barlabel.setText(progress + "%");
-                modsBar.setProgress(progress / 100D);
-            });
-        }
-
-        /**
-         * 下载异常信息
-         */
-        public void onDownloadFailed(Exception e){
-            System.out.println(e.getMessage());
-            MessageUtils.error(e);
-        }
     }
 
     public String get(final String url) throws IOException {

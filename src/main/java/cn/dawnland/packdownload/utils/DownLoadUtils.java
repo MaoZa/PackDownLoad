@@ -1,15 +1,17 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.listener.DownloadListener;
 import cn.dawnland.packdownload.model.ForgeVersion;
+import cn.dawnland.packdownload.task.DownloadTask;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -57,7 +59,7 @@ public class DownLoadUtils {
      * @param url 下载链接
      * @param path 相对于.minecraft的路径(.minecraft = 根目录)
      */
-    public static boolean downLoadMod(String url, String path, OkHttpUtils.OnDownloadListener onDownloadListener) {
+    public static boolean downLoadMod(String url, String path, DownloadListener downloadListener) {
         if(path == null || "".equals(path)){
             path = rootPath;
         }
@@ -65,7 +67,7 @@ public class DownLoadUtils {
         if (!file.exists()) {
             file.mkdirs();
         }
-        DownLoadUtils.downLoadModFromUrl(url, path, onDownloadListener);
+        DownLoadUtils.downLoadModFromUrl(url, path, downloadListener);
         return true;
     }
 
@@ -89,10 +91,12 @@ public class DownLoadUtils {
      * 从网络Url中下载文件
      * @param urlStr
      * @param savePath
+     * @param downloadListener
      * @throws IOException
      */
-    public static void  downLoadModFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
-        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
+    public static void  downLoadModFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
+//        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
+        new DownloadTask(savePath, downloadListener).startDownload(urlStr);
     }
 
     /**
@@ -101,8 +105,9 @@ public class DownLoadUtils {
      * @param savePath
      * @throws IOException
      */
-    public static String downLoadFromUrl(String urlStr, String savePath, OkHttpUtils.OnDownloadListener onDownloadListener) {
-        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
+    public static String downLoadFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
+//        OkHttpUtils.get().download(urlStr, savePath, downloadListener);
+        new DownloadTask(savePath, downloadListener).startDownload(urlStr);
         return null;
     }
 
@@ -111,9 +116,9 @@ public class DownLoadUtils {
         String s = OkHttpUtils.get().get(MojangUtils.getJsonUrl(mcVersion));
         JSONObject jsonObject = JSONObject.parseObject(s);
         MessageUtils.info("正在下载Forge...");
-        DownLoadUtils.downLoadFromUrl(installUrl, DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+        DownLoadUtils.downLoadFromUrl(installUrl, DownLoadUtils.getPackPath(), new DownloadListener() {
             @Override
-            public void onDownloadSuccess(File file){
+            public void onSuccess(File file){
                 Platform.runLater(() -> {
                     if(this.hb.getParent() != null){
                         UIUpdateUtils.taskList.getItems().remove(this.hb);
@@ -135,9 +140,9 @@ public class DownLoadUtils {
                 jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
                 jsonObject.put("mainClass", versionObject.get("mainClass"));
                 MessageUtils.info("正在下载配置文件...");
-                DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+                DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new DownloadListener() {
                     @Override
-                    public void onDownloadSuccess(File file) {
+                    public void onSuccess(File file) {
                         Platform.runLater(() -> {
                             if(this.hb.getParent() != null){
                                 UIUpdateUtils.taskList.getItems().remove(this.hb);
@@ -164,7 +169,14 @@ public class DownLoadUtils {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        MessageUtils.info("安装完成");
+                        if(DownLoadUtils.downloadFaildModS.size() > 0){
+//                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+                            Platform.runLater(() -> {
+                                LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
+                            });
+                        }else{
+                            MessageUtils.info("安装完成");
+                        }
                     }
                 });
             }
@@ -189,9 +201,9 @@ public class DownLoadUtils {
         jsonObject.put("minecraftArguments", versionObject.get("minecraftArguments"));
         jsonObject.put("mainClass", versionObject.get("mainClass"));
         MessageUtils.info("正在下载配置文件...");
-        DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new OkHttpUtils.OnDownloadListener() {
+        DownLoadUtils.downLoadFromUrl("https://dawnland.cn/hmclversion.cfg", DownLoadUtils.getPackPath(), new DownloadListener() {
             @Override
-            public void onDownloadSuccess(File file) {
+            public void onSuccess(File file) {
                 Platform.runLater(() -> {
                     if(this.hb.getParent() != null){
                         UIUpdateUtils.taskList.getItems().remove(this.hb);
@@ -218,30 +230,41 @@ public class DownLoadUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+//                if(DownLoadUtils.downloadFaildModS.size() > 0){
+////                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
+//                    Platform.runLater(() -> {
+//                        LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
+//                    });
+//                }
                 MessageUtils.info("安装完成");
+                try {
+                    Files.deleteIfExists(Paths.get(DownLoadUtils.getPackPath() + "/successMod.txt"));
+                } catch (IOException e) {
+                    Platform.runLater(() -> JOptionPane.showMessageDialog(null, "请手动删除目录下的successMod.txt", "啊删除临时文件失败啦", JOptionPane.ERROR_MESSAGE));
+                }
+                isOpenLanauch();
             }
         });
     }
 
-    public static void isOpenLanauch(Label resultLabel){
+    public static void isOpenLanauch(){
         JOptionPane.showMessageDialog(null, "打开启动器开始玩耍吧!", "安装完成", 1);
+        Runtime runtime = null;
+        try {
+            Runtime.getRuntime().exec("cmd /c start explorer " + DownLoadUtils.getRootPath());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (null != runtime) {
+                runtime.runFinalization();
+            }
+        }
         CommonUtils.appExit();
+    }
 
-//        resultLabel.setText("安装完成");
-//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("安装完成");
-//        alert.setHeaderText("");
-//        alert.setContentText("是否打开启动器");
-//        Optional result = alert.showAndWait();
-//        if (result.get() == ButtonType.OK) {
-//            /** 执行cmd命令打开启动器 */
-//            try {
-//                Desktop.getDesktop().open(new File(DownLoadUtils.getRootPath() + "/黎明大陆伪正版启动器.exe"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            System.exit(0);
-//        }
+    public static void downloadFailModsAdd(String filename, String url, String savePath, DownloadListener listener){
+        downloadFaildModS.put(filename, url);
+        new DownloadTask(savePath, listener).startDownload(url);
     }
 
 }

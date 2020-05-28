@@ -1,15 +1,12 @@
 package cn.dawnland.packdownload.controller;
 
 import cn.dawnland.packdownload.utils.MessageUtils;
-import com.jfoenix.controls.JFXProgressBar;
-import com.jfoenix.controls.JFXTextField;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static cn.dawnland.packdownload.utils.Upgrader.*;
+import static cn.dawnland.packdownload.utils.Upgrader.dowload;
 
 /**
  * @author Created by cap_sub@dawnland.cn

@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Launcher extends Application {
@@ -39,28 +40,12 @@ public class Launcher extends Application {
         //如果version.json 永远比当前版本高 实现每次打开强制更新
         Scene scene = new Scene(FxmlUtils.LoadFxml("PackDownLoadNew.fxml"), 644, 300);;
         if(Upgrader.isNewVersion()){
+            JOptionPane.showMessageDialog(null, "开始自动更新,请耐心等待\n点击确定开始更新", "发现新版本 " + Upgrader.newVersion, 1);
             scene = new Scene(FxmlUtils.LoadFxml("Update.fxml"), 334, 118);
             primaryStage.setTitle("自动更新");
             primaryStage.setScene(scene);
             primaryStage.show();
         }
-        // 为按钮添加事件——点击时打开新的窗口
-//        Button opinionButton = new Button("反馈");
-//        opinionButton.setLayoutX(396);
-//        opinionButton.setLayoutY(14);
-//        opinionButton.setOnMouseClicked(event -> {
-//            Parent root = null;
-//            try {
-//                root = FxmlUtils.LoadFxml("Opinion.fxml");
-//            } catch (IOException e) {
-//                MessageUtils.error(e);
-//            }
-//            primaryStage.setTitle("反馈");
-//            primaryStage.setScene(new Scene(root, 400, 200));
-//            primaryStage.initModality(Modality.APPLICATION_MODAL);
-//            primaryStage.show();
-//        });
-//        ((AnchorPane)root).getChildren().add(opinionButton);
         primaryStage.setTitle("整合包下载器");
         primaryStage.setScene(scene);
         primaryStage.show();

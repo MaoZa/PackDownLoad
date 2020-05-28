@@ -60,23 +60,25 @@ public class MessageUtils {
     }
 
     public static void downloadSpeedStart(){
-        pool.submit((Runnable) () -> {
-            while (true) {
-                int size = sizeAI.get();
-                try {
-                    Thread.sleep(500);
-                    int speed = sizeAI.get() - size;
-                    if(speed > 0 && downloadSpeed != null){
-                        UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 0.5) + "/s");
-                        sizeAI.set(0);
-                    }else if(downloadSpeed != null){
-                        UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
+        if(downloadSpeed == null || "".equals(downloadSpeed.getText())){
+            pool.submit((Runnable) () -> {
+                while (true) {
+                    int size = sizeAI.get();
+                    try {
+                        Thread.sleep(500);
+                        int speed = sizeAI.get() - size;
+                        if(speed > 0 && downloadSpeed != null){
+                            UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 0.5) + "/s");
+                            sizeAI.set(0);
+                        }else if(downloadSpeed != null){
+                            UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
+                        }
+                    } catch (InterruptedException e) {
+                        MessageUtils.error(e);
                     }
-                } catch (InterruptedException e) {
-                    MessageUtils.error(e);
                 }
-            }
-        });
+            });
+        }
     }
 
     public static String readableFileSize(double size) {
