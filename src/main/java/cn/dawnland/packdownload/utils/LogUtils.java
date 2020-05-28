@@ -45,7 +45,7 @@ public class LogUtils {
         System.out.println(LocalDateTime.now() + ": " + msg);
     }
 
-    public static void addSuccessMod(CurseModInfo curseModInfo) {
+    public static synchronized void addSuccessMod(CurseModInfo curseModInfo) {
         File file = new File(DownLoadUtils.getPackPath() + "/successMod.txt");
         FileWriter fileWriter = null;
         try {
