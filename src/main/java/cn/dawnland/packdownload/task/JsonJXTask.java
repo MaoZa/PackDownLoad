@@ -105,16 +105,24 @@ public class JsonJXTask implements Runnable {
                 UIUpdateUtils.modsBar = modsBar;
                 UIUpdateUtils.modsLabel = label;
                 UIUpdateUtils.modsCount = (files.size() - successModMap.size());
+
             });
             ((Runnable)() -> {
-                while (iterator.hasNext()){
-                    JSONObject object = iterator.next();
-                    String projectID = object.get("projectID").toString();
-                    String fileId = object.get("fileID").toString();
-                    if(successModMap.get(projectID) != null && successModMap.get(projectID).equals(fileId)){
-                        continue;
+                if(!iterator.hasNext()){
+                    Platform.runLater(() -> {
+                        MessageUtils.info("Mod下载完成,请等待其他任务完成...");
+                        MessageUtils.setStatus();
+                    });
+                }else{
+                    while (iterator.hasNext()){
+                        JSONObject object = iterator.next();
+                        String projectID = object.get("projectID").toString();
+                        String fileId = object.get("fileID").toString();
+                        if(successModMap.get(projectID) != null && successModMap.get(projectID).equals(fileId)){
+                            continue;
+                        }
+                        request(object);
                     }
-                    request(object);
                 }
             }).run();
         } catch (Exception e) {
@@ -134,22 +142,6 @@ public class JsonJXTask implements Runnable {
         pool.submit(() -> {
             String projectId = jsonObject.get("projectID").toString();
             String fileId = jsonObject.get("fileID").toString();
-//            String url = String.format(baseUrl, projectId, fileId);
-//            CurseModInfo curseModInfo = null;
-//            try {
-//                curseModInfo = JSONObject.parseObject(OkHttpUtils.get().get(url), CurseModInfo.class);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getFileName());
-//            if(Files.exists(path)){
-//                File file = new File(path.toString());
-//                if(file.length() == curseModInfo.getFileLength()){
-//                    UIUpdateUtils.modsBarAddOne();
-//                    LogUtils.info(file.getName() + "已下载{跳过}");
-//                    return;
-//                }
-//            }
             CurseModInfo curseModInfo = new CurseModInfo();
             try {
                 curseModInfo.setDownloadUrl(OkHttpUtils.get().get(String.format(addonUrl, projectId, fileId)));

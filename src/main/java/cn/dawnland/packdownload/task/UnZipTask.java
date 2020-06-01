@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.scene.control.Label;
@@ -45,7 +46,7 @@ public class UnZipTask implements Runnable{
                 unzipFile.mkdirs();
             }else {
                 unzipFile.getParentFile().mkdirs();
-                fos = new FileOutputStream(unzipFile.getPath(), false);
+                fos = new FileOutputStream(unzipFile.getPath());
                 cs.forEach(c -> {
                     try {
                         fos.write(c);

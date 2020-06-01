@@ -16,7 +16,8 @@ public class LogUtils {
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(e.getLocalizedMessage());
+            fileWriter.append(e.getLocalizedMessage() + "\n");
+            fileWriter.flush();
         } catch (Exception e1) {
             e1.printStackTrace();
         }
@@ -27,7 +28,8 @@ public class LogUtils {
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(msg);
+            fileWriter.append(msg + "\n");
+            fileWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,6 +41,7 @@ public class LogUtils {
         try {
             fileWriter = new FileWriter(file, true);
             fileWriter.append(msg + "\n");
+            fileWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,6 +54,7 @@ public class LogUtils {
         try {
             fileWriter = new FileWriter(file, true);
             fileWriter.append(curseModInfo.getDisplayName() + "\n");
+            fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }finally {

@@ -33,7 +33,7 @@ public class RetryIntercepter implements Interceptor {
             response = chain.proceed(request);
             Thread.sleep(10000);
         }catch (Exception e){
-            LogUtils.info(e.getMessage());
+            LogUtils.info(request.url() + ":" + e.getMessage());
         }
         while (response == null || (!response.isSuccessful() && retryNum < maxRetry)) {
             retryNum++;
@@ -41,7 +41,7 @@ public class RetryIntercepter implements Interceptor {
             try {
                 response = chain.proceed(request);
             } catch (IOException e) {
-                LogUtils.info(e.getMessage());
+                LogUtils.info(request.url() + ":" + e.getMessage());
             }
         }
         return response;
