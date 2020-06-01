@@ -9,5 +9,8 @@
         <module name="PackDownLoad" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PackDownLoad" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

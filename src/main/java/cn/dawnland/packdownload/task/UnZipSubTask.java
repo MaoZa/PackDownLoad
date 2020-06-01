@@ -1,7 +1,10 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
+import cn.dawnland.packdownload.utils.UIUpdateUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,21 @@ public class UnZipSubTask implements Runnable {
     public void run() {
         try {
             while ((ze = zin.getNextEntry()) != null) {
+                String path = location + "\\" + ze.getName();
+                if(location.indexOf("versions") > 0){
+                    path = path.replaceFirst("overrides", "");
+                }else {
+                    if(path.indexOf(".minecraft") > 0){
+                        path = path.replaceFirst("overrides/", "");
+                    }
+                    path = path.replaceFirst("overrides", ".minecraft");
+                }
+                File unzipFile = new File(path);
+                if(!ze.isDirectory() && unzipFile != null && unzipFile.exists() && unzipFile.length() == ze.getSize()){
+                    LogUtils.info(ze.getName() + "跳过-已解压");
+                    UIUpdateUtils.unzipBarAddOne();
+                    continue;
+                }
                 List<Integer> cs = new ArrayList<>();
                 try {
                     for (int c = zin.read(); c != -1; c = zin.read()) {
