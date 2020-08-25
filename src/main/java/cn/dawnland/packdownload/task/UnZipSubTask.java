@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.model.manifest.Manifest;
 import cn.dawnland.packdownload.utils.MessageUtils;
 
 import java.io.IOException;
@@ -18,8 +19,10 @@ public class UnZipSubTask implements Runnable {
     private ZipInputStream zin;
     private ExecutorService pool;
     private String location;
+    private Manifest manifest;
 
-    public UnZipSubTask(ZipInputStream zin, ExecutorService pool, String location) {
+    public UnZipSubTask(Manifest manifest, ZipInputStream zin, ExecutorService pool, String location) {
+        this.manifest = manifest;
         this.zin = zin;
         this.pool = pool;
         this.location = location;
@@ -38,7 +41,7 @@ public class UnZipSubTask implements Runnable {
                     MessageUtils.error(e);
                     e.printStackTrace();
                 }
-                pool.submit(new UnZipTask(location, ze, cs));
+                pool.submit(new UnZipTask(manifest, location, ze, cs));
             }
         }catch (Exception e){
             MessageUtils.error(e);

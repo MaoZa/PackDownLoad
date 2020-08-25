@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.utils;
 
+import cn.dawnland.packdownload.model.manifest.Manifest;
 import cn.dawnland.packdownload.task.UnZipSubTask;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXProgressBar;
@@ -23,7 +24,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtils {
 
-    public static void unzip(String zipFile, String location, JFXListView taskList, ExecutorService pool) throws IOException {
+    public static void unzip(Manifest manifest, String zipFile, String location, JFXListView taskList, ExecutorService pool) throws IOException {
         try {
 
             File f = new File(location);
@@ -62,7 +63,7 @@ public class ZipUtils {
                     UIUpdateUtils.unzipCount = zf.size();
                 });
             });
-            pool.submit(new UnZipSubTask(zin, pool, location));
+            pool.submit(new UnZipSubTask(manifest, zin, pool, location));
         }
         catch (Exception e) {
             MessageUtils.error(e);

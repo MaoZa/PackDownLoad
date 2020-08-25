@@ -2,8 +2,10 @@ package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.configs.Config;
 import cn.dawnland.packdownload.listener.DownloadListener;
-import cn.dawnland.packdownload.model.curse.CurseModInfo;
+import cn.dawnland.packdownload.model.manifest.Manifest;
+import cn.dawnland.packdownload.model.manifest.ManifestFile;
 import cn.dawnland.packdownload.utils.*;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXProgressBar;
@@ -12,16 +14,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 /**
  * @author Cap_Sub
@@ -30,9 +29,11 @@ public class JsonJXTask implements Runnable {
 
     private ExecutorService pool;
 
-    private String jsonPath;
+    private Path jsonPath;
     private String zipFilePath;
     private JFXListView taskList;
+
+    public static Manifest manifest;
 
     public JsonJXTask(String zipFilePath, JFXListView taskList, ExecutorService pool) {
         this.zipFilePath = zipFilePath;
@@ -43,9 +44,10 @@ public class JsonJXTask implements Runnable {
     @Override
     public void run() {
         try {
-            if (jsonPath == null) {
+            jsonPath = Paths.get(DownLoadUtils.getPackPath(), "manifest.json");
+            if (!jsonPath.toFile().exists()) {
                 try{
-                    jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").getPath();
+                    jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").toPath();
                 }catch (Exception e){
                     MessageUtils.error("不支持的整合包ZIP", "异常");
                     MessageUtils.info("不支持的整合包ZIP");
@@ -59,25 +61,23 @@ public class JsonJXTask implements Runnable {
                 Upgrader.downLoadFromUrl(Config.authlibInjectorsUrl, "", new DownloadListener() {});
             });
             String fileJson = FileUtils.readJsonData(jsonPath);
-            JSONObject jsonObject = JSONObject.parseObject(fileJson);
-            List<JSONObject> files = (List<JSONObject>) jsonObject.get("files");
-            String mcVersion = ((Map)jsonObject.get("minecraft")).get("version") + "";
-            String forgeVersionStr = (((Map)((List)((Map)jsonObject.get("minecraft")).get("modLoaders")).get(0)).get("id") + "");
-            ForgeUtils.downloadForgeNew(mcVersion, forgeVersionStr);
-
-            ZipUtils.unzip(zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
-            Iterator<JSONObject> iterator = files.iterator();
-
-            //获取已成功下载的文件(mod)列表
-            File successModFile = new File(DownLoadUtils.getPackPath() + "/successMod.txt");
-            if(successModFile.exists()){
-                BufferedReader br = new BufferedReader(new FileReader(successModFile));
-                String s = null;
-                while ((s = br.readLine())!=null){
-                    String[] split = s.split(":");
-                    successModMap.put(split[0], split[1]);
+            try{
+                manifest = JSONObject.parseObject(fileJson, Manifest.class);
+            }catch (JSONException je){
+                try{
+                    jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").toPath();
+                    fileJson = FileUtils.readJsonData(jsonPath);
+                }catch (Exception e){
+                    MessageUtils.error("不支持的整合包ZIP", "异常");
+                    MessageUtils.info("不支持的整合包ZIP");
+                    Thread.currentThread().stop();
                 }
+                manifest = JSONObject.parseObject(fileJson, Manifest.class);
             }
+            manifest.setThisJsonFilePath(jsonPath.toString());
+
+            ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
+            List<ManifestFile> files = manifest.getFiles();
 
             Platform.runLater(() -> {
                 JFXProgressBar modsBar = new JFXProgressBar();
@@ -96,27 +96,29 @@ public class JsonJXTask implements Runnable {
                 modsLabel.setAlignment(Pos.CENTER_LEFT);
                 label.setPrefWidth(100D);
                 label.setAlignment(Pos.CENTER_RIGHT);
-                label.setText("0/" + (files.size() - successModMap.size()));
+                Long processedQuantity = manifest.getFiles().stream().filter(f -> !f.isDownloadSucceed()).count();
+                label.setText("0/" + processedQuantity);
                 MessageUtils.info("正在安装整合包，请耐心等待");
                 Platform.runLater(() -> {
                     hb.getChildren().addAll(modsLabel, modsBar, label);
+//                    hb.setOnMouseClicked(event -> {
+//                        MouseButton button = event.getButton();
+//                        if (button == MouseButton.SECONDARY) {
+//                            MessageUtils.info("复制链接成功", "复制下载连接");
+//                        }
+//                    });
+//                    // TODO: 2020-08-25 添加右键监听 右键后复制下载地址
                     DownLoadUtils.taskList.getItems().add(hb);
                 });
                 UIUpdateUtils.modsBar = modsBar;
                 UIUpdateUtils.modsLabel = label;
-                UIUpdateUtils.modsCount = (files.size() - successModMap.size());
+                UIUpdateUtils.modsCount = files.size() - (files.size() - processedQuantity.intValue());
             });
-            ((Runnable)() -> {
-                while (iterator.hasNext()){
-                    JSONObject object = iterator.next();
-                    String projectID = object.get("projectID").toString();
-                    String fileId = object.get("fileID").toString();
-                    if(successModMap.get(projectID) != null && successModMap.get(projectID).equals(fileId)){
-                        continue;
-                    }
-                    request(object);
-                }
-            }).run();
+            Set<ManifestFile> processedFiles = manifest.getFiles().stream().filter(f -> !f.isDownloadSucceed()).collect(Collectors.toSet());
+            processedFiles.forEach(this::request);
+            String mcVersion = manifest.getMinecraft().getVersion();
+            String forgeVersionStr = manifest.getMinecraft().getModLoaders().get(0).getId();
+            ForgeUtils.downloadForgeNew(mcVersion, forgeVersionStr);
         } catch (Exception e) {
             MessageUtils.error(e);
         }
@@ -124,16 +126,11 @@ public class JsonJXTask implements Runnable {
     }
 
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
+//    private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
+    private final String ADDON_URL = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s/download-url";
 
-    private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
-    private String addonUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s/download-url";
-
-    private Map<String, String> successModMap = new HashMap<>();
-
-    public void request(JSONObject jsonObject) {
+    public void request(ManifestFile manifestFile) {
         pool.submit(() -> {
-            String projectId = jsonObject.get("projectID").toString();
-            String fileId = jsonObject.get("fileID").toString();
 //            String url = String.format(baseUrl, projectId, fileId);
 //            CurseModInfo curseModInfo = null;
 //            try {
@@ -150,14 +147,15 @@ public class JsonJXTask implements Runnable {
 //                    return;
 //                }
 //            }
-            CurseModInfo curseModInfo = new CurseModInfo();
             try {
-                curseModInfo.setDownloadUrl(OkHttpUtils.get().get(String.format(addonUrl, projectId, fileId)));
+                if(manifestFile.getDownloadUrl() == null || manifestFile.getDownloadUrl().trim().length() < 1){
+                    manifestFile.setDownloadUrl(OkHttpUtils.get().get(String.format(ADDON_URL, manifestFile.getProjectID(), manifestFile.getFileID())));
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                MessageUtils.error(e);
             }
-            curseModInfo.setDisplayName(projectId + ":" + fileId);
-            new ModDownLoadTask(curseModInfo, MODS_PATH).subTask();
+            manifestFile.setDisName(manifestFile.getProjectID() + ":" + manifestFile.getFileID());
+            new ModDownLoadTask(manifest, manifestFile, MODS_PATH).subTask();
         });
     }
 }
