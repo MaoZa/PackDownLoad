@@ -1,6 +1,10 @@
 package cn.dawnland.packdownload.listener;
 
+import cn.dawnland.packdownload.model.manifest.Manifest;
+import cn.dawnland.packdownload.model.manifest.ManifestFile;
+import cn.dawnland.packdownload.utils.CommonUtils;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
+import cn.dawnland.packdownload.utils.MessageUtils;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -8,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * @author Created by cap_sub@dawnland.cn
@@ -20,13 +25,15 @@ public abstract class DownloadListener{
     public final HBox hb = new HBox();
     public String defaultText;
     private boolean flag = false;
+    private ManifestFile manifestFile;
 
     public DownloadListener() {
         init();
     }
 
-    public DownloadListener(String defaultText) {
-        this.defaultText = defaultText;
+    public DownloadListener(ManifestFile manifestFile) {
+        this.manifestFile = manifestFile;
+        this.defaultText = manifestFile.getDisName();
         init();
     }
 
@@ -34,6 +41,12 @@ public abstract class DownloadListener{
         hb.setPrefWidth(360D);
         hb.setSpacing(10D);
         hb.setAlignment(Pos.CENTER);
+        if(Objects.nonNull(manifestFile)){
+            hb.setOnMouseClicked(event -> {
+                CommonUtils.setClipboardString(manifestFile.getDownloadUrl());
+                MessageUtils.info("复制下载地址成功", "获取链接");
+            });
+        }
         modsBar.setPrefWidth(70D);
         modsBar.setMaxHeight(5D);
         modsBar.setProgress(0);

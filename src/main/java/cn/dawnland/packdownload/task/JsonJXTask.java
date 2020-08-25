@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -101,13 +102,6 @@ public class JsonJXTask implements Runnable {
                 MessageUtils.info("正在安装整合包，请耐心等待");
                 Platform.runLater(() -> {
                     hb.getChildren().addAll(modsLabel, modsBar, label);
-//                    hb.setOnMouseClicked(event -> {
-//                        MouseButton button = event.getButton();
-//                        if (button == MouseButton.SECONDARY) {
-//                            MessageUtils.info("复制链接成功", "复制下载连接");
-//                        }
-//                    });
-//                    // TODO: 2020-08-25 添加右键监听 右键后复制下载地址
                     DownLoadUtils.taskList.getItems().add(hb);
                 });
                 UIUpdateUtils.modsBar = modsBar;

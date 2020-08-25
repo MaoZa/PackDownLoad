@@ -64,7 +64,7 @@ public class PackDownLoadNewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        threadCount.setPromptText("线程数:默认10");
+        threadCount.setPromptText("线程数:默认50");
         DownLoadUtils.taskList = taskList;
         divideVersionCheckBox.setSelected(true);
         MessageUtils.downloadSpeed = downloadSpeed;
@@ -106,7 +106,7 @@ public class PackDownLoadNewController implements Initializable {
         targetHboxStatic = targetHbox;
         searchHboxStatic = searchHbox;
         startButtonStatic.setDisable(true);
-        Integer threadCount = 10;
+        Integer threadCount = 50;
         if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
                 threadCount = Integer.valueOf(this.threadCount.getText());

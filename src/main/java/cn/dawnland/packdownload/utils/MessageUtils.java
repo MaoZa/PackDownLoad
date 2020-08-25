@@ -28,17 +28,16 @@ public class MessageUtils {
         return status >= 2;
     }
 
-    public static void check(){
-        if(UIUpdateUtils.modsPoint.get() == UIUpdateUtils.modsCount){
-            Platform.runLater(() -> {
-                MessageUtils.info("Mod下载完成,请等待其他任务完成...");
-                MessageUtils.setStatus();
-            });
-        }
-        if(UIUpdateUtils.unzipPoint.get() == UIUpdateUtils.unzipCount){
-            MessageUtils.setStatus();
-            MessageUtils.info("解压完成,请等待其他任务完成...");
-        }
+    public synchronized static boolean check(){
+        return checkUnzip() && checkMod();
+    }
+
+    private static boolean checkUnzip(){
+        return UIUpdateUtils.modsPoint.get() == UIUpdateUtils.modsCount;
+    }
+
+    private static boolean checkMod(){
+        return UIUpdateUtils.unzipPoint.get() == UIUpdateUtils.unzipCount;
     }
 
     public synchronized static void setStatus(){

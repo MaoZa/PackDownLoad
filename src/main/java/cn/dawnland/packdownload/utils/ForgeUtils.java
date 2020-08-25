@@ -17,14 +17,8 @@ public class ForgeUtils {
 
     public static void downloadForgeNew(String mcVersion, String forgeVersionStr){
         pool.submit(() -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                MessageUtils.error(e);
-            }
-            MessageUtils.check();
             while(true){
-                if(MessageUtils.isOk()){
+                if(MessageUtils.check()){
                     try {
                         DownLoadUtils.installForge(new ForgeVersion(mcVersion, null, forgeVersionStr));
                     } catch (IOException e) {
