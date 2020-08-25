@@ -25,10 +25,23 @@ public class MessageUtils {
     public static int status = 0;
 
     public static Boolean isOk(){
-        return status >= 2 ? true : false;
+        return status >= 2;
     }
 
-    public static void setStatus(){
+    public static void check(){
+        if(UIUpdateUtils.modsPoint.get() == UIUpdateUtils.modsCount){
+            Platform.runLater(() -> {
+                MessageUtils.info("Mod下载完成,请等待其他任务完成...");
+                MessageUtils.setStatus();
+            });
+        }
+        if(UIUpdateUtils.unzipPoint.get() == UIUpdateUtils.unzipCount){
+            MessageUtils.setStatus();
+            MessageUtils.info("解压完成,请等待其他任务完成...");
+        }
+    }
+
+    public synchronized static void setStatus(){
         status = status + 1;
     }
 

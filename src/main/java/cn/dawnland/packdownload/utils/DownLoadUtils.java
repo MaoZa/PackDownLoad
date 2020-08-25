@@ -131,7 +131,7 @@ public class DownLoadUtils {
                 } catch (IOException e) {
                     MessageUtils.error(e);
                 }
-                String versionJson = FileUtils.readJsonData(versionJsonFile.getPath());
+                String versionJson = FileUtils.readJsonData(versionJsonFile.toPath());
                 JSONObject versionObject = JSONObject.parseObject(versionJson);
                 JSONArray libraries = (JSONArray) versionObject.get("libraries");
                 libraries.addAll((JSONArray)jsonObject.get("libraries"));

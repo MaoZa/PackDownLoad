@@ -1,9 +1,9 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.listener.DownloadListener;
-import cn.dawnland.packdownload.model.curse.CurseModInfo;
+import cn.dawnland.packdownload.model.manifest.Manifest;
+import cn.dawnland.packdownload.model.manifest.ManifestFile;
 import cn.dawnland.packdownload.utils.DownLoadUtils;
-import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
 import javafx.application.Platform;
 
@@ -11,22 +11,25 @@ import java.io.File;
 
 public class ModDownLoadTask extends BaseTask<String> {
 
-    private final CurseModInfo curseModInfo;
+    private final Manifest manifest;
+    private final ManifestFile manifestFile;
     private final String path;
 
-    public ModDownLoadTask(CurseModInfo curseModInfo, String path) {
-        this.curseModInfo = curseModInfo;
+    public ModDownLoadTask(Manifest manifest, ManifestFile manifestFile, String path) {
+        this.manifest = manifest;
+        this.manifestFile = manifestFile;
         this.path = path;
     }
     @Override
     void subTask() {
-        DownLoadUtils.downLoadMod(curseModInfo.getDownloadUrl(), path, new DownloadListener(curseModInfo.getDisplayName()) {
+        DownLoadUtils.downLoadMod(manifestFile.getDownloadUrl(), path, new DownloadListener(manifestFile.getDisName()) {
             @Override
             public void onSuccess(File file) {
                 Platform.runLater(() -> {
                     super.onSuccess(file);
-                    LogUtils.addSuccessMod(curseModInfo);
+                    manifestFile.setDownloadSucceed(Boolean.TRUE);
                     UIUpdateUtils.modsBarAddOne();
+                    manifest.save();
                 });
             }
         });

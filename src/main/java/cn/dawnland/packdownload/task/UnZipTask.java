@@ -1,10 +1,9 @@
 package cn.dawnland.packdownload.task;
 
 import cn.dawnland.packdownload.utils.LogUtils;
+import cn.dawnland.packdownload.model.manifest.Manifest;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,10 +19,12 @@ public class UnZipTask implements Runnable{
     private String location;
     private ZipEntry ze;
     private List<Integer> cs;
+    private Manifest manifest;
 
     private FileOutputStream fos;
 
-    public UnZipTask(String location, ZipEntry ze, List<Integer> cs) {
+    public UnZipTask(Manifest manifest, String location, ZipEntry ze, List<Integer> cs) {
+        this.manifest = manifest;
         this.location = location;
         this.ze = ze;
         this.cs = cs;
@@ -34,12 +35,12 @@ public class UnZipTask implements Runnable{
         try {
             String path = location + "\\" + ze.getName();
             if(location.indexOf("versions") > 0){
-                path = path.replaceFirst("overrides", "");
+                path = path.replaceFirst(manifest.getOverrides(), "");
             }else {
                 if(path.indexOf(".minecraft") > 0){
-                    path = path.replaceFirst("overrides/", "");
+                    path = path.replaceFirst(manifest.getOverrides() + "/", "");
                 }
-                path = path.replaceFirst("overrides", ".minecraft");
+                path = path.replaceFirst(manifest.getOverrides(), ".minecraft");
             }
             File unzipFile = new File(path);
             if (ze.isDirectory()) {

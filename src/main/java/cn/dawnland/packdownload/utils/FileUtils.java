@@ -2,6 +2,8 @@ package cn.dawnland.packdownload.utils;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,15 +20,15 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
-    public static String readJsonData(String pactFile){
-        StringBuffer sb = new StringBuffer();
-        File myFile = new File(pactFile);
-        if (!myFile.exists()) {
+    public static String readJsonData(Path pactFile){
+        StringBuilder sb = new StringBuilder();
+        File file = pactFile.toFile();
+        if (!file.exists()) {
             System.err.println("Can't Find " + pactFile);
         }
         try {
-            FileInputStream fis = new FileInputStream(pactFile);
-            InputStreamReader inputStreamReader = new InputStreamReader(fis, "UTF-8");
+            FileInputStream fis = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader in  = new BufferedReader(inputStreamReader);
 
             String str;
