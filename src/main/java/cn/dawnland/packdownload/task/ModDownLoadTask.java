@@ -22,7 +22,7 @@ public class ModDownLoadTask extends BaseTask<String> {
     }
     @Override
     void subTask() {
-        DownLoadUtils.downLoadMod(manifestFile.getDownloadUrl(), path, new DownloadListener(manifestFile.getDisName()) {
+        DownLoadUtils.downLoadMod(manifestFile.getDownloadUrl(), path, new DownloadListener(manifestFile) {
             @Override
             public void onSuccess(File file) {
                 Platform.runLater(() -> {
