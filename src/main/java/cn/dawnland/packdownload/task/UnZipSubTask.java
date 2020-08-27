@@ -37,12 +37,12 @@ public class UnZipSubTask implements Runnable {
             while ((ze = zin.getNextEntry()) != null) {
                 String path = location + "\\" + ze.getName();
                 if(location.indexOf("versions") > 0){
-                    path = path.replaceFirst("overrides", "");
+                    path = path.replaceFirst(manifest.getOverrides(), "");
                 }else {
                     if(path.indexOf(".minecraft") > 0){
-                        path = path.replaceFirst("overrides/", "");
+                        path = path.replaceFirst(manifest.getOverrides() + "/", "");
                     }
-                    path = path.replaceFirst("overrides", ".minecraft");
+                    path = path.replaceFirst(manifest.getOverrides(), ".minecraft");
                 }
                 File unzipFile = new File(path);
                 if(!ze.isDirectory() && unzipFile != null && unzipFile.exists() && unzipFile.length() == ze.getSize()){

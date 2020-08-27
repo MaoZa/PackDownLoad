@@ -1,11 +1,10 @@
 package cn.dawnland.packdownload.controller;
 
 import cn.dawnland.packdownload.listener.DownloadListener;
+import cn.dawnland.packdownload.model.InstallInfo;
 import cn.dawnland.packdownload.model.curse.CurseProjectInfo;
 import cn.dawnland.packdownload.task.ModPackZipDownLoadTask;
-import cn.dawnland.packdownload.utils.DownLoadUtils;
-import cn.dawnland.packdownload.utils.MessageUtils;
-import cn.dawnland.packdownload.utils.UIUpdateUtils;
+import cn.dawnland.packdownload.utils.*;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -22,9 +21,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -51,7 +52,7 @@ public class PackDownLoadNewController implements Initializable {
     @FXML private HBox searchHbox;
     @FXML private TextField searchText;
     @FXML private Button searchButton;
-    private static File zipFile;
+    public static File zipFile;
     private static JFXTextField projectUrlTextFieldStatic;
     private static HBox targetHboxStatic;
     private static HBox searchHboxStatic;
@@ -60,7 +61,9 @@ public class PackDownLoadNewController implements Initializable {
     private static Button selectDirButtonStatic;
     private static JFXTextField threadCountStatic;
     private static CheckBox divideVersionCheckBoxStatic;
+    public static Integer threadCountInt;
     private static int count;
+    public static InstallInfo installInfo;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,6 +73,18 @@ public class PackDownLoadNewController implements Initializable {
         MessageUtils.downloadSpeed = downloadSpeed;
         MessageUtils.resultLabel = resultLabel;
         UIUpdateUtils.taskList = taskList;
+        File file = Paths.get(System.getProperty("user.dir"), "PreviouslyUnfinished.json").toFile();
+        if(file.exists()){
+            int i = JOptionPane.showConfirmDialog(null, "是否载入上次安装信息", "发现上次安装未完成", JOptionPane.YES_NO_CANCEL_OPTION);
+            if(i == 0){
+                installInfo = (InstallInfo) new FileToObjectUtils().read(Paths.get(file.getPath()), InstallInfo.class);
+                DownLoadUtils.setRootPath(installInfo.getRootPath());
+                threadCount.setText("50");
+                zipFile = Paths.get(installInfo.getZipFilePath()).toFile();
+                selectDirButton.setText(installInfo.getRootPath());
+                selectZipDirButton.setText(installInfo.getZipFilePath());
+            }
+        }
     }
 
     public void selectedDir(){
@@ -106,16 +121,16 @@ public class PackDownLoadNewController implements Initializable {
         targetHboxStatic = targetHbox;
         searchHboxStatic = searchHbox;
         startButtonStatic.setDisable(true);
-        Integer threadCount = 50;
+        threadCountInt = 50;
         if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
-                threadCount = Integer.valueOf(this.threadCount.getText());
+                threadCountInt = Integer.valueOf(this.threadCount.getText());
             }catch (Exception e){
                 Platform.runLater(() -> resultLabel.setText("线程数只能为整数"));
                 return;
             }
         }
-        ExecutorService pool = newFixedThreadPool(threadCount);
+        ExecutorService pool = newFixedThreadPool(threadCountInt);
         if(divideVersionCheckBox.isSelected()){
             if(zipFile != null){
                 if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]); }
