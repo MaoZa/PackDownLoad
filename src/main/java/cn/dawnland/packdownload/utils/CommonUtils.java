@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -34,6 +35,11 @@ public class CommonUtils {
                     .therdCount(PackDownLoadNewController.threadCountInt)
                     .build();
             new FileToObjectUtils().save(Paths.get(System.getProperty("user.dir"), "PreviouslyUnfinished.json"), installInfo);
+        }else{
+            File file = Paths.get(System.getProperty("user.dir"), "PreviouslyUnfinished.json").toFile();
+            if(file.exists()){
+                file.deleteOnExit();
+            }
         }
         System.exit(0);
     }
