@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.SneakyThrows;
 
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class FileToObjectUtils {
@@ -16,8 +18,9 @@ public class FileToObjectUtils {
 
     @SneakyThrows
     public void save(Path path, Object obj){
-        try(FileOutputStream fos = new FileOutputStream(path.toFile())){
-            PrintWriter pw = new PrintWriter(fos);
+        try(FileOutputStream fos = new FileOutputStream(path.toFile());
+            OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)){
+            PrintWriter pw = new PrintWriter(osw);
             pw.println(JSONObject.toJSONString(obj));
             pw.flush();
             pw.close();
