@@ -17,8 +17,13 @@ public class ForgeUtils {
 
     public static void downloadForgeNew(String mcVersion, String forgeVersionStr){
         pool.submit(() -> {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             while(true){
-                if(MessageUtils.isOk()){
+                if(MessageUtils.check()){
                     try {
                         DownLoadUtils.installForge(new ForgeVersion(mcVersion, null, forgeVersionStr));
                     } catch (IOException e) {
@@ -29,7 +34,7 @@ public class ForgeUtils {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    MessageUtils.error(e);
                 }
             }
         });

@@ -25,10 +25,22 @@ public class MessageUtils {
     public static int status = 0;
 
     public static Boolean isOk(){
-        return status >= 2 ? true : false;
+        return status >= 2;
     }
 
-    public static void setStatus(){
+    public synchronized static boolean check(){
+        return checkUnzip() && checkMod();
+    }
+
+    private static boolean checkUnzip(){
+        return UIUpdateUtils.modsPoint.get() == UIUpdateUtils.modsCount;
+    }
+
+    private static boolean checkMod(){
+        return UIUpdateUtils.unzipPoint.get() == UIUpdateUtils.unzipCount;
+    }
+
+    public synchronized static void setStatus(){
         status = status + 1;
     }
 

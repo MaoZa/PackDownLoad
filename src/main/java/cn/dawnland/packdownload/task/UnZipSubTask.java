@@ -1,5 +1,6 @@
 package cn.dawnland.packdownload.task;
 
+import cn.dawnland.packdownload.model.manifest.Manifest;
 import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;
@@ -21,8 +22,10 @@ public class UnZipSubTask implements Runnable {
     private ZipInputStream zin;
     private ExecutorService pool;
     private String location;
+    private Manifest manifest;
 
-    public UnZipSubTask(ZipInputStream zin, ExecutorService pool, String location) {
+    public UnZipSubTask(Manifest manifest, ZipInputStream zin, ExecutorService pool, String location) {
+        this.manifest = manifest;
         this.zin = zin;
         this.pool = pool;
         this.location = location;
@@ -34,12 +37,12 @@ public class UnZipSubTask implements Runnable {
             while ((ze = zin.getNextEntry()) != null) {
                 String path = location + "\\" + ze.getName();
                 if(location.indexOf("versions") > 0){
-                    path = path.replaceFirst("overrides", "");
+                    path = path.replaceFirst(manifest.getOverrides(), "");
                 }else {
                     if(path.indexOf(".minecraft") > 0){
-                        path = path.replaceFirst("overrides/", "");
+                        path = path.replaceFirst(manifest.getOverrides() + "/", "");
                     }
-                    path = path.replaceFirst("overrides", ".minecraft");
+                    path = path.replaceFirst(manifest.getOverrides(), ".minecraft");
                 }
                 File unzipFile = new File(path);
                 if(!ze.isDirectory() && unzipFile != null && unzipFile.exists() && unzipFile.length() == ze.getSize()){
@@ -56,7 +59,7 @@ public class UnZipSubTask implements Runnable {
                     MessageUtils.error(e);
                     e.printStackTrace();
                 }
-                pool.submit(new UnZipTask(location, ze, cs));
+                pool.submit(new UnZipTask(manifest, location, ze, cs));
             }
         }catch (Exception e){
             MessageUtils.error(e);
