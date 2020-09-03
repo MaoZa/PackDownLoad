@@ -41,7 +41,7 @@ public class DownloadTask {
 
     /**
      * 这个方法中的所有代码都会在子线程中运行，我们应该在这里处理所有的耗时任务。
-     * @return
+     * @return DownloadStatusType
      */
     public DownloadStatusType doInBackground() {
         MessageUtils.downloadSpeedStart();

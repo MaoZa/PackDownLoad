@@ -13,10 +13,8 @@ import java.util.concurrent.Executors;
  */
 public class ForgeUtils {
 
-    private static ExecutorService pool = Executors.newFixedThreadPool(5);
-
     public static void downloadForgeNew(String mcVersion, String forgeVersionStr){
-        pool.submit(() -> {
+        CommonUtils.getPool().submit(() -> {
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {

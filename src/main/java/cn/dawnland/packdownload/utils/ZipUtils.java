@@ -24,7 +24,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtils {
 
-    public static void unzip(Manifest manifest, String zipFile, String location, JFXListView taskList, ExecutorService pool) throws IOException {
+    public static void unzip(Manifest manifest, String zipFile, String location, JFXListView taskList) throws IOException {
         try {
 
             File f = new File(location);
@@ -57,13 +57,13 @@ public class ZipUtils {
                 hb.getChildren().addAll(unzipLabel, unzipBar, label);
                 taskList.getItems().add((hb));
                 MessageUtils.info("正在读取压缩文件，稍等即可");
-                pool.submit(()-> {
+                CommonUtils.getPool().submit(()-> {
                     UIUpdateUtils.unzipBar = unzipBar;
                     UIUpdateUtils.unzipLabel = label;
                     UIUpdateUtils.unzipCount = zf.size();
                 });
             });
-            pool.submit(new UnZipSubTask(manifest, zin, pool, location));
+            CommonUtils.getPool().submit(new UnZipSubTask(manifest, zin, location));
         }
         catch (Exception e) {
             MessageUtils.error(e);
@@ -111,7 +111,7 @@ public class ZipUtils {
         /*此方法有两个参数，第一个是要查找的字符串数组，第二个是要查找的字符或字符串*/
         int i = strs.length;
         while (i-- > 0){
-            if(strs[i] == s || s.startsWith(strs[i])){
+            if(strs[i].equals(s) || s.startsWith(strs[i])){
                 return true;
             }
         }

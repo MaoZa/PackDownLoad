@@ -12,7 +12,6 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -28,18 +26,15 @@ import java.util.stream.Collectors;
  */
 public class JsonJXTask implements Runnable {
 
-    private ExecutorService pool;
-
     private Path jsonPath;
     private String zipFilePath;
     private JFXListView taskList;
 
     public static Manifest manifest;
 
-    public JsonJXTask(String zipFilePath, JFXListView taskList, ExecutorService pool) {
+    public JsonJXTask(String zipFilePath, JFXListView taskList) {
         this.zipFilePath = zipFilePath;
         this.taskList = taskList;
-        this.pool = pool;
     }
 
     @Override
@@ -56,7 +51,7 @@ public class JsonJXTask implements Runnable {
                 }
             }
             MessageUtils.downloadSpeedStart();
-            pool.submit(() -> {
+            CommonUtils.getPool().submit(() -> {
                 MessageUtils.info("正在下载启动器...");
                 Upgrader.downLoadFromUrl(Config.lancherUrl, "", new DownloadListener() {});
                 Upgrader.downLoadFromUrl(Config.authlibInjectorsUrl, "", new DownloadListener() {});
@@ -77,7 +72,7 @@ public class JsonJXTask implements Runnable {
             }
             manifest.setThisJsonFilePath(jsonPath.toString());
 
-            ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), taskList, pool);
+            ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), taskList);
             List<ManifestFile> files = manifest.getFiles();
 
             Platform.runLater(() -> {
@@ -120,27 +115,10 @@ public class JsonJXTask implements Runnable {
     }
 
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
-//    private String baseUrl = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s";
     private final String ADDON_URL = "https://addons-ecs.forgesvc.net/api/v2/addon/%s/file/%s/download-url";
 
     public void request(ManifestFile manifestFile) {
-        pool.submit(() -> {
-//            String url = String.format(baseUrl, projectId, fileId);
-//            CurseModInfo curseModInfo = null;
-//            try {
-//                curseModInfo = JSONObject.parseObject(OkHttpUtils.get().get(url), CurseModInfo.class);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            Path path = Paths.get(MODS_PATH + File.separator + curseModInfo.getFileName());
-//            if(Files.exists(path)){
-//                File file = new File(path.toString());
-//                if(file.length() == curseModInfo.getFileLength()){
-//                    UIUpdateUtils.modsBarAddOne();
-//                    LogUtils.info(file.getName() + "已下载{跳过}");
-//                    return;
-//                }
-//            }
+        CommonUtils.getPool().submit(() -> {
             try {
                 if(manifestFile.getDownloadUrl() == null || manifestFile.getDownloadUrl().trim().length() < 1){
                     manifestFile.setDownloadUrl(OkHttpUtils.get().get(String.format(ADDON_URL, manifestFile.getProjectID(), manifestFile.getFileID())));

@@ -20,7 +20,7 @@ public class Config {
     public static String lancherUrl;
     public static String authlibInjectorsUrl;
 
-    public static boolean init(){
+    public static void init(){
         try{
             String configJson = HttpUtils.get("https://dawnland.cn/config.json");
             JSONObject jsonObject = JSONObject.parseObject(configJson);
@@ -30,11 +30,9 @@ public class Config {
             string2download = jsonObject.get("string2download").toString();
             lancherUrl = jsonObject.get("lancherUrl").toString();
             authlibInjectorsUrl = jsonObject.get("authlib-injectors-url").toString();
-            return true;
         }catch (Exception e){
             MessageUtils.error(e);
             MessageUtils.error("未能初始化配置", "请带上目录下的error.txt进行反馈");
-            return false;
         }
     }
 

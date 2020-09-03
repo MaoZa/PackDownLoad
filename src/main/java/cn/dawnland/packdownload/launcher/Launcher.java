@@ -33,10 +33,6 @@ public class Launcher extends Application {
         //初始化大多配置信息
         Config.init();
         alert.close();
-        if(Upgrader.isNewVersion()){
-            Upgrader.versionLog();
-        }
-        //自动更新
         //如果version.json 永远比当前版本高 实现每次打开强制更新
         Scene scene = new Scene(FxmlUtils.LoadFxml("PackDownLoadNew.fxml"), 644, 300);;
         if(Upgrader.isNewVersion()){

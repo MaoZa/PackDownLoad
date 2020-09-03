@@ -1,6 +1,6 @@
 package cn.dawnland.packdownload.utils;
 
-import cn.dawnland.packdownload.configs.RetryIntercepter;
+import cn.dawnland.packdownload.configs.RetryInterceptor;
 import cn.dawnland.packdownload.listener.DownloadListener;
 import okhttp3.*;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +31,7 @@ public class OkHttpUtils{
     }
 
     public static OkHttpUtils get() {
-        if (downloadUtil == null) {
+        if (Objects.isNull(downloadUtil)) {
             downloadUtil = new OkHttpUtils();
         }
         return downloadUtil;
@@ -41,7 +42,7 @@ public class OkHttpUtils{
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .writeTimeout(10, TimeUnit.SECONDS)
-                .addInterceptor(new RetryIntercepter(10))
+                .addInterceptor(new RetryInterceptor(10))
                 .addNetworkInterceptor(chain -> {
                     System.out.println("url: " + chain.request().url());
                     return chain.proceed(chain.request());

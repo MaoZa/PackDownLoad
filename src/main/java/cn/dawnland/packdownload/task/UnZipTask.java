@@ -1,6 +1,5 @@
 package cn.dawnland.packdownload.task;
 
-import cn.dawnland.packdownload.utils.LogUtils;
 import cn.dawnland.packdownload.model.manifest.Manifest;
 import cn.dawnland.packdownload.utils.MessageUtils;
 import cn.dawnland.packdownload.utils.UIUpdateUtils;

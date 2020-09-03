@@ -6,10 +6,6 @@ public abstract class BaseTask<T> extends Task<T> {
 
     protected Callback<T> callback;
 
-    public BaseTask(Callback<T> callback) {
-        this.callback = callback;
-    }
-
     public BaseTask() {
     }
 

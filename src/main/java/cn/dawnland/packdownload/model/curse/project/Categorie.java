@@ -9,7 +9,7 @@ import lombok.Data;
 public class Categorie {
 
     private Integer avatarId;
-    private String acatarUrl;
+    private String avatarUrl;
     private Integer categoryId;
     private Integer gameId;
     private String name;

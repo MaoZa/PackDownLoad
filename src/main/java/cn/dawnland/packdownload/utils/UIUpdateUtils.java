@@ -30,7 +30,7 @@ public class UIUpdateUtils {
     public static void modsBarAddOne(){
         modsPoint.addAndGet(1);
         Platform.runLater(() -> {
-            updateLable(modsLabel, modsPoint.get() + "/" + modsCount);
+            updateLabel(modsLabel, modsPoint.get() + "/" + modsCount);
             updateProgress(modsBar, ((1D/modsCount) * modsPoint.get()));
             if(modsPoint.get() == modsCount){
                 Platform.runLater(() -> {
@@ -44,21 +44,20 @@ public class UIUpdateUtils {
     public static void unzipBarAddOne(){
         unzipPoint.addAndGet(1);
         Platform.runLater(() -> {
-            updateLable(unzipLabel, unzipPoint.get() + "/" + unzipCount);
+            updateLabel(unzipLabel, unzipPoint.get() + "/" + unzipCount);
             updateProgress(unzipBar, ((1D / unzipCount) * unzipPoint.get()));
             if(unzipPoint.get() == unzipCount){
                 MessageUtils.setStatus();
                 MessageUtils.info("解压完成,请等待其他任务完成...");
-                return;
             }
         });
     }
 
-    public static synchronized void updateProgress(ProgressBar progressBar, double point){
+    public static void updateProgress(ProgressBar progressBar, double point){
         Platform.runLater(()-> progressBar.setProgress(point));
     }
 
-    public static synchronized void updateLable(Label label, String values){
+    public static void updateLabel(Label label, String values){
         Platform.runLater(() -> label.setText(values));
     }
 
