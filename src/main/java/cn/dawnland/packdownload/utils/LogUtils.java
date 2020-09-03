@@ -13,10 +13,10 @@ public class LogUtils {
 
     public static void error(Exception e){
         File file = new File(DownLoadUtils.getRootPath() + "/error.txt");
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(e.getLocalizedMessage() + "\n");
+            fileWriter.append(e.getLocalizedMessage()).append("\n");
             fileWriter.flush();
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -25,10 +25,10 @@ public class LogUtils {
 
     public static void error(String msg){
         File file = new File(DownLoadUtils.getRootPath() + "/error.txt");
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(msg + "\n");
+            fileWriter.append(msg).append("\n");
             fileWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,10 +37,10 @@ public class LogUtils {
 
     public static void info(String msg) {
         File file = new File(DownLoadUtils.getRootPath() + "/info.txt");
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(msg + "\n");
+            fileWriter.append(msg).append("\n");
             fileWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +53,7 @@ public class LogUtils {
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(file, true);
-            fileWriter.append(curseModInfo.getDisplayName() + "\n");
+            fileWriter.append(curseModInfo.getDisplayName()).append("\n");
             fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();

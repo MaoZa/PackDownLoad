@@ -4,13 +4,14 @@ import cn.dawnland.packdownload.utils.LogUtils;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 /**
  * 重试拦截器
  */
-public class RetryIntercepter implements Interceptor {
+public class RetryInterceptor implements Interceptor {
 
     /**
      * 最大重试次数
@@ -21,10 +22,11 @@ public class RetryIntercepter implements Interceptor {
      */
     private int retryNum = 0;
 
-    public RetryIntercepter(int maxRetry) {
+    public RetryInterceptor(int maxRetry) {
         this.maxRetry = maxRetry;
     }
 
+    @NotNull
     @Override
     public Response intercept(Chain chain){
         Request request = chain.request();

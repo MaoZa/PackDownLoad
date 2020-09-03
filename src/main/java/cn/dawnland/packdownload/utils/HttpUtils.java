@@ -10,6 +10,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Cap_Sub
@@ -43,12 +44,12 @@ public class HttpUtils {
             httpGet.addHeader("Content-type", "application/json; charset=GBK");
             httpGet.setHeader("Accept", "application/json");
             response = httpClient.execute(httpGet);
-            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
             StringBuffer sb = new StringBuffer();
             String line;
             String NL = System.getProperty("line.separator");
             while ((line = in.readLine()) != null) {
-                sb.append(line + NL);
+                sb.append(line).append(NL);
             }
             in.close();
             result = sb.toString();

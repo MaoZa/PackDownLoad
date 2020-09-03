@@ -87,6 +87,7 @@ public class PackDownLoadNewController implements Initializable {
         }
     }
 
+    //选择安装目录
     public void selectedDir(){
         Stage stage = (Stage) resultLabel.getParent().getScene().getWindow();
         if(stage != null){
@@ -99,6 +100,7 @@ public class PackDownLoadNewController implements Initializable {
         }
     }
 
+    //选择ZIP包路径
     public void selectedZipDir(){
         Stage stage = (Stage) resultLabel.getParent().getScene().getWindow();
         if(stage != null){
@@ -111,16 +113,36 @@ public class PackDownLoadNewController implements Initializable {
 
     public void startPackDownLoad(){
         count += 1;
-        divideVersionCheckBoxStatic = divideVersionCheckBox;
-        threadCountStatic = threadCount;
-        selectDirButtonStatic = selectDirButton;
-        startButtonStatic = downloadButton;
-        selectZipDirButtonStatic = selectZipDirButton;
-        UIUpdateUtils.startButton = downloadButton;
-        projectUrlTextFieldStatic = projectUrlTextField;
-        targetHboxStatic = targetHbox;
-        searchHboxStatic = searchHbox;
+        this.components2Static();
         startButtonStatic.setDisable(true);
+        this.initThread();
+        if(divideVersionCheckBox.isSelected()){
+            if(zipFile != null){
+                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]); }
+                startInstall();
+            }else {
+                String projectName = (String) ((ComboBox)searchHbox.getChildren().get(0)).getValue();
+                String[] split = "\\,/,:,*,?,\",<,>,|".split(",");
+                for (int i = 0; i < split.length; i++) {
+                    projectName = projectName.replace(split[i], " ");
+                }
+                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + projectName); }
+                CommonUtils.getPool().submit(() -> {
+                    MessageUtils.info("正在下载整合包zip...");
+                    DownLoadUtils.downLoadFromUrl(projectUrlTextField.getText(), DownLoadUtils.getPackPath(), new DownloadListener() {
+                        @Override
+                        public void onSuccess(File file) {
+                            super.onSuccess(file);
+                            zipFile = file;
+                            startInstall();
+                        }
+                    });
+                });
+            }
+        }
+    }
+
+    private void initThread(){
         threadCountInt = 50;
         if(this.threadCount.getText() != null && !this.threadCount.getText().equals("")){
             try{
@@ -130,33 +152,19 @@ public class PackDownLoadNewController implements Initializable {
                 return;
             }
         }
-        ExecutorService pool = newFixedThreadPool(threadCountInt);
-        if(divideVersionCheckBox.isSelected()){
-            if(zipFile != null){
-                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + zipFile.getName().split(".zip")[0]); }
-                startInstall(pool);
-            }else {
-                String projectName = (String) ((ComboBox)searchHbox.getChildren().get(0)).getValue();
-                String[] split = "\\,/,:,*,?,\",<,>,|".split(",");
-                for (int i = 0; i < split.length; i++) {
-                    projectName = projectName.replace(split[i], " ");
-                }
-                if(count == 1){ DownLoadUtils.setPackPath(DownLoadUtils.getPackPath() + "/versions/" + projectName); }
-                pool.submit(() -> {
-                    MessageUtils.info("正在下载整合包zip...");
-                    DownLoadUtils.downLoadFromUrl(projectUrlTextField.getText(), DownLoadUtils.getPackPath(), new DownloadListener() {
-                        @Override
-                        public void onSuccess(File file) {
-                            super.onSuccess(file);
-                            zipFile = file;
-                            startInstall(pool);
-                        }
-                    });
-                });
-            }
-        }
+        CommonUtils.setPool(newFixedThreadPool(threadCountInt));
+    }
 
-
+    private void components2Static(){
+        divideVersionCheckBoxStatic = divideVersionCheckBox;
+        threadCountStatic = threadCount;
+        selectDirButtonStatic = selectDirButton;
+        startButtonStatic = downloadButton;
+        selectZipDirButtonStatic = selectZipDirButton;
+        UIUpdateUtils.startButton = downloadButton;
+        projectUrlTextFieldStatic = projectUrlTextField;
+        targetHboxStatic = targetHbox;
+        searchHboxStatic = searchHbox;
     }
 
     public static void setDisplay(){
@@ -195,7 +203,7 @@ public class PackDownLoadNewController implements Initializable {
         targetHbox.getChildren().remove(0);
         ObservableList projectObs = FXCollections.observableArrayList();
         ObservableList fileObs = FXCollections.observableArrayList();
-        projects.entrySet().stream().forEach(p -> projectObs.add(p.getKey()));
+        projects.forEach((key, value) -> projectObs.add(key));
         JFXComboBox projectComboBox = new JFXComboBox<>();
         JFXComboBox latestComboBox = new JFXComboBox<>();
         projectComboBox.setPromptText("请选择一个整合包.....");
@@ -222,8 +230,8 @@ public class PackDownLoadNewController implements Initializable {
         searchHbox.getChildren().add(projectComboBox);
     }
 
-    private void startInstall(ExecutorService pool){
-        pool.submit(new ModPackZipDownLoadTask(zipFile.getPath(), taskList, pool));
+    private void startInstall(){
+        CommonUtils.getPool().submit(new ModPackZipDownLoadTask(zipFile.getPath(), taskList));
         Platform.runLater(() -> {
             root.setMaxWidth(root.getMaxWidth() + 400D);
             root.setMinWidth(root.getMaxWidth());

@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -120,7 +121,7 @@ public class Upgrader {
     /**
      * 下载最新版本
      */
-    public static void dowload() {
+    public static void download() {
         downLoadFromUrl(Config.batUrl, new DownloadListener() {
                     @Override
                     public void onSuccess(File file) {
@@ -171,13 +172,13 @@ public class Upgrader {
     /**
      * 启动后自动更新
      */
-    public static void autoupgrade() {
+    public static void autoUpgrade() {
         getNewVersion();
         if (Config.currentVersion >= newVersion) {
             return;
         }
         try {
-            dowload();
+            download();
         } catch (Exception e) {
             MessageUtils.error(e);
             System.exit(0);
@@ -191,8 +192,6 @@ public class Upgrader {
 
     /**
      * 检查是否有新版本
-     *
-     * @return
      */
     public static boolean isNewVersion() {
         if (newVersion == 0) {
@@ -219,7 +218,7 @@ public class Upgrader {
             URL url = new URL(getUrl);
             URLConnection urlConnection = url.openConnection();
             urlConnection.setAllowUserInteraction(false);
-            isr = new InputStreamReader(url.openStream(), "UTF-8");
+            isr = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
             br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
@@ -239,15 +238,13 @@ public class Upgrader {
      * @throws IOException
      */
     public static void downLoadFromUrl(String urlStr, String savePath, DownloadListener listener) {
-        if(savePath.trim() == null || "".equals(savePath.trim())){
+        if(Objects.isNull(savePath) || "".equals(savePath.trim())){
             savePath = DownLoadUtils.getRootPath();
         }
-//        OkHttpUtils.get().download(urlStr, savePath, listener);
         new DownloadTask(savePath, listener).startDownload(urlStr);
     }
     public static void downLoadFromUrl(String urlStr, DownloadListener listener) {
         String savePath = DownLoadUtils.getRootPath();
-//        OkHttpUtils.get().download(urlStr, savePath, listener);
         new DownloadTask(savePath, listener).startDownload(urlStr);
     }
 }

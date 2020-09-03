@@ -11,6 +11,6 @@ public class InstallInfo {
     private String zipFilePath;
     private String rootPath;
     private String packPath;
-    private Integer therdCount;
+    private Integer threadCount;
 
 }

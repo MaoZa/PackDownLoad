@@ -9,15 +9,33 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
  * @author Cap_Sub
  * 公共工具
  */
 public class CommonUtils {
+
+    private static ExecutorService pool;
+
+    public static ExecutorService getPool() {
+        if(Objects.isNull(pool)){
+            pool = newFixedThreadPool(50);
+        }
+        return pool;
+    }
+
+    public static void setPool(ExecutorService pool) {
+        if(Objects.isNull(pool)){
+            pool = newFixedThreadPool(50);
+        }
+        CommonUtils.pool = pool;
+    }
 
     /**
      * 退出软件
@@ -32,7 +50,7 @@ public class CommonUtils {
                     .packPath(DownLoadUtils.getPackPath())
                     .rootPath(DownLoadUtils.getRootPath())
                     .zipFilePath(PackDownLoadNewController.zipFile.getPath())
-                    .therdCount(PackDownLoadNewController.threadCountInt)
+                    .threadCount(PackDownLoadNewController.threadCountInt)
                     .build();
             new FileToObjectUtils().save(Paths.get(System.getProperty("user.dir"), "PreviouslyUnfinished.json"), installInfo);
         }else{

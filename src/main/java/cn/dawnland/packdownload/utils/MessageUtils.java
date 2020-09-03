@@ -19,7 +19,7 @@ public class MessageUtils {
 
     public static Label resultLabel;
     public static AtomicInteger sizeAI = new AtomicInteger(0);
-    private static ExecutorService pool = Executors.newFixedThreadPool(1);
+    private static final ExecutorService pool = Executors.newFixedThreadPool(1);
     public static Label downloadSpeed;
 
     public static int status = 0;
@@ -80,10 +80,10 @@ public class MessageUtils {
                         Thread.sleep(500);
                         int speed = sizeAI.get() - size;
                         if(speed > 0 && downloadSpeed != null){
-                            UIUpdateUtils.updateLable(downloadSpeed, readableFileSize(speed / 0.5) + "/s");
+                            UIUpdateUtils.updateLabel(downloadSpeed, readableFileSize(speed / 0.5) + "/s");
                             sizeAI.set(0);
                         }else if(downloadSpeed != null){
-                            UIUpdateUtils.updateLable(downloadSpeed, "0kb/s");
+                            UIUpdateUtils.updateLabel(downloadSpeed, "0kb/s");
                         }
                     } catch (InterruptedException e) {
                         MessageUtils.error(e);

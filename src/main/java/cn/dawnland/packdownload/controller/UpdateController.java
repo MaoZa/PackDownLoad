@@ -15,7 +15,7 @@ public class UpdateController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            new Thread(Upgrader::dowload).start();
+            new Thread(Upgrader::download).start();
         } catch (Exception e) {
             MessageUtils.error(e);
             System.exit(0);

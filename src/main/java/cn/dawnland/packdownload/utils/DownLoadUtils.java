@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -92,10 +91,8 @@ public class DownLoadUtils {
      * @param urlStr
      * @param savePath
      * @param downloadListener
-     * @throws IOException
      */
-    public static void  downLoadModFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
-//        OkHttpUtils.get().download(urlStr, savePath, onDownloadListener);
+    public static void downLoadModFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
         new DownloadTask(savePath, downloadListener).startDownload(urlStr);
     }
 
@@ -103,12 +100,10 @@ public class DownLoadUtils {
      * 从网络Url中下载文件到指定目录 通用方法
      * @param urlStr
      * @param savePath
-     * @throws IOException
+     * @param downloadListener
      */
-    public static String downLoadFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
-//        OkHttpUtils.get().download(urlStr, savePath, downloadListener);
+    public static void downLoadFromUrl(String urlStr, String savePath, DownloadListener downloadListener) {
         new DownloadTask(savePath, downloadListener).startDownload(urlStr);
-        return null;
     }
 
     public static void downloadVersionJson(String mcVersion, String forgeVersion, String installUrl) throws IOException {
@@ -230,12 +225,6 @@ public class DownLoadUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                if(DownLoadUtils.downloadFaildModS.size() > 0){
-////                        CurseUtils.failsMod(DownLoadUtils.downloadFaildModS);
-//                    Platform.runLater(() -> {
-//                        LogUtils.error("有" + DownLoadUtils.downloadFaildModS.size() + "个mod下载失败 请尝试重新下载");
-//                    });
-//                }
                 MessageUtils.info("安装完成");
                 try {
                     Files.deleteIfExists(Paths.get(DownLoadUtils.getPackPath() + "/successMod.txt"));

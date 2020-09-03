@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,7 +17,7 @@ public class MojangUtils {
 
     private static ConcurrentHashMap<String, Version> mojangVersions;
 
-    public static Map<String, Version> getVersions() throws IOException {
+    public static void getVersions() throws IOException {
         String url = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
         String s = OkHttpUtils.get().get(url);
         JSONObject jsonObject = JSONObject.parseObject(s);
@@ -28,12 +28,13 @@ public class MojangUtils {
         }else if(mojangVersions.size() != versions.size()){
             versions.forEach(v -> mojangVersions.putIfAbsent(v.getId(), v));
         }
-        return mojangVersions;
     }
 
     public static Version getVersionUrlByVersion(String version) throws IOException {
-        getVersions();
-        return mojangVersions != null ? mojangVersions.get(version) : null;
+        if(Objects.isNull(mojangVersions)){
+            getVersions();
+        }
+        return mojangVersions.get(version);
     }
 
     public static String getJsonUrl(String version) throws IOException {
