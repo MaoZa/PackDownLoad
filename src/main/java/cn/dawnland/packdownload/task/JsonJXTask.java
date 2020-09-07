@@ -24,17 +24,15 @@ import java.util.stream.Collectors;
 /**
  * @author Cap_Sub
  */
-public class JsonJXTask implements Runnable {
+public class JsonJXTask extends BaseTask<String> {
 
     private Path jsonPath;
     private String zipFilePath;
-    private JFXListView taskList;
 
     public static Manifest manifest;
 
-    public JsonJXTask(String zipFilePath, JFXListView taskList) {
+    public JsonJXTask(String zipFilePath) {
         this.zipFilePath = zipFilePath;
-        this.taskList = taskList;
     }
 
     @Override
@@ -72,7 +70,7 @@ public class JsonJXTask implements Runnable {
             }
             manifest.setThisJsonFilePath(jsonPath.toString());
 
-            ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), taskList);
+            ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), this.taskList);
             List<ManifestFile> files = manifest.getFiles();
 
             Platform.runLater(() -> {
@@ -112,6 +110,11 @@ public class JsonJXTask implements Runnable {
             MessageUtils.error(e);
         }
 
+    }
+
+    @Override
+    void subTask() throws Exception {
+        this.run();
     }
 
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";
