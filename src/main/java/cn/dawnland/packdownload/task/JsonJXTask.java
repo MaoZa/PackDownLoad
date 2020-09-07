@@ -36,6 +36,13 @@ public class JsonJXTask extends BaseTask<String> {
     }
 
     @Override
+    void initProgress() {
+        this.
+
+        super.initProgress();
+    }
+
+    @Override
     public void run() {
         try {
             jsonPath = Paths.get(DownLoadUtils.getPackPath(), "manifest.json");
@@ -73,34 +80,6 @@ public class JsonJXTask extends BaseTask<String> {
             ZipUtils.unzip(manifest, zipFilePath, DownLoadUtils.getPackPath(), this.taskList);
             List<ManifestFile> files = manifest.getFiles();
 
-            Platform.runLater(() -> {
-                JFXProgressBar modsBar = new JFXProgressBar();
-                Label modsLabel = new Label("下载进度");
-                modsBar.setPrefWidth(70);
-                HBox hb = new HBox();
-                Label label = new Label();
-                hb.setPrefWidth(350D);
-                hb.setSpacing(10D);
-                hb.setAlignment(Pos.CENTER);
-                modsBar.setPrefWidth(130D);
-                modsBar.setMaxHeight(5D);
-                modsBar.setProgress(0);
-                modsLabel.setPrefWidth(60D);
-                modsLabel.setMaxHeight(5);
-                modsLabel.setAlignment(Pos.CENTER_LEFT);
-                label.setPrefWidth(100D);
-                label.setAlignment(Pos.CENTER_RIGHT);
-                Long processedQuantity = manifest.getFiles().stream().filter(f -> !f.isDownloadSucceed()).count();
-                label.setText("0/" + processedQuantity);
-                MessageUtils.info("正在安装整合包，请耐心等待");
-                Platform.runLater(() -> {
-                    hb.getChildren().addAll(modsLabel, modsBar, label);
-                    DownLoadUtils.taskList.getItems().add(hb);
-                });
-                UIUpdateUtils.modsBar = modsBar;
-                UIUpdateUtils.modsLabel = label;
-                UIUpdateUtils.modsCount = files.size() - (files.size() - processedQuantity.intValue());
-            });
             Set<ManifestFile> processedFiles = manifest.getFiles().stream().filter(f -> !f.isDownloadSucceed()).collect(Collectors.toSet());
             processedFiles.forEach(this::request);
             String mcVersion = manifest.getMinecraft().getVersion();
