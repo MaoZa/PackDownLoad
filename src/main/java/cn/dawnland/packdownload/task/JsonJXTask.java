@@ -7,12 +7,6 @@ import cn.dawnland.packdownload.model.manifest.ManifestFile;
 import cn.dawnland.packdownload.utils.*;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXProgressBar;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,10 +18,9 @@ import java.util.stream.Collectors;
 /**
  * @author Cap_Sub
  */
-public class JsonJXTask extends BaseTask<String> {
+public class JsonJXTask extends BaseTask<Manifest> {
 
-    private Path jsonPath;
-    private String zipFilePath;
+    private final String zipFilePath;
 
     public static Manifest manifest;
 
@@ -37,15 +30,13 @@ public class JsonJXTask extends BaseTask<String> {
 
     @Override
     void initProgress() {
-        this.
-
         super.initProgress();
     }
 
     @Override
     public void run() {
         try {
-            jsonPath = Paths.get(DownLoadUtils.getPackPath(), "manifest.json");
+            Path jsonPath = Paths.get(DownLoadUtils.getPackPath(), "manifest.json");
             if (!jsonPath.toFile().exists()) {
                 try{
                     jsonPath = ZipUtils.getZipEntryFile(zipFilePath, "manifest.json").toPath();
@@ -92,8 +83,8 @@ public class JsonJXTask extends BaseTask<String> {
     }
 
     @Override
-    void subTask() throws Exception {
-        this.run();
+    protected void subTask() {
+        run();
     }
 
     private final String MODS_PATH = DownLoadUtils.getPackPath() + "/mods";

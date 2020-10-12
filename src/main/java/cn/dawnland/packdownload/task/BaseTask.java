@@ -26,17 +26,11 @@ public abstract class BaseTask<T> extends Task<T> {
     protected HBox taskHb;
     protected Label taskProgressLabel;
 
-    public BaseTask(TaskProfile taskProfile) {
-        this.taskProfile = taskProfile;
-        taskProgressBar = new JFXProgressBar();
-    }
-
     @Override
     protected T call() { return null; }
 
     void initProgress(){
         Platform.runLater(() -> {
-
             Label modsLabel = new Label(taskProfile.getDisplayTitle());
             taskHb = new HBox();
             taskProgressLabel = new Label();
@@ -54,11 +48,11 @@ public abstract class BaseTask<T> extends Task<T> {
             taskProgressLabel.setText("0/" + maxSize);
             MessageUtils.info(taskProfile.getStartMessage());
             Platform.runLater(() -> {
-                taskHb.getChildren().addAll(modsLabel, modsBar, label);
+                taskHb.getChildren().addAll(modsLabel, taskProgressBar, messageLabel);
                 DownLoadUtils.taskList.getItems().add(taskHb);
             });
-            UIUpdateUtils.modsBar = modsBar;
-            UIUpdateUtils.modsLabel = label;
+            UIUpdateUtils.modsBar = taskProgressBar;
+            UIUpdateUtils.modsLabel = messageLabel;
             UIUpdateUtils.modsCount = maxSize;
         });
     }
@@ -76,6 +70,6 @@ public abstract class BaseTask<T> extends Task<T> {
      * @return String filename
      * @throws Exception
      */
-    abstract void subTask() throws Exception;
+    protected abstract void subTask() throws Exception;
 
 }
